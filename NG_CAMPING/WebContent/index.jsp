@@ -10,7 +10,7 @@
 </head>
 <body class="is-preload landing">
 		<div id="page-wrapper">
-
+		
 			<!-- Header -->
 				<header id="header">
 					<h1 id="logo"><a href="index.html">Landed</a></h1>

@@ -1,0 +1,46 @@
+create table info(
+	idx int primary key auto_increment,
+	firstImageUrl text,
+	addr1 text,
+	addr2 text,
+	facltNm text,
+	lineIntro text,
+	intro text,
+	featureNm text,
+	lctCl text,
+	doNm text,
+	sigunguNm  text,
+	autoSiteCo int,
+	caravSiteCo int,
+	glampSiteCo int,
+	gnrlSiteCo int,
+	caravAcmpnyAt text,
+	indvdlCaravSiteCo text,
+	trlerAcmpnyAt text,
+	eqpmnLendCl text,
+	sbrsCl text,
+	sbrsEtc text,
+	posblFcltyCl text,
+	themaEnvrnCl text,
+	animalCmgCl text,
+	siteBottomCl1 int,
+	siteBottomCl2 int,
+	siteBottomCl3 int,
+	siteBottomCl4 int,
+	siteBottomCl5 int,
+	brazierCl text,
+	homepage text,
+	resveUrl text,
+	tel  text,
+	induty text,
+	operDeCl text,
+	facltDivNm text,
+	insrncAt text,
+	mapX double,
+	mapY double
+);
+
+show tables;
+desc info;
+select * from info;
+drop table info;

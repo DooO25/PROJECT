@@ -10,9 +10,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@Log4j
 public class JDBCUtil {
 	// 1. 연결
 	public static Connection getConnection() {

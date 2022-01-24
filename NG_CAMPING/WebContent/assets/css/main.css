@@ -7,6 +7,7 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
+
 html, body, div, span, applet, object,
 iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
 pre, a, abbr, acronym, address, big, cite,
@@ -28,6 +29,9 @@ section, summary, time, mark, audio, video {
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;}
+	
+	
+	
 
 body {
 	line-height: 1;
@@ -154,6 +158,9 @@ input, select, textarea {
 	h3 {
 		font-size: 1.35em;
 		line-height: 1.5em;
+	}
+	h3.borad1 {
+		text-align: left;
 	}
 
 	h4 {
@@ -3451,7 +3458,6 @@ input, select, textarea {
 		background-color: black;
 		box-shadow: none;
 		position: fixed;
-		height: px;
 	}
 
 /* Banner */
@@ -3497,7 +3503,6 @@ input, select, textarea {
 			max-width: 95%;
 			padding: 6em;
 			position: relative;
-			text-align: right;
 			vertical-align: middle;
 			z-index: 1;
 		}
@@ -3536,6 +3541,10 @@ input, select, textarea {
 	body.is-touch #banner {
 		background-attachment: scroll;
 	}
+
+
+
+
 
 /* Footer */
 
@@ -4098,6 +4107,21 @@ input, select, textarea {
 			#banner .content {
 				padding: 3em 1.5625em 5.25em 1.5625em;
 			}
+			
+			
+		/*Board */
+		board .h3 {
+		text-align: left;
+		
+		}
+
+
+.board {
+	padding-left: 50;
+	
+	
+}
+
 
 		/* Footer */
 

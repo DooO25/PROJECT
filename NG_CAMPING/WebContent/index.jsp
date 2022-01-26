@@ -33,7 +33,6 @@
 .swiper-slide {
 	text-align: center;
 	font-size: 18px;
-	background: #fff;
 	width: 60%;
 	/* Center slide text vertically */
 	display: -webkit-box;
@@ -138,7 +137,7 @@
 
 				<!-- Add Pagination -->
 				<div class="swiper-pagination"></div>
-			<a href="#one" class="goto-next scrolly">Next</a>
+			 <!-- <a href="#one" class="goto-next scrolly">Next</a>  -->
 		</div>	
 		</div>
 	</section>
@@ -176,7 +175,7 @@
 				</div>
 			</div>
 		</div>
-		<a href="#two" class="goto-next scrolly">Next</a>
+	<!-- <a href="#two" class="goto-next scrolly">Next</a>  -->
 	</section>
 
 	<!-- Two -->
@@ -200,7 +199,7 @@
 				<li><a href="#" class="button">더보기</a></li>
 			</ul>
 		</div>
-		<a href="#three" class="goto-next scrolly">Next</a>
+		<!-- <a href="#three" class="goto-next scrolly">Next</a> -->
 	</section>
 
 	<!-- Three -->
@@ -224,7 +223,7 @@
 				<li><a href="#" class="button">더보기</a></li>
 			</ul>
 		</div>
-		<a href="#four" class="goto-next scrolly">Next</a>
+		<!--  <a href="#four" class="goto-next scrolly">Next</a>  -->
 	</section>
 
 
@@ -248,7 +247,7 @@
 				<li><a href="#" class="button">더보기</a></li>
 			</ul>
 		</div>
-		<a href="#five" class="goto-next scrolly">Next</a>
+		 <!-- <a href="#five" class="goto-next scrolly">Next</a> -->
 	</section>
 
 
@@ -272,7 +271,7 @@
 				<li><a href="#" class="button">더보기</a></li>
 			</ul>
 		</div>
-		<a href="#six" class="goto-next scrolly">Next</a>
+		<!--  <a href="#six" class="goto-next scrolly">Next</a> -->
 	</section>
 
 
@@ -310,7 +309,7 @@
 						<p>글램핑/카라반 테마의 캠핑장 갯수입니다.</p>
 					</section>
 					<section>
-						<br> <br> <a href="#seven" class="goto-next scrolly">Next</a>
+					<!-- 	<br> <br> <a href="#seven" class="goto-next scrolly">Next</a> -->
 					</section>
 				</div>
 			</div>

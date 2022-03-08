@@ -1,9 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
+<link rel="shortcut icon" type="image/x-icon"
+	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
 <title>캠핑은 NG캠핑!</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link
@@ -19,8 +21,10 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <meta charset="utf-8" />
-<link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <style>
 .swiper-container {
 	width: 90%;
@@ -54,12 +58,11 @@
 .swiper-slide:nth-child(3n) {
 	width: 20%;
 }
-
-
 </style>
 
 <noscript>
-	<link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/noscript.css" />
+	<link rel="stylesheet"
+		href="${pageContext.request.contextPath }/resources/assets/css/noscript.css" />
 </noscript>
 </head>
 <body class="is-preload landing">
@@ -68,8 +71,9 @@
 		<!-- Header -->
 		<header id="header">
 			<h1 id="logo">
-				<a href="/main.do"><img src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" alt="" />
-				</a>
+				<a href="/main.do"><img
+					src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png"
+					alt="" /> </a>
 			</h1>
 			<nav id="nav">
 				<ul>
@@ -103,7 +107,7 @@
 						여러분의 캠핑생활을 도와드립니다!<br /> 스크롤을 내려 캠핑정보를 확인하세요!
 					</p>
 				</header>
-				
+
 				<!-- Swiper -->
 				<div class="swiper-container">
 					<div class="swiper-wrapper">
@@ -118,11 +122,12 @@
 						<div class="swiper-slide">Slide 9</div>
 						<div class="swiper-slide">Slide 10</div>
 					</div>
-					
+
 					<!-- Add Pagination -->
 					<div class="swiper-pagination"></div>
 				</div>
-				<script src="${pageContext.request.contextPath }/resources/assets/js/swiper.min.js"></script>
+				<script
+					src="${pageContext.request.contextPath }/resources/assets/js/swiper.min.js"></script>
 				<script>
 					var swiper = new Swiper('.swiper-container', {
 						pagination : '.swiper-pagination',
@@ -135,15 +140,16 @@
 
 				<!-- Add Pagination -->
 				<div class="swiper-pagination"></div>
-			 <!-- <a href="#one" class="goto-next scrolly">Next</a>  -->
-		</div>	
-		</div>
+				<!-- <a href="#one" class="goto-next scrolly">Next</a>  -->
+			</div>
 	</section>
 
 
 	<!-- One -->
 	<section id="one" class="spotlight style1 bottom">
-		<span class="image fit main"><img src="${pageContext.request.contextPath }/resources/assets/css/images/pic02.jpg" alt="" /></span>
+		<span class="image fit main"><img
+			src="${pageContext.request.contextPath }/resources/assets/css/images/pic02.jpg"
+			alt="" /></span>
 		<div class="content">
 			<div class="container">
 				<div class="row">
@@ -173,7 +179,7 @@
 				</div>
 			</div>
 		</div>
-	<!-- <a href="#two" class="goto-next scrolly">Next</a>  -->
+		<!-- <a href="#two" class="goto-next scrolly">Next</a>  -->
 	</section>
 
 	<!-- Two -->
@@ -245,7 +251,7 @@
 				<li><a href="#" class="button">더보기</a></li>
 			</ul>
 		</div>
-		 <!-- <a href="#five" class="goto-next scrolly">Next</a> -->
+		<!-- <a href="#five" class="goto-next scrolly">Next</a> -->
 	</section>
 
 
@@ -307,7 +313,7 @@
 						<p>글램핑/카라반 테마의 캠핑장 갯수입니다.</p>
 					</section>
 					<section>
-					<!-- 	<br> <br> <a href="#seven" class="goto-next scrolly">Next</a> -->
+						<!-- 	<br> <br> <a href="#seven" class="goto-next scrolly">Next</a> -->
 					</section>
 				</div>
 			</div>
@@ -454,14 +460,22 @@
 	</div>
 
 	<!-- Scripts -->
-	<script src="${pageContext.request.contextPath }/resources/assets/js/jquery.min.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrolly.min.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/assets/js/jquery.dropotron.min.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrollex.min.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/assets/js/browser.min.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/assets/js/breakpoints.min.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/assets/js/util.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/jquery.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrolly.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/jquery.dropotron.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrollex.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/browser.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/breakpoints.min.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/util.js"></script>
+	<script
+		src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
 	<div style="position: fixed; bottom: 10px; right: 10px; z-index: 100;">
 		<a href="#banner" style="text-decoration: underline;"><img
 			src="${pageContext.request.contextPath }/resources/assets/css/images/top.png"></a>

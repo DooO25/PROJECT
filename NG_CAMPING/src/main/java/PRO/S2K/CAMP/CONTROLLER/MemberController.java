@@ -1,8 +1,11 @@
 package PRO.S2K.CAMP.CONTROLLER;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,7 +21,12 @@ public class MemberController {
 	private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 	
 	@Autowired
-	MemberService memberService;
+	private MemberService memberService;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
 	
 	
 	@RequestMapping(value = "/insert.do", method = RequestMethod.GET)
@@ -26,8 +34,14 @@ public class MemberController {
 		return "insert";
 	}
 
+	@RequestMapping(value = "/insertOk.do", method = RequestMethod.GET)
+	public String insertOk() {
+		return "redirect:/";
+	}
+	
 	@RequestMapping(value = "/insertOk.do", method = RequestMethod.POST)
 	public String insertOk(MemberVO memberVO) {
+		memberVO.setAuthkey(UUID.randomUUID().toString());
 		memberService.insert(memberVO);
 		return "insertOk";
 	}
@@ -68,6 +82,16 @@ public class MemberController {
 			logger.info("=============================2");
 		}
 		return count + "";
+	}
+	
+	@RequestMapping(value = "/login.do", method = RequestMethod.GET)
+	public String login() {
+		return "login";
+	}
+	
+	@RequestMapping(value = "/callback.do", method = RequestMethod.GET)
+	public String callback() {
+		return "callback";
 	}
 	
 }

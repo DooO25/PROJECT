@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import PRO.S2K.CAMP.DAO.GradeDAO;
 import PRO.S2K.CAMP.DAO.MemberDAO;
 import PRO.S2K.CAMP.VO.MemberVO;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service("memberService")
 public class MemberServiceImpl implements MemberService{
 
@@ -34,7 +36,7 @@ public class MemberServiceImpl implements MemberService{
 	
 	
 	@Override
-	public MemberVO loginOk(MemberVO memberVO) {
+	public MemberVO loginOk(MemberVO memberVO) { 
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -47,10 +49,13 @@ public class MemberServiceImpl implements MemberService{
 
 	@Override
 	public void insert(MemberVO memberVO) {
+		// DB에 저장한다.
+		log.info("insert 호출 : " + memberVO);
 		if(memberVO!=null) {
 			memberDAO.insert(memberVO);
 			/* gradeDAO.insert(memberVO.getMb_ID()); 이거 사용 X*/   
 			/* sendEmail(memberVO);  나중에 다시 활성화 ON */
+			sendEmail(memberVO);
 		}
 	}
 
@@ -144,7 +149,7 @@ public class MemberServiceImpl implements MemberService{
 		String content = "반갑습니다. " + memberVO.getMb_nick() + "님!!!<br>"
                 + "회원 가입을 축하드립니다.<br> "
         		+ "회원 가입을 완료하려면 다음의 링크를 클릭해서 인증하시기 바랍니다.<br>"
-                + "<a href='http://localhost:8080/member/confirm?getMb_ID="+memberVO.getMb_ID()+"&Authkey="+memberVO.getAuthkey()+"'>인증</a><br>";
+                + "<a href='http://localhost:8080/confirm?getMb_ID="+memberVO.getMb_ID()+"&Authkey="+memberVO.getAuthkey()+"'>인증</a><br>";
 		
         MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
         try {
@@ -161,7 +166,7 @@ public class MemberServiceImpl implements MemberService{
  
             public void prepare(MimeMessage mimeMessage) throws Exception {
             	MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            	helper.setFrom("ngcamps2k@gmail.com");
+            	helper.setFrom("S2KCCamp@gmail.com");
             	helper.setTo(to);
             	helper.setSubject(subject);
             	helper.setText(content, true);

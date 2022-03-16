@@ -71,8 +71,9 @@ CREATE TABLE `camp_member` (
 );
 
 desc camp_member;
-alter table camp_member add mb_zipcode int not null;
-alter table camp_member drop mb_zipcode;
+alter table camp_member add mb_ip varchar(20) not null;
+alter table camp_member drop mb_use;
+
 drop table camp_grade;
 
 CREATE TABLE `camp_grade` (

@@ -93,7 +93,7 @@
 							<li><a href="#">QnA</a></li>
 						</ul></li>
 					<li><a href="/insert.do">회원가입</a></li>
-					<li><a href="html/login.html">로그인</a></li>
+					<li><a href="/login.do">로그인</a></li>
 				</ul>
 			</nav>
 		</header>

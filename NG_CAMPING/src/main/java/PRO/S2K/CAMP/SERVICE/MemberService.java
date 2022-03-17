@@ -17,7 +17,11 @@ public interface MemberService {
 // 6. 비번 변경
 	void updatePassword(MemberVO memberVO);
 // 7. 인증 완료
+<<<<<<< HEAD
 	MemberVO updateGrade(String mb_ID, String authkey);
+=======
+	MemberVO updateUse(String mb_ID, String authkey);
+>>>>>>> refs/remotes/origin/master
 // 8. 아이디 중복확인
 	int idCheck(String mb_ID);
 // 9. 닉네임 중복확인

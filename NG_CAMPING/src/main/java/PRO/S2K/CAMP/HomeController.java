@@ -40,6 +40,7 @@ public class HomeController {
 		
 		return "main";
 	}
+<<<<<<< HEAD
 	// 인증 정보를 시큐리트에서 얻어내는 메서드
 		private String getPrincipal(){
 	        String userName = null;
@@ -51,5 +52,7 @@ public class HomeController {
 	        }
 	        return userName;
 	    }
+=======
+>>>>>>> refs/remotes/origin/master
 
 }

@@ -77,7 +77,11 @@
 	
 	<!-- 10. 인증여부를 변경하는 쿼리 -->
 	<update id="updateUse" parameterType="hashmap">
+<<<<<<< HEAD
 		update camp_member set gr_grade=#{gr_grade} where mb_ID=#{mb_ID} and authkey=#{authkey}
+=======
+		update camp_member set mb_use=#{mb_use} where mb_ID=#{mb_ID} and mb_ID=#{mb_ID}
+>>>>>>> refs/remotes/origin/master
 	</update>
 	<!-- 11. 비밀번호 변경하기 -->
 	<update id="updatePassword" parameterType="hashmap">

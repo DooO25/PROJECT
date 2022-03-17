@@ -98,6 +98,7 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 	@Override
+<<<<<<< HEAD
 	   public MemberVO updateGrade(String mb_ID, String authkey) {
 	      HashMap<String, Object> map = new HashMap<String, Object>();
 	      map.put("gr_grade", "1");
@@ -167,6 +168,77 @@ public class MemberServiceImpl implements MemberService{
             public void prepare(MimeMessage mimeMessage) throws Exception {
             	MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             	helper.setFrom("ngcamppp@gmail.com");
+=======
+	public MemberVO updateUse(String mb_ID, String authkey) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("use", 1);
+		map.put("mb_ID", mb_ID);
+		map.put("authkey", authkey);
+		memberDAO.updateUse(map);
+		return memberDAO.selectUserId(mb_ID);
+	}
+
+	@Override
+	public int idCheck(String mb_ID) {
+		return memberDAO.selectCountByUserId(mb_ID);		
+	}
+	
+	@Override
+	public int nickCheck(String mb_nick) {
+		return memberDAO.selectCountByUsernick(mb_nick);
+	}
+
+	@Override
+	public MemberVO idSearch(MemberVO memberVO) {
+		MemberVO vo = null;
+		if(memberVO!=null) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("mb_Name", memberVO.getMb_name());
+			map.put("mb_Tel", memberVO.getMb_tel());
+			vo = memberDAO.selectByUsername(map);
+		}
+		return vo;
+	}
+
+	@Override
+	public MemberVO passwordsearch(MemberVO memberVO) {
+		MemberVO vo = null;
+		if(memberVO!=null) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("mb_Name", memberVO.getMb_name());
+			map.put("mb_Tel", memberVO.getMb_tel());
+			vo = memberDAO.selectByUsername(map);
+		}
+		
+		return vo;
+		
+	}
+	// 회원 가입시 인증 메일 보내는 메서드 
+	public void sendEmail(MemberVO memberVO) {
+		String subject = "회원 가입을 축하드립니다.";
+		String to = memberVO.getMb_email();
+		String content = "반갑습니다. " + memberVO.getMb_nick() + "님!!!<br>"
+                + "회원 가입을 축하드립니다.<br> "
+        		+ "회원 가입을 완료하려면 다음의 링크를 클릭해서 인증하시기 바랍니다.<br>"
+                + "<a href='http://localhost:8080/confirm?getMb_ID="+memberVO.getMb_ID()+"&Authkey="+memberVO.getAuthkey()+"'>인증</a><br>";
+		
+        MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
+        try {
+            mailSender.send(preparator);
+            System.out.println("메일 보내기 성공 ***************************************************");
+        } catch (MailException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+	
+	// 메일 내용 완성
+    private MimeMessagePreparator getMessagePreparator(String to, String subject, String content) {
+        MimeMessagePreparator preparator = new MimeMessagePreparator() {
+ 
+            public void prepare(MimeMessage mimeMessage) throws Exception {
+            	MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            	helper.setFrom("S2KCCamp@gmail.com");
+>>>>>>> refs/remotes/origin/master
             	helper.setTo(to);
             	helper.setSubject(subject);
             	helper.setText(content, true);

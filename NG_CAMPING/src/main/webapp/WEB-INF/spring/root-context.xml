@@ -42,6 +42,7 @@
 	<!-- Security 권한 설정 -기본 bean에 security:를 붙여줘야함.  -->
 	<security:http auto-config="true" use-expressions="true">
         <security:intercept-url pattern="/" access="permitAll" />
+<<<<<<< HEAD
         <!-- 접근 불가능한 곳에 접근할때 에러가 아닌 보여줄 페이지 지정 -->
         <security:access-denied-handler error-page="/403"/>
         <!-- 사용자가 만든 로그인 폼을 사용하기 위해서는 이부분을 수정해 준다. -->
@@ -86,6 +87,54 @@
 		<property name="port" value="587"></property>
 		<property name="username" value="ngcamppp@gmail.com"></property>
 		<property name="password" value="220317!!a"></property>
+=======
+        <security:intercept-url pattern="/admin/**" access="hasRole('admin')" />
+        <security:intercept-url pattern="/board/**" access="hasRole('user')" />
+        <!-- 접근 불가능한 곳에 접근할때 에러가 아닌 보여줄 페이지 지정 -->
+        <security:access-denied-handler error-page="/403"/>
+        <!-- 사용자가 만든 로그인 폼을 사용하기 위해서는 이부분을 수정해 준다. -->
+        <security:form-login  
+        login-page="/login"
+        username-parameter="userid"
+        password-parameter="password"
+        default-target-url="/"
+        authentication-success-handler-ref="customSuccessHandler"
+        authentication-failure-url="/login?error" /> <!-- 로그인 실패시 이동할 페이지 -->
+        <security:logout logout-success-url="/"/> <!-- 로그아웃 성공시 이동할 페이지 -->
+        <!-- 
+        <security:logout logout-success-url="/login?logout"/> 
+         -->
+        <!-- csrf 프로텍션 사용하겠다. -->
+        <security:csrf disabled="true"/>
+    </security:http>
+  
+	<!-- Security 사용자 설정 -->
+    <security:authentication-manager >
+    	<!-- DB정보를 이용하여 인증을 처리 하겠다. -->
+    	<security:authentication-provider> 
+    		 <security:password-encoder ref="bCryptPasswordEncoder"/>
+			 <security:jdbc-user-service 
+			 	data-source-ref="dataSource"
+			 	users-by-username-query="select mb_name, mb_password, mb_use from camp_member where mb_ID=?"
+			 	authorities-by-username-query="select gr_name, gr_role from camp_grade where gr_name=?"
+			 	/>   	
+    	</security:authentication-provider> 
+    </security:authentication-manager>	
+    
+    <!-- 로그인 성공시 처리할 객체 등록 -->
+    <bean class="PRO.S2K.CAMP.SERVICE.CustomSuccessHandler" id="customSuccessHandler"></bean>
+    
+  
+    <!-- 시큐리트 암호화 객체 등록 -->
+    <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="bCryptPasswordEncoder"/>
+
+	<!-- 자바 메일 보내기 객체 -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com"></property>
+		<property name="port" value="587"></property>
+		<property name="username" value="S2KCCamp@gmail.com"></property>
+		<property name="password" value="220316!!"></property>
+>>>>>>> refs/remotes/origin/master
 		<property name="javaMailProperties">
 			<props>
 				<prop key="mail.smtp.starttls.enable">true</prop>

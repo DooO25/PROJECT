@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PRO.S2K.CAMP.DAO.GradeDAO">
+
+	<insert id="insert" parameterType="string">
+		INSERT INTO camp_grade VALUES (#{gr_grade}, #{gr_name},'user')
+	</insert>
+</mapper>

@@ -4,6 +4,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}" />
+<meta id="_csrf_header" name="_csrf_header"	th:content="${_csrf.headerName}" />
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
 <title>캠핑은 NG캠핑!</title>
@@ -19,7 +21,6 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
 <%-- 다음 우편번호 API --%>
 <script
 	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -35,6 +36,30 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <script type="text/javascript">
+	$(function() {
+		$("#password1").keyup(function() {
+			var pw = $('#password').val();
+			var pw2 = $('#password1').val();
+
+			if (pw != '' || pw2 != '') {
+				if (pw == pw2) {
+					$('#pwcheckval').html('Matching').css('color', 'white');
+				} else {
+					$('#pwcheckval').html('Not Matching').css('color', 'yellow');
+				}
+
+			}
+
+		});
+
+		$("#password1").focus(function() {
+			if ($("#password").val() == '') {
+				alert('비밀번호 입력칸을 먼저 입력해주세요.');
+				$("#password").focus();
+			}
+		});
+	});
+
 	function daumPostcode() {
 		new daum.Postcode({
 			oncomplete : function(data) {
@@ -54,8 +79,170 @@
 			}
 		}).open();
 	}
-</script>
+	// 폼검증하는 자바스크립트 함수
+	function formCheck() {
+		var tel = /^[0-9]{11}$/;
+		var num = /^[0-9]{4}$/;
+		var han = /^[가-힣]{3,4}$/;
+		var eng = /^[a-zA-Z]$/;
+		var regPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,15}$/;
+		var emailcheck = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+)$/;
 
+		var thisDate = new Date();
+		var thisYear = thisDate.getFullYear();
+
+		var value = $("#birthYear").val();
+		if (!num.test(value)) {
+			alert('년도는 숫자만 입력해주세요. 공백불가');
+			$("#birthYear").focus();
+			return false;
+		} else if (value <= '1900') {
+			alert('1900년도 이상으로 입력해주세요.');
+			$("#birthYear").focus();
+			return false;
+		} else if (thisYear - value <= 18) {
+			alert('18세 이상만 회원가입이 가능합니다.');
+			$("#birthYear").focus();
+			return false;
+		}
+
+		var value = $("#password").val();
+		if (!regPass.test(value)) {
+			alert('영문, 숫자, 특수기호 조합으로 8-15자리로 입력해주세요.');
+			$("#password").focus();
+			return false;
+		}
+
+		var value = $("#email").val();
+		if (!emailcheck.test(value)) {
+			alert('이메일 형식을 제대로 적어주세요 @포함');
+			$("#email").focus();
+			return false;
+		}
+		
+
+		var value = $("#hp").val();
+		if (!tel.test(value)) {
+			alert('전화번호는 -제외한 11글자만 입력해주세요.');
+			$("#hp").focus();
+			return false;
+		}
+
+		
+
+		var value = $("#username").val();
+		if (!han.test(value)) {
+			alert('이름은 한글만 입력해주세요. 3~4글자만 가능. 공백불가');
+			$("#username").focus();
+			return false;
+		}
+
+		if (!$('#flexCheckDefault').is(":checked")) {
+			alert("약관에 동의해주세요.");
+			return false;
+		}
+
+		if (!idCheckYn) { // 처음에 false / 중복이여도 false
+			alert('ID 중복확인을 해주세요. ');
+			return false; // 
+		}
+
+		if (!FnNickcheck) { // 처음에 false / 중복이여도 false
+			alert('닉네임 중복확인을 해주세요.');
+			return false; // 
+		}
+
+		var value = $("#month").val();
+		if (value === '') {
+			alert('태어난 월을 선택해주세요.');
+			$("#month").val("");
+			$("#month").focus();
+			return false;
+		}
+
+		var value = $("#day").val();
+		if (value === '') {
+			alert('태어난 날짜를 선택해주세요.');
+			$("#day").val("");
+			$("#day").focus();
+			return false;
+		}
+
+		var year = $('#birthYear').val() + $('#month').val() + $('#day').val();
+
+		$('#mb_birth').val(year);
+
+	}
+
+	// 아이디 체크여부
+	var idCheckYn = false; // 전역변수여서 어디든 사용 가능.
+
+	function FnIdcheck() {
+		var check = /^[a-zA-Z0-9]{6,12}$/;
+		var value = $('#ID').val();
+		if (value != null && check.test(value)) {
+			$.ajax({
+				type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
+				url : "idCheck.do", // 컨트롤러에서 대기중인 URL 주소이다.
+				data : {
+					"userid" : value
+				},
+				dataType : "text",
+				success : function(count) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+					// 보니깐 count로 할거같던데
+					if (count == 0) { // 있으면
+						alert("ID 사용가능");
+						idCheckYn = true; // 아이디 중복처리를 했다는걸 여기서 true값을 줌.
+					} else if (count > 0) { // 0 이면 없음
+						alert("ID 중복 또는 공백문제입니다. 특수문자도 제외");
+						idCheckYn = false; // 중복된걸 통과시킬순없음 X
+
+					} else { // 이건 오류 (밑에도 타겠지만 값이 안넘오는 경우에 여기서 걸릴거임.)
+						alert("기타 오류입니다.");
+					}
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+					alert("회원가입 실패")
+				}
+			});
+		} else {
+			alert("이름은 6글자이상 12자 이하만 입력되며 공백 및 특수문자가 불가능합니다.");
+		}
+	}
+
+	function FnNickcheck() {
+		var check = /^[가-힣a-zA-Z0-9]{2,10}$/;
+		var value = $('#nick').val();
+		if (value != null && check.test(value)) {
+			$.ajax({
+				type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
+				url : "nickCheck.do", // 컨트롤러에서 대기중인 URL 주소이다.
+				data : {
+					"nick" : value
+				},
+				dataType : "text",
+				success : function(count1) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+					// 보니깐 count로 할거같던데
+					if (count1 == 0) { // 있으면
+						alert("닉네임 사용가능");
+						idCheckYn = true; // 아이디 중복처리를 했다는걸 여기서 true값을 줌.
+					} else if (count1 > 0) { // 0 이면 없음
+						alert("닉네임 중복 또는 공백문제입니다.");
+						idCheckYn = false; // 중복된걸 통과시킬순없음 X
+
+					} else { // 이건 오류 (밑에도 타겠지만 값이 안넘오는 경우에 여기서 걸릴거임.)
+						alert("기타 오류입니다.");
+					}
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+					alert("가입 실패")
+				}
+			});
+		} else {
+			alert("닉네임은 2글자이상 10자 이하만 입력되며 공백 및 특수문자가 불가능합니다.");
+		}
+	}
+</script>
 
 <style type="text/css">
 #banner1 {
@@ -78,15 +265,6 @@ textarea {
 #member_position {
 	padding-left: 33%;
 }
-
-#membertitle {
-	padding-top: 100px;
-}
-
-#wrapper {
-	width: 500px;
-	padding-left: 20%;
-}
 </style>
 
 <noscript>
@@ -104,13 +282,13 @@ textarea {
 		<!-- Header -->
 		<header id="header">
 			<h1 id="logo">
-				<a href="index.jsp"><img
+				<a href="/main.do"><img
 					src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png"
 					alt="" /> </a>
 			</h1>
 			<nav id="nav">
 				<ul>
-					<li><a href="index.jsp">Home</a></li>
+					<li><a href="/main.do">Home</a></li>
 					<li><a href="#">캠핑장</a>
 						<ul>
 							<li><a href="#">일반 야영장</a></li>
@@ -126,7 +304,7 @@ textarea {
 							<li><a href="#">QnA</a></li>
 						</ul></li>
 					<li><a href="/insert.do">회원가입</a></li>
-					<li><a href="html/login.html">로그인</a></li>
+					<li><a href="/login.do">로그인</a></li>
 				</ul>
 			</nav>
 		</header>
@@ -210,119 +388,186 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 							id="flexCheckDefault"> <label class="form-check-label"
 							for="flexCheckDefault"> 동의합니다. </label>
 					</div>
+					<div class="mb-4">
+						<form action="/insertOk.do" method="post"
+							onsubmit="return formCheck();">
+							<div style="width: 50%;">
+								<div class="title">회원가입하기</div>
+								<br>
+								<div class="mb-4 row">
+									<label for="ID" class="col-sm-3 col-form-label"> 아이디</label>
+									<div class="col-sm-5">
+										<input type="text" class="form-control" id="ID" name="mb_ID"
+											placeholder="아이디입력" required maxlength="12">
+									</div>
+									<div class="col-sm-3">
+										<input type="button" id="idcheck" value="중복확인"
+											onclick="FnIdcheck();" />
+									</div>
+
+								</div>
+
+								<div class="mb-4 row">
+									<label for="password" class="col-sm-3 col-form-label">비밀번호</label>
+									<div class="col-sm-5">
+										<input type="password" class="form-control" id="password"
+											name="mb_password" placeholder="영어,숫자,특수문자 8~15글자" required
+											maxlength="15">
+									</div>
+									<div class="col-sm-3 col-form-label" id="pwcheckval"></div>
+								</div>
+
+								<div class="mb-4 row">
+									<label for="password" class="col-sm-3 col-form-label"
+										id="pwcheck">비밀번호확인 </label>
+									<div class="col-sm-5">
+										<input type="password" class="form-control" id="password1"
+											placeholder="비밀번호확인" required maxlength="15">
+									</div>
+								</div>
+
+								<div class="mb-4 row">
+									<label for="username" class="col-sm-3 col-form-label">
+										이름</label>
+									<div class="col-sm-5">
+										<input type="text" class="form-control" id="username"
+											name="mb_name" placeholder="이름 입력" required maxlength="4 ">
+									</div>
+								</div>
 
 
-					<div id="membertitle">
-						<b> 회원정보 입력 </b>
-						<p>
-						<div class="row">
-							<div class="col-md-3 mb-4">
-								<label for="id">아이디</label> <input type="text"
-									class="form-control" id="Id" placeholder="" value="" required
-									maxlength="12">
+								<div class="mb-4 row">
+									<label for="nick" class="col-sm-3 col-form-label"> 닉네임</label>
+									<div class="col-sm-5">
+										<input type="text" class="form-control" id="nick"
+											name="mb_nick" placeholder="닉네임입력" required maxlength="10">
+									</div>
+									<div class="col-sm-3">
+										<input type="button" id="nickcheck" value="중복확인"
+											onclick="FnNickcheck();" />
+									</div>
+
+								</div>
+
+
+								<div class="mb-4 row">
+									<label for="email" class="col-sm-3 col-form-label"> 이메일</label>
+									<div class="col-sm-5">
+										<input type="text" class="form-control" id="email"
+											name="mb_email" placeholder="example@ex.com" required>
+									</div>
+								</div>
+
+								<div class="mb-4 row">
+									<label for="hp" class="col-sm-3 col-form-label">전화번호</label>
+									<div class="col-sm-5">
+										<input type="text" id="hp" name="mb_tel" placeholder="-미포함"
+											value="" required maxlength="11">
+									</div>
+								</div>
+
+								<div class="mb-4 row">
+									<input type="hidden" id="mb_birth" name="mb_birth" value="">
+									<label for="birth" class="col-sm-3 col-form-label">
+										생년월일</label>
+									<div class="col-sm-3">
+										<input type="text" id="birthYear" name="mb_year"
+											placeholder="" value="" required maxlength="4">
+									</div>
+									<div class="col-sm-3">
+										<select name="mb_month" id="month">
+											<option value="">-- 선택 --</option>
+											<option value="01">1</option>
+											<option value="02">2</option>
+											<option value="03">3</option>
+											<option value="04">4</option>
+											<option value="05">5</option>
+											<option value="06">6</option>
+											<option value="07">7</option>
+											<option value="08">8</option>
+											<option value="09">9</option>
+											<option value="10">10</option>
+											<option value="11">11</option>
+											<option value="12">12</option>
+										</select>
+									</div>
+
+									<div class="col-sm-3">
+										<select name="mb_day" id="day">
+											<option value="">-- 선택 --</option>
+											<option value="01">1</option>
+											<option value="02">2</option>
+											<option value="03">3</option>
+											<option value="04">4</option>
+											<option value="05">5</option>
+											<option value="06">6</option>
+											<option value="07">7</option>
+											<option value="08">8</option>
+											<option value="09">9</option>
+											<option value="10">10</option>
+											<option value="11">11</option>
+											<option value="12">12</option>
+											<option value="13">13</option>
+											<option value="14">14</option>
+											<option value="15">15</option>
+											<option value="16">16</option>
+											<option value="17">17</option>
+											<option value="18">18</option>
+											<option value="19">19</option>
+											<option value="20">20</option>
+											<option value="21">21</option>
+											<option value="22">22</option>
+											<option value="23">23</option>
+											<option value="24">24</option>
+											<option value="25">25</option>
+											<option value="26">26</option>
+											<option value="27">27</option>
+											<option value="28">28</option>
+											<option value="29">29</option>
+											<option value="30">30</option>
+											<option value="31">31</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col mb-3">
+									주소 &nbsp;&nbsp;&nbsp; <input type="button" class="btn-check"
+										id="zipCodebtn" onclick="daumPostcode();"> <label
+										class="btn btn-outline-primary" for="zipCodebtn">찾기</label>
+									<div class="col-sm-3">
+										<input type="text" class="form-control" id="zipcode"
+											name="mb_zipcode" placeholder="" required readonly
+											style="background-color: #272833">
+									</div>
+									<div class="col-sm-30">
+										<input type="text" class="form-control" id="address"
+											name="address1" placeholder="" required readonly
+											style="background-color: #272833"> <input type="text"
+											class="form-control" id="address2" name="address2"
+											placeholder="상세주소">
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<div class="col-sm-12" style="text-align: right;">
+										
+										<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
+										<input type="hidden" name="${_csrf.parameterName}"
+											value="${_csrf.token}" /> 
+											
+											<input type="submit"
+											class="btn-check" id="submitBtn"> <label
+											class="btn btn-outline-success" for="submitBtn">회원가입</label>
+										<input type="reset" class="btn-check" id="resetBtn"> <label
+											class="btn btn-outline-success" for="resetBtn">다시쓰기</label> <input
+											type="button" class="btn-check" id="cancelBtn"
+											onclick="location.href='/'"> <label
+											class="btn btn-outline-success" for="cancelBtn">돌아가기</label>
+									</div>
+								</div>
+
 
 							</div>
-
-							<div class="col-md-3 mb-4">
-								<label for="nickname">비밀번호</label> <input type="password"
-									class="form-control" id="password" placeholder="" value=""
-									required maxlength="15">
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-3 mb-4">
-								<label for="id">닉네임</label> <input type="text"
-									class="form-control" id="nickname" placeholder="" value=""
-									required maxlength="10">
-							</div>
-
-
-							<div class="col-md-3 mb-4">
-								<label for="nickname">이메일</label> <input type="email"
-									class="form-control" id="email" placeholder="you@example.com"
-									required>
-							</div>
-						</div>
-
-						<div class="row">
-							<label for="nickname">생년월일</label>
-
-							<div class="col-md-2 mb-6">
-								<input type="text" id="birthYear" placeholder="" value=""
-									required maxlength="4">
-							</div>
-							<div class="col-md-2 mb-6">
-								<select name="month">
-									<option value="">-- 선택 --</option>
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-									<option value="4">4</option>
-									<option value="5">5</option>
-									<option value="6">6</option>
-									<option value="7">7</option>
-									<option value="8">8</option>
-									<option value="9">9</option>
-									<option value="10">10</option>
-									<option value="11">11</option>
-									<option value="12">12</option>
-								</select>
-							</div>
-
-							<div class="col-md-2 mb-6">
-								<select name="day">
-									<option value="">-- 선택 --</option>
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-									<option value="4">4</option>
-									<option value="5">5</option>
-									<option value="6">6</option>
-									<option value="7">7</option>
-									<option value="8">8</option>
-									<option value="9">9</option>
-									<option value="10">10</option>
-									<option value="11">11</option>
-									<option value="12">12</option>
-									<option value="13">13</option>
-									<option value="14">14</option>
-									<option value="15">15</option>
-									<option value="16">16</option>
-									<option value="17">17</option>
-									<option value="18">18</option>
-									<option value="19">19</option>
-									<option value="20">20</option>
-									<option value="21">21</option>
-									<option value="22">22</option>
-									<option value="23">23</option>
-									<option value="24">24</option>
-									<option value="25">25</option>
-									<option value="26">26</option>
-									<option value="27">27</option>
-									<option value="28">28</option>
-									<option value="29">29</option>
-									<option value="30">30</option>
-									<option value="31">31</option>
-								</select>
-							</div>
-						</div>
-						<p>
-						<div class="col-md-6 mb-3">
-							주소 &nbsp;&nbsp;&nbsp; <input type="button" class="btn-check"
-								id="zipCodebtn" onclick="daumPostcode();"> <label
-								class="btn btn-outline-primary" for="zipCodebtn">우편번호찾기</label>
-							<div class="col-sm-2">
-								<input type="text" class="form-control" id="zipcode"
-									placeholder="" required>
-							</div>
-							<input type="text" class="form-control" id="address"
-								placeholder="" required> <input type="text"
-								class="form-control" id="address2" placeholder="상세주소">
-						</div>
-						<div id="wrapper">
-							<button class="btn btn-primary btn-block" type="button"
-								style="font-size: 20px">가입하기</button>
-						</div>
+						</form>
 					</div>
 				</div>
 			</div>

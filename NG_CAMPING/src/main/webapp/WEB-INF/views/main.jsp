@@ -93,7 +93,7 @@
 							<li><a href="#">QnA</a></li>
 						</ul></li>
 					<li><a href="/insert.do">회원가입</a></li>
-					<li><a href="html/login.html">로그인</a></li>
+					<li><a href="/login.do">로그인</a></li>
 				</ul>
 			</nav>
 		</header>
@@ -102,6 +102,7 @@
 		<section id="banner">
 			<div class="content">
 				<header class="hightitle">
+					<a href="/summernote.do">summernote</a>
 					<h2>캠핑은 NG캠핑!</h2>
 					<p>
 						여러분의 캠핑생활을 도와드립니다!<br /> 스크롤을 내려 캠핑정보를 확인하세요!

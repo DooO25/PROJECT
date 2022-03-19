@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@page import="PRO.S2K.CAMP.VO.MemberVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,6 +67,7 @@
 </noscript>
 </head>
 <body class="is-preload landing">
+
 	<div id="page-wrapper">
 
 		<!-- Header -->
@@ -75,6 +77,7 @@
 					src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png"
 					alt="" /> </a>
 			</h1>
+			<c:set value="${sessionScope.mvo.gr_role}" var="role"/>
 			<nav id="nav">
 				<ul>
 					<li><a href="/main.do">Home</a></li>
@@ -91,9 +94,52 @@
 							<li><a href="#">공지사항</a></li>
 							<li><a href="#">캠핑후기</a></li>
 							<li><a href="#">QnA</a></li>
-						</ul></li>
-					<li><a href="/insert.do">회원가입</a></li>
-					<li><a href="/login.do">로그인</a></li>
+						</ul>
+					</li>
+						
+					<c:if test="${sessionScope.mvo eq null }">
+							<li><a href="/insert.do">회원가입</a></li>
+							<li><a href="/login.do">로그인</a></li>
+					</c:if> 
+										
+										
+										
+					<c:if test="${sessionScope.mvo ne null }">
+							<c:choose>
+					<c:when test="${role eq 'ROLE_USER' }">
+                        <c:url value="/logout" var="logoutURL" />
+                           <li>
+                              <form action="${logoutURL }" method="post" name="logout">
+                                 <input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }"> 
+                                    <a href="#" onclick="logoutSubmit()">로그아웃</a>
+                              </form>
+                           </li>
+                           <li><a href="/login.do">마이페이지</a></li>
+                 	    </c:when>							
+							</c:choose>
+					</c:if>
+					
+							<%--
+								<c:when test="${role eq 'ROLE_USER' }">
+									<li><a href="/logout">로그아웃</a></li>
+									<li><a href="/login.do">마이페이지</a></li>
+								</c:when>
+								<c:otherwise>
+									<li><a href="/insert.do">로그아웃</a></li>
+									<li><a href="/login.do">관리자페이지</a></li>								
+								</c:otherwise>
+							 --%>
+						
+					<%-- <c:choose>
+						<c:when test= "${mvo.getMb_use =='1' && role=='ROLE_USER'}" >
+							<li><a href="/insert.do">로그아웃</a></li>
+							<li><a href="/login.do">마이페이지</a></li>
+	 					</c:when>			
+	 					<c:when test= "${mvo.getMb_use =='1' && role=='ROLE_admin'}" >
+							<li><a href="/insert.do">로그아웃</a></li>
+							<li><a href="/login.do">관리자페이지</a></li>
+	 					</c:when>			
+				   </c:choose>  --%>
 				</ul>
 			</nav>
 		</header>
@@ -102,7 +148,6 @@
 		<section id="banner">
 			<div class="content">
 				<header class="hightitle">
-					<a href="/summernote.do">summernote</a>
 					<h2>캠핑은 NG캠핑!</h2>
 					<p>
 						여러분의 캠핑생활을 도와드립니다!<br /> 스크롤을 내려 캠핑정보를 확인하세요!
@@ -435,6 +480,9 @@
 						</table>
 						<br>
 					</section>
+				</div>
+			</div>
+		</div>
 	</section>
 
 

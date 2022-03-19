@@ -48,40 +48,30 @@ CREATE TABLE `camp_info` (
   PRIMARY KEY (`idx`)
 );
 
-drop table camp_member;
-
-CREATE TABLE `camp_member` (
-  `mb_idx` int(11) NOT NULL AUTO_INCREMENT,
+drop table camp_member ;
+drop table member_role ;
+CREATE TABLE `member_role` (
+  `mb_idx` int(11) NOT NULL auto_increment primary key,
   `mb_ID` varchar(12) not NULL,
-  `mb_password` varchar(41) not NULL,
+  `mb_password` varchar(60) not NULL,
   `mb_name` varchar(15) not NULL,
   `mb_nick` varchar(30) NOT NULL,
   `mb_email` varchar(30) not NULL,
   `mb_tel` varchar(13) not NULL,
   `mb_birth` date not null,
-  mb_zipcode int NOT NULL,
+  `mb_zipcode` int not null,
   `mb_address1` varchar(200) not NULL,
   `mb_address2` varchar(300) not NULL,
-  `gr_grade` int(11) NOT NULL,
   `mb_use` int(11) default 0,
-  `authkey` varchar(200) not NULL,
-  PRIMARY KEY (`mb_idx`),
-  KEY `camp_member_FK` (`gr_grade`),
-  CONSTRAINT `camp_member_FK` FOREIGN KEY (`gr_grade`) REFERENCES `camp_grade` (`gr_grade`) ON UPDATE CASCADE
+  `authkey` varchar(200) not null
 );
 
-desc camp_member;
-alter table camp_member add mb_ip varchar(20) not null;
-alter table camp_member drop mb_use;
-
-drop table camp_grade;
-
-CREATE TABLE `camp_grade` (
-  `gr_grade` int(11) NOT NULL,
-  `gr_name` varchar(15) not NULL,
-  `gr_role` varchar(15) not NULL,
-  PRIMARY KEY (`gr_grade`)
+CREATE TABLE `camp_role` (
+  `gr_idx` int(11) NOT null AUTO_INCREMENT primary key,
+   `mb_ID` varchar(12) not NULL,
+  `gr_role` varchar(15) not NULL
 );
+RENAME TABLE campdb.camp_role TO campdb.member_role;
 
 drop table camp_notice;
 

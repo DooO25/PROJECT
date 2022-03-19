@@ -4,8 +4,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta id="_csrf" name="_csrf" th:content="${_csrf.token}" />
-<meta id="_csrf_header" name="_csrf_header"	th:content="${_csrf.headerName}" />
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
 <title>아이디 찾기 성공</title>
@@ -32,12 +30,6 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <script type="text/javascript">
-function login(){
-	var ID = $("#ID").val();
-	var pw = $("#password").val();
-	alert(ID);
-	alert(pw);
-}
 
 </script>
 
@@ -45,6 +37,7 @@ function login(){
 
 #banner1 {
 	padding:200px;
+	padding-top: 300px;
 
 }
 
@@ -119,7 +112,8 @@ textarea {
 		<section id="banner1">		
 			<div class="row">
 					<div class="col-md-8" style="padding-left: 30% ">
-						<div style="text-align: left; padding-left: 30%;">${vo.mb_name }님의 아이디는 "${vo.mb_tel }"입니다.</div>
+						<br />
+						<div style="text-align: center;">${memberVO.mb_name }님의 아이디는 "${memberVO.mb_ID }"입니다.</div>
 					</div>
 					
 					<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
@@ -128,7 +122,8 @@ textarea {
 					<div class="col-md-4">
 						<input type="submit" value="로그인 " style="height: 95px; float: left;"/>
 					</div>
-					<div style="font:white;  font-size: 10px; text-align:left; padding-left: 87%;">
+					<div style="font:white;  font-size: 10px; text-align:left; padding-left: 76%;">
+						<a href="/findPassword.do">비밀번호 찾기</a>
 					</div>
 			</div>
 		</section>

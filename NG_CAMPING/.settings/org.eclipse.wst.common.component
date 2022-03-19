@@ -1,110 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-<<<<<<< HEAD
-                            	
+                                    	
     
-=======
-                        	
->>>>>>> refs/remotes/origin/master
+    
+    
     
     
     
     
     
     <wb-module deploy-name="CAMP-1.0.0-BUILD-SNAPSHOT">
-<<<<<<< HEAD
-                                                                
+                                                                                
         
-=======
-                                                        
->>>>>>> refs/remotes/origin/master
+        
+        
         
         
         
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-<<<<<<< HEAD
-                                                        		
+                                                                        		
         
-=======
-                                                		
->>>>>>> refs/remotes/origin/master
+        
+        
         
         
         
         
         
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-<<<<<<< HEAD
-                                                        		
+                                                                        		
         
-=======
-                                                		
->>>>>>> refs/remotes/origin/master
+        
+        
         
         
         
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-<<<<<<< HEAD
-                                                        		
+                                                                        		
         
-=======
-                                                		
->>>>>>> refs/remotes/origin/master
+        
+        
         
         
         
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-<<<<<<< HEAD
-                                
+                                                
+        
+        
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
-                                                        		
-        
-        
-        
-        
-        
-        
-        <property name="java-output-path" value="target/classes"/>
-                
-=======
                         
         
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
-                                                		
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
+                                                                        		
+        
+        
+        
         
         
         
         
         
         <property name="java-output-path" value="target/classes"/>
->>>>>>> refs/remotes/origin/master
         <property name="context-root" value="CAMP"/>
-<<<<<<< HEAD
-                                                        	
+                                                                        	
     
-=======
-                                                	
->>>>>>> refs/remotes/origin/master
+    
+    
     
     
     
     
     
     </wb-module>
-<<<<<<< HEAD
-                            
+                                    
 
-=======
-                        
->>>>>>> refs/remotes/origin/master
+
+
 
 
 

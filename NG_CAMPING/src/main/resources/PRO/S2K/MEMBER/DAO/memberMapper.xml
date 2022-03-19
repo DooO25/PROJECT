@@ -7,7 +7,7 @@
 	<!-- 1. 저장하기 -->
 	<insert id="insert" parameterType="MemberVO">
 		insert into camp_member
-		(mb_ID,mb_password,mb_name,mb_nick,mb_email,mb_tel,mb_birth,mb_zipcode,mb_address1,mb_address2,gr_grade,authkey)
+		(mb_ID,mb_password,mb_name,mb_nick,mb_email,mb_tel,mb_birth,mb_zipcode,mb_address1,mb_address2,mb_use,authkey)
 		<!-- insert into camp_member로 그냥 해놓으면 전체적인 값을 집어넣어줘야함 
 			위에 같이 이렇게 명시해서 넣으면 필요한 값만 넣음.
 		 -->
@@ -22,9 +22,9 @@
 			#{mb_tel},
 			#{mb_birth},
 			#{mb_zipcode},
-			#{address1},
-			#{address2},
-			'0', <!-- 등급 -->
+			#{mb_address1},
+			#{mb_address2},
+			'0', <!-- 인증 유무 -->
 			#{authkey}  <!-- 임시 authKey 나중에 바꿔야함. -->
 			
 		)
@@ -34,18 +34,13 @@
 	<select id="selectByIdx" parameterType="int" resultType="MemberVO">
 		select * from camp_member where mb_idx=#{mb_idx}
 	</select>
-	<!-- 3. 수정하기 -->
-	<update id="update" parameterType="MemberVO">
-		update member set
-			mb_name = #{mb_name},
-			mb_nick = #{mb_nick},
-			mb_tel = #{mb_tel},
-			mb_zipcode = #{mb_zipcode},
-			address1 = #{address1},
-			address2 = #{address2},
-		where
-			mb_idx=#{mb_idx}
-	</update>
+<!-- 3. 수정하기 -->
+   <update id="update" parameterType="MemberVO">
+	      update member set
+	         mb_nick = #{mb_nick}
+	      where
+	         mb_idx=#{mb_idx}
+   </update>
 	<!-- 4. 삭제하기 -->
 	<delete id="delete" parameterType="int">
 		delete from camp_member where mb_idx=#{mb_idx}
@@ -72,22 +67,16 @@
 	</select>
 	<!-- 9. ID와과 전화번호로 가져오기(비번찾기 사용) -->
 	<select id="selectByUserId" parameterType="hashmap" resultType="MemberVO">
-		select * from camp_member where mb_ID=#{mb_ID} and mb_tel=#{mb_tel}
+		select * from camp_member where mb_ID=#{mb_ID} and mb_email=#{mb_email}
 	</select>
-	
 	<!-- 10. 인증여부를 변경하는 쿼리 -->
 	<update id="updateUse" parameterType="hashmap">
-<<<<<<< HEAD
-		update camp_member set gr_grade=#{gr_grade} where mb_ID=#{mb_ID} and authkey=#{authkey}
-=======
-		update camp_member set mb_use=#{mb_use} where mb_ID=#{mb_ID} and mb_ID=#{mb_ID}
->>>>>>> refs/remotes/origin/master
+		update camp_member set mb_use= '1' where mb_ID=#{mb_ID} and authkey=#{authkey}
 	</update>
 	<!-- 11. 비밀번호 변경하기 -->
 	<update id="updatePassword" parameterType="hashmap">
 		update camp_member set mb_password=#{mb_password} where mb_ID=#{mb_ID}
 	</update>
-	
 	<!-- 12. ID로 가져오기 -->
 	<select id="selectUserId" parameterType="string" resultType="MemberVO">
 		select * from camp_member where mb_ID=#{mb_ID}

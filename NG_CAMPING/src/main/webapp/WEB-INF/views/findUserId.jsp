@@ -4,8 +4,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta id="_csrf" name="_csrf" th:content="${_csrf.token}" />
-<meta id="_csrf_header" name="_csrf_header"	th:content="${_csrf.headerName}" />
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
 <title>아이디 찾기</title>
@@ -32,12 +30,6 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <script type="text/javascript">
-function login(){
-	var ID = $("#ID").val();
-	var pw = $("#password").val();
-	alert(ID);
-	alert(pw);
-}
 
 </script>
 
@@ -45,6 +37,7 @@ function login(){
 
 #banner1 {
 	padding:200px;
+	padding-top: 300px;
 
 }
 
@@ -124,9 +117,9 @@ textarea {
 				</c:if>
 		
 			<div class="row">
-				<div style="text-align: left; padding-left: 30%;">아이디찾기</div>
+				<div style="text-align: left; padding-left: 30%;">아이디 찾기</div>
 					<div class="col-md-8" style="padding-left: 30% ">
-						<input type="text" class="form-control" id="ID" name="mb_name"placeholder="사용자 이름 입력" required>
+						<input type="text" class="form-control" id="ID" name="mb_name"placeholder="이름 입력" required>
 						<input type="text" class="form-control" id="tel" name="mb_tel"placeholder="전화번호 입력" required>
 					</div>
 					
@@ -136,15 +129,15 @@ textarea {
 					<div class="col-md-4">
 						<input type="submit" value="찾기" style="height: 95px; float: left;"/>
 					</div>
-					<div style="font:white;  font-size: 10px; text-align:left; padding-left: 78%;">
+					<div style="font:white;  font-size: 10px; text-align:left; padding-left: 70%;">
+						<a href="/findPassword.do">비밀번호 찾기</a>
+						&nbsp; | &nbsp;
 						<a href="/insert.do">회원가입</a>
 						
-				
 			</div>
 			</form>
 		</section>
-		
-
+	
 		<!-- Footer -->
 		<footer id="footer">
 			<ul class="icons">

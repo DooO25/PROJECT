@@ -34,7 +34,7 @@ public class BoardController {
 	
 	@RequestMapping(value = "summernote.do", method = RequestMethod.GET)
 	public String summernote() {
-		return "summernote";
+		return "summernote2";
 	}
 	
 	@RequestMapping(value = "result.do")

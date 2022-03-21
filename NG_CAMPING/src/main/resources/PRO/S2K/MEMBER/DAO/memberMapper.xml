@@ -24,7 +24,7 @@
 			#{mb_zipcode},
 			#{mb_address1},
 			#{mb_address2},
-			'0', <!-- 인증 유무 -->
+			'1', <!-- 인증 유무 -->
 			#{authkey}  <!-- 임시 authKey 나중에 바꿔야함. -->
 			
 		)
@@ -34,7 +34,7 @@
 	<select id="selectByIdx" parameterType="int" resultType="MemberVO">
 		select * from camp_member where mb_idx=#{mb_idx}
 	</select>
-<!-- 3. 수정하기 -->
+	<!-- 3. 수정하기 -->
    <update id="update" parameterType="MemberVO">
 	      update member set
 	         mb_nick = #{mb_nick}
@@ -70,19 +70,42 @@
 		select * from camp_member where mb_ID=#{mb_ID} and mb_email=#{mb_email}
 	</select>
 	<!-- 10. 인증여부를 변경하는 쿼리 -->
-	<update id="updateUse" parameterType="hashmap">
-		update camp_member set mb_use= '1' where mb_ID=#{mb_ID} and authkey=#{authkey}
+	<update id="updateRole" parameterType="hashmap">
+		update camp_member a 
+			join member_role mr on 
+			a.mb_ID = mr.mb_ID
+		set 
+			mr.gr_role ='ROLE_USER'
+		where 
+			mr.mb_ID=#{mb_ID} and a.authkey=#{authkey}
 	</update>
 	<!-- 11. 비밀번호 변경하기 -->
 	<update id="updatePassword" parameterType="hashmap">
 		update camp_member set mb_password=#{mb_password} where mb_ID=#{mb_ID}
 	</update>
 	<!-- 12. ID로 가져오기 -->
-	<select id="selectUserId" parameterType="string" resultType="MemberVO">
-		select * from camp_member where mb_ID=#{mb_ID}
+	<select id="selectUserId" parameterType="string"
+		resultType="MemberVO">
+		select
+			*
+		from camp_member a
+			join member_role mr on a.mb_ID = mr.mb_ID
+		where 
+			a.mb_ID=#{mb_ID}
 	</select>
 	<!-- 13. 해당이메일의 개수세기(이메일 중복확인 : 0이면 없는 이메일, 1이상이면 존재하는 이메일 -->
 	<select id="selectCountByEmail" resultType="int" parameterType="string">
 		select count(*) from camp_member where mb_email=#{mb_email}
 	</select>
+	
+	<!-- 정보 찾기 -->
+	<select id="findKakao" parameterType="hashmap" resultType="KakaoVO">
+		select * from sns_kakao where k_nick=#{nickname} and k_email=#{email}
+	</select>
+
+	<!-- 정보 저장 -->
+	<insert id="kakaoInsert" parameterType="hashmap">
+		insert into sns_kakao(k_nick, k_email)
+			values(#{nickname}, #{email})
+	</insert>
 </mapper>

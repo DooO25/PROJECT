@@ -13,10 +13,26 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import PRO.S2K.CAMP.DAO.KakaoDAO;
 import PRO.S2K.CAMP.DAO.MemberDAO;
 import PRO.S2K.CAMP.DAO.RoleDAO;
+import PRO.S2K.CAMP.VO.KakaoVO;
 import PRO.S2K.CAMP.VO.MemberVO;
 import lombok.extern.slf4j.Slf4j;
+import java.io.BufferedReader;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @Slf4j
 @Service("memberService")
@@ -24,6 +40,9 @@ public class MemberServiceImpl implements MemberService{
 
 	@Autowired
 	private MemberDAO memberDAO;
+	
+	@Autowired
+	private KakaoDAO kakaoDAO;
 	
 	@Autowired
 	private RoleDAO roleDAO;
@@ -85,7 +104,7 @@ public class MemberServiceImpl implements MemberService{
 			}
 		}
 	}
-
+ 
 	@Override
 	public void updatePassword(MemberVO memberVO) {
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -96,12 +115,12 @@ public class MemberServiceImpl implements MemberService{
 		}
 
 	@Override
-	   public MemberVO updateUse(String mb_ID, String authkey) {
+	   public MemberVO updateRole(String mb_ID, String authkey) {
 	      HashMap<String, String> map = new HashMap<String, String>();
-	      map.put("mb_use", "1");
+	      map.put("gr_role", "ROLE_USER");
 	      map.put("mb_ID", mb_ID);
 	      map.put("authkey", authkey);
-	      memberDAO.updateUse(map);
+	      memberDAO.updateRole(map);
 	      return memberDAO.selectUserId(mb_ID);
 	   }
 
@@ -135,6 +154,7 @@ public class MemberServiceImpl implements MemberService{
 			map.put("mb_ID", memberVO.getMb_ID());
 			map.put("mb_email", memberVO.getMb_email());
 			vo = memberDAO.selectByUserId(map);
+			
 		}
 		
 		return vo;
@@ -174,7 +194,8 @@ public class MemberServiceImpl implements MemberService{
     }
     
     // 비밀번호 찾기 임시비밀번호 메일 보내는 메서드 
-    public void sendPassword(MemberVO memberVO) {
+    
+    public void sendPasswor(MemberVO memberVO) {
     	String subject = "NG_CAMP 임시 비밀번호 입니다.";
     	String to = memberVO.getMb_email();
     	String content = "반갑습니다. " + memberVO.getMb_ID() + "님!!!<br>" + "NG_CAMP에서 요청하신 비밀번호 찾기 메일로,<br> "
@@ -248,15 +269,143 @@ public class MemberServiceImpl implements MemberService{
 		return vo; 
 	}
 
-	@Override
-	public void updateImsi(MemberVO memberVO) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("mb_ID", memberVO.getMb_ID());
-		String encryptPassword = bCryptPasswordEncoder.encode(memberVO.getMb_password());
-		map.put("mb_password", encryptPassword);
-		memberDAO.updatePassword(map);
-		sendPassword(memberVO);
+	// 카카오 엑세스토큰 받아오는 메서드 
+	public String getAccessToken (String authorize_code) {
+		String access_Token = "";
+		String refresh_Token = "";
+		String reqURL = "https://kauth.kakao.com/oauth/token";
+
+		try {
+			URL url = new URL(reqURL);
+            
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			// POST 요청을 위해 기본값이 false인 setDoOutput을 true로
+            
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			// POST 요청에 필요로 요구하는 파라미터 스트림을 통해 전송
+            
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+			StringBuilder sb = new StringBuilder();
+			sb.append("grant_type=authorization_code");
+            
+			sb.append("&client_id=8e9a2c0fe5fd14072d6be59bf53313d6"); //본인이 발급받은 key
+			sb.append("&redirect_uri=http://localhost:8080/kakaoLogin.do"); // 본인이 설정한 주소
+            
+			sb.append("&code=" + authorize_code);
+			bw.write(sb.toString());
+			bw.flush();
+            
+			// 결과 코드가 200이라면 성공
+			int responseCode = conn.getResponseCode();
+			System.out.println("responseCode : " + responseCode);
+            
+			// 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String line = "";
+			String result = "";
+            
+			while ((line = br.readLine()) != null) {
+				result += line;
+			}
+			System.out.println("response body : " + result);
+            
+			// Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
+			JsonParser parser = new JsonParser();
+			JsonElement element = parser.parse(result);
+            
+			access_Token = element.getAsJsonObject().get("access_token").getAsString();
+			refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
+            
+			System.out.println("access_token : " + access_Token);
+			System.out.println("refresh_token : " + refresh_Token);
+            
+			br.close();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return access_Token;
 	}
+
+	// 카캌오 회원정보 가져오는 메서드
+	@Override
+	public KakaoVO getUserInfo(String access_Token) {
+
+		// 요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
+		HashMap<String, Object> userInfo = new HashMap<String, Object>();
+		String reqURL = "https://kapi.kakao.com/v2/user/me";
+		try {
+			URL url = new URL(reqURL);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+
+			// 요청에 필요한 Header에 포함될 내용
+			conn.setRequestProperty("Authorization", "Bearer " + access_Token);
+
+			int responseCode = conn.getResponseCode();
+			System.out.println("responseCode : " + responseCode);
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+			String line = "";
+			String result = "";
+
+			while ((line = br.readLine()) != null) {
+				result += line;
+			}
+			System.out.println("response body : " + result);
+
+			JsonParser parser = new JsonParser();
+			JsonElement element = parser.parse(result);
+
+			JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
+			JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
+
+			String nickname = properties.getAsJsonObject().get("nickname").getAsString();
+			String email = kakao_account.getAsJsonObject().get("email").getAsString();
+			userInfo.put("nickname", nickname);
+			userInfo.put("email", email);
+			log.info(nickname+"#######################################");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		KakaoVO result = kakaoDAO.findKakao(userInfo);
+		// 위 코드는 먼저 정보가 저장되있는지 확인하는 코드.
+		System.out.println("S:" + result);
+		if(result==null) {
+		// result가 null이면 정보가 저장이 안되있는거므로 정보를 저장.
+			kakaoDAO.kakaoInsert(userInfo);
+			// 위 코드가 정보를 저장하기 위해 Repository로 보내는 코드임.
+			return kakaoDAO.findKakao(userInfo);
+			// 위 코드는 정보 저장 후 컨트롤러에 정보를 보내는 코드임.
+			//  result를 리턴으로 보내면 null이 리턴되므로 위 코드를 사용.
+		} else {
+			return result;
+			// 정보가 이미 있기 때문에 result를 리턴함.
+		}
+	}
+
+	@Override
+	public void sendPassword(MemberVO memberVO) {
+		String subject = "NG_CAMP 임시 비밀번호 입니다.";
+    	String to = memberVO.getMb_email();
+    	String content = "반갑습니다. " + memberVO.getMb_ID() + "님!!!<br>" + "NG_CAMP에서 요청하신 비밀번호 찾기 메일로,<br> "
+    			+ "회원님의 임시 비밀번호는 "+ memberVO.getMb_password()+ " 입니다.";
+    	
+    	MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
+    	try {
+    		mailSender.send(preparator);
+    		System.out.println("메일 보내기 성공 ***************************************************");
+    	} catch (MailException ex) {
+    		System.err.println(ex.getMessage());
+    	}
+    }
+    
+	
+	
+	
+		
 	
 
 }

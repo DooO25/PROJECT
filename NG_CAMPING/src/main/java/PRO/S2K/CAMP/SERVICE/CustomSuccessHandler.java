@@ -46,6 +46,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       // 얻어온 회원 정보를 세션에 저장하고 홈으로 이동한다. 
       HttpSession session = request.getSession();
       session.setAttribute("mvo", memberVO);
-      redirectStrategy.sendRedirect(request, response, "/");
+      redirectStrategy.sendRedirect(request, response, "/main.do");
     }
 }

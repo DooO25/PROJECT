@@ -45,5 +45,6 @@
 	<context:component-scan base-package="PRO.S2K.CAMP" />
 	
 	
-	
 </beans:beans>
+
+	

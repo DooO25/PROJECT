@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
-<title>NG캠핑 로그인</title>
+<title>공지사항</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -22,23 +22,67 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 	rel="stylesheet">
-<!-- 네이버 스크립트-->
-<script type="text/javascript"
-	src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js"
-	charset="utf-8"></script>
 	
-<script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<!-- 언어 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ko-KR.min.js"></script>
+<script type="text/javascript">
+	
+</script>
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <script type="text/javascript">
-
+	$(function() {
+		$('#summernote').summernote(
+				{
+					lang : 'ko-KR', // default: 'en-US'
+					height : 300, // set editor height
+					minHeight : null, // set minimum height of editor
+					maxHeight : null, // set maximum height of editor
+					fontNames : [ '맑은고딕', 'Arial', 'Arial Black','Comic Sans MS', 'Courier New', ],
+					fontNamesIgnoreCheck : [ '맑은고딕' ],
+					focus : true,
+					// 이미지가 1MB를 넘을경우 수동으로 업로드를 처리하고 실행될 코드를 지정해준다.
+					callbacks : {
+						onImageUpload : function(files, editor, welEditable) {
+							for (var i = files.length - 1; i >= 0; i--) {
+								sendFile(files[i], this);
+							}
+						}
+					}
+				});
+	});
+	
+	// 실제 업로드되는 서버의 파일을 Ajax로 호출해 줘야한다.
+	function sendFile(file, el) {
+		// 폼 작성
+		var form_data = new FormData();
+      	form_data.append('file', file);
+      	// Ajax 호출
+      	$.ajax({
+        	data: form_data,
+        	type: "POST",
+        	url: 'imageUpload',
+        	cache: false,
+        	contentType: false,
+        	enctype: 'multipart/form-data',
+        	processData: false,
+        	success: function(img_name) { // 성공
+          		$(el).summernote('editor.insertImage', img_name);
+        	}
+      	});
+    }
 </script>
 
 <style type="text/css">
 
+.note-editable { background-color: white !important; color: black !important; }
+.note-toolbar { background: white; }
 
 element.style {
     width: 500px;
@@ -119,75 +163,57 @@ textarea {
 			</nav>
 		</header>
 		<!-- Banner -->
-		<section id="banner1">
-			<form action="${pageContext.request.contextPath}/login" method="post">
-				<%-- 로그인 실패시 에러메세지 출력 --%>
-				<c:if test="${not empty error }">
-					<div style="color: red;">${error }</div>
-				</c:if>
-				<%-- 로그아웃시 메세지 출력 --%>
-				<c:if test="${not empty msg }">
-					<div style="color: green;">${msg }</div>
-				</c:if>
-				<div class="row">
-					<div style="text-align: left; padding-left: 30%;">
-						아이디/비번 로그인
-					</div>
-					<div class="col-md-8" style="padding-left: 30% ">
-						<input type="text" class="form-control" id="ID" name="mb_ID"placeholder="아이디입력" required>
-						<input type="password" class="form-control" id="password" name="mb_password"placeholder="비밀번호입력" required>
-					</div>
+		<div style="padding-top: 70px; padding-left: 10%">
+				<div class="col-sm-2">
+					<select name="chart" id="chart" style="float: left;">
+						<option value="" >캠핑장</option>
+						<option value="" selected>캠핑톡</option>
+					</select>
 					
-					<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
-					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-				 
-					<div class="col-md-4">
-						<input type="submit" value="로그인" style="height: 95px; float: left;"/>
-					</div>
-					<!-- 
-					<div class="col-md-4">
-						<input type="button" value="로그인" style="height: 95px; float: left;" onclick="login()"/>
-					</div>
-					 -->
-					
-					<div style="font:white;  font-size: 10px; text-align:left; padding-left: 65%;">
-						<a href="/findUserId.do">아이디찾기</a>
-						&nbsp; | &nbsp;
-						<a href="/findPassword.do">비밀번호 찾기 </a>
-						&nbsp; | &nbsp;
-						<a href="/insert.do">회원가입 </a>
-					</div>
-				</div> 
-			</form>
-	
-			<div class="row" style="width: 300px; height: 300px; margin: 0 auto; padding-right:3;" >
-				<div class="col-md-4">
-					<!-- 네이버아이디로로그인 버튼 노출 영역 -->
-					
-			  		<%-- <a id="naverIdLogin_loginButton" href="#"><img width="50"
-						src="${pageContext.request.contextPath }/resources/images/naverLogin.png"
-						alt="" />
-					</a> --%>
-					
-					<a id="" href="${ kakao_url }"><img width="50"
-						src="${pageContext.request.contextPath }/resources/images/naverLogin.png"
-						alt="" />
-					</a>
 				</div>
-				<div class="col-md-4">
-					<a href="${ kakao_url }"><span id="kakao"><img width="50"
-						src="${pageContext.request.contextPath }/resources/images/kakaoLogin.png"
-						alt="" /></span>
-					</a>
+				<div class="col-sm-2" style="float: left;">
+					<select name="list" id="list">
+						<option value="" selected>공지사항</option>
+						<option value="">캠핑후기</option>
+						<option value="">QnA</option>
+					</select>
 				</div>
-				<div class="col-md-4">
-					<a href="${ google_url }"><span id="google"><img width="50"
-						src="${pageContext.request.contextPath }/resources/images/googleLogin.png"
-						alt="" /></span>
-					</a>
-				</div>
+		</div>
+	<br />
+	<br />
+	<br />
+	<br />
+		<div>
+			<p style="font-size: 50px; padding-left: 12%;">공지사항</p>
+		</div>
+		
+		<div style="padding-right: 10%; padding-bottom: 5%;">
+			<div class="col-sm-1" style="float: right;">
+				<input type="button" value="검색" onclick="search();">
 			</div>
+			
+			<div class="col-sm-2" style="float: right;">
+				<input type="text" />
+			</div>
+			
+			<div class="col-sm-1.8" style="float: right;">
+				<select name="search" id="search" style="float: left;">
+					<option value="" selected>전체</option>
+					<option value="" >제목</option>
+					<option value="" >내용</option>
+				</select>
+			</div>
+		</div>
+		<br />
+		<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
+			<form action="result.do" method="post">
+			<input type="text" size="60" name="subject"><br>
+			<textarea id="summernote" name="note" style="background-color: white;"></textarea>
+			<input type="submit" value="전송" class="btn btn-outline-success btn-sm" style="float: right;" >
+		</form>
 		</section>
+	<br />
+
 		
 
 		<!-- Footer -->
@@ -215,8 +241,6 @@ textarea {
 
 	<!-- Scripts -->
 	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/jquery.min.js"></script>
-	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrolly.min.js"></script>
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/jquery.dropotron.min.js"></script>
@@ -230,38 +254,8 @@ textarea {
 		src="${pageContext.request.contextPath }/resources/assets/js/util.js"></script>
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
-<script>
-<!-- 네이버 로그인API  -->
 
-var naverLogin = new naver.LoginWithNaverId(
-			{
-				clientId: "eT2NCIHgedo2uVebssZm", //내 애플리케이션 정보에 cliendId를 입력해줍니다.
-				callbackUrl: "http://localhost:8080/oauth2/naver/callback.do", // 내 애플리케이션 API설정의 Callback URL 을 입력해줍니다.
-				isPopup: false,
-				callbackHandle: true
-			}
-		);	
-	
-	naverLogin.init();
-	
-	window.addEventListener('load', function () {
-		naverLogin.getLoginStatus(function (status) {
-			if (status) {
-				var email = naverLogin.user.getEmail(); // 필수로 설정할것을 받아와 아래처럼 조건문을 줍니다.
-	    		
-				console.log(naverLogin.user); 
-	    		
-	            if( email == undefined || email == null) {
-					alert("이메일은 필수정보입니다. 정보제공을 동의해주세요.");
-					naverLogin.reprompt();
-					return;
-				}
-			} else {
-				console.log("callback 처리에 실패하였습니다.");
-			}
-		});
-	});
-</script>		
+		
 
 </body>
 </html>

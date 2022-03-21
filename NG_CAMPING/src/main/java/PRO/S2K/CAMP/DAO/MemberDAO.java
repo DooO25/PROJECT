@@ -27,9 +27,16 @@ public interface MemberDAO {
 		// 10. ID와과 전화번호로 가져오기(비번찾기 사용)
 		MemberVO selectByUserId(HashMap<String, String> map);
 		// 11. 인증여부를 변경하는 쿼리
-		void updateUse(HashMap<String, String> map);
+		void updateRole(HashMap<String, String> map);
 		// 12. 비밀번호 변경하기
 		void updatePassword(HashMap<String, String> map);
 		// 13. ID로 가져오기
 		MemberVO selectUserId(String userid);
+		
+		//14. 카카오 정보 찾기
+		MemberVO findKakao(HashMap<String, Object> userInfo);
+		//15. 카카오 정보 저장
+		void kakaoInsert(HashMap<String, Object> userInfo);
+
+
 } 

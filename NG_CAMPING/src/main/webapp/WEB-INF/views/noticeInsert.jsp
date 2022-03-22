@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
-<title>NG캠핑</title>
+<title>NG캠핑 로그인</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -46,77 +46,90 @@
 		var logout = document.logout;
 		logout.submit();
 	}
+	$(function() {
+		$('#summernote').summernote(
+				{
+					lang : 'ko-KR', // default: 'en-US'
+					height : 300, // set editor height
+					minHeight : null, // set minimum height of editor
+					maxHeight : null, // set maximum height of editor
+					fontNames : [ '맑은고딕', 'Arial', 'Arial Black',
+							'Comic Sans MS', 'Courier New', ],
+					fontNamesIgnoreCheck : [ '맑은고딕' ],
+					focus : true,
+					// 이미지가 1MB를 넘을경우 수동으로 업로드를 처리하고 실행될 코드를 지정해준다.
+					callbacks : {
+						onImageUpload : function(files, editor, welEditable) {
+							for (var i = files.length - 1; i >= 0; i--) {
+								sendFile(files[i], this);
+							}
+						}
+					}
+				});
+	});
 
-	function noticeWriteSubmit() {
-		location.href = "/notice_Insert.do";
+	// 실제 업로드되는 서버의 파일을 Ajax로 호출해 줘야한다.
+	function sendFile(file, el) {
+		// 폼 작성
+		var form_data = new FormData();
+		form_data.append('file', file);
+		// Ajax 호출
+		$.ajax({
+			data : form_data,
+			type : "POST",
+			url : 'imageUpload',
+			cache : false,
+			contentType : false,
+			enctype : 'multipart/form-data',
+			processData : false,
+			success : function(img_name) { // 성공
+				$(el).summernote('editor.insertImage', img_name);
+			}
+		});
 	}
 </script>
 
 <style type="text/css">
+
+.note-editable { background-color: white !important; color: black !important; }
+.note-toolbar { background: white; }
+
+
+strong, b {
+    color: #000000;
+    font-weight: bold;
+}
 element.style {
 	width: 500px;
 	height: 100px;
 	margin: 0 auto;
 }
 
-.table-hover>tbody>tr:hover>* { -
-	-bs-table-accent-bg: var(- -bs-table-hover-bg);
-	color: var(- -bs-table-hover-color);
+#banner1 {
+	padding: 200px;
+	padding-top: 300px;
 }
 
-.table-hover>tbody>tr:hover>* { -
-	-bs-table-accent-bg: var(- -bs-table-hover-bg);
-	color: var(- -bs-table-hover-color);
+#content1 {
+	text-align: left;
 }
 
-.table>:not(caption)>*>* {
-	padding: 0.5rem 0.5rem;
-	background-color: var(- -bs-table-bg);
-	border-bottom-width: 1px;
-	box-shadow: inset 0 0 0 9999px var(- -bs-table-accent-bg);
+textarea {
+	height: 15em;
+	border: none;
+	resize: none;
+	background-color: white;
+	color: black;
 }
 
-.table>:not(caption)>*>* {
-	padding: 0.5rem 0.5rem;
-	background-color: var(- -bs-table-bg);
-	border-bottom-width: 1px;
-	box-shadow: inset 0 0 0 9999px var(- -bs-table-accent-bg);
+#member_position {
+	padding-left: 27%;
 }
 
-table th {
-	color: #ffffff;
-	font-size: 0.9em;
-	font-weight: 300;
-	padding: 0 0.75em 0.75em 0.75em;
-	text-align: center;
-}
-
-table {
-	text-align: center;
-}
-
-.th-1 {
-	width: 40px;
-}
-
-.th-2 {
-	width: 80px;
-}
-
-.th-3 {
-	width: 150px;
-}
-
-.th-4 {
-	width: 90px;
-}
-
-.th-5 {
-	width: 60px;
-}
-
-.th-6 {
-	width: 40px;
+#login {
+	padding-left: 27%;
+	width: 1000px;
+	height: 1000px;
 }
 </style>
 
@@ -266,26 +279,26 @@ table {
 			</div>
 			<div class="col-sm-2" style="float: left;">
 				<select name="list" id="list" onchange="window.open(value,'_self');">
-					<option value="/notice.do" selected>공지사항</option>
+				    <option value="/notice.do" selected>공지사항</option>
+					<option value="/QnA.do" >QnA</option>
 					<option value="/review.do">캠핑후기</option>
-					<option value="/QnA.do">QnA</option>
 				</select>
 			</div>
 		</div>
-		<br> <br>
+		<br /> <br /> <br /> <br />
 		<div>
-			<p
-				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">공지사항</p>
+			<p style="font-size: 50px; padding-left: 12%;">공지사항</p>
 		</div>
 
 		<div style="padding-right: 10%; padding-bottom: 3%;">
 			<div class="col-sm-1" style="float: right;">
 				<input type="button" value="검색" onclick="search();">
 			</div>
-
+			
 			<div class="col-sm-2" style="float: right;">
 				<input type="text" />
 			</div>
+
 
 			<div class="col-sm-1.8" style="float: right;">
 				<select name="search" id="search" style="float: left;">
@@ -295,31 +308,16 @@ table {
 				</select>
 			</div>
 		</div>
+		<br />
 		<section
 			style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
 			<form action="result.do" method="post">
-				<br>
-				<table class="table table-hover table-dark">
-					<tr>
-						<th class="th-1" scope="col">글번호</th>
-						<th class="th-2" scope="col">제목</th>
-						<th class="th-3" scope="col">내용</th>
-						<th class="th-4" scope="col">닉네임</th>
-						<th class="th-5" scope="col">작성일</th>
-						<th class="th-6" scope="col">조회수</th>
-					</tr>
-					<tr>
-						<td>1</td>
-						<td>제목이지렁</td>
-						<td>이것은 테스트입니다.</td>
-						<td>일이삼사오육실팔구십</td>
-						<td>2022/11/08 05:22:00</td>
-						<td>1</td>
-					</tr>
-				</table>
+				<input type="text" size="60" name="subject"><br>
+				<textarea id="summernote" name="note"></textarea>
+				<c:set value="${sessionScope.mvo.gr_role}" var="role" />
 				<c:if test="${role eq 'ROLE_ADMIN' }">
-					<button type="button" class="btn btn-outline-secondary"
-						style="float: right;" onclick="noticeWriteSubmit()">글쓰기</button>
+					<input type="submit" value="글쓰기"
+						class="btn btn-outline-success btn-sm" style="float: right;">
 				</c:if>
 			</form>
 		</section>
@@ -351,8 +349,7 @@ table {
 
 
 	<!-- Scripts -->
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/jquery.min.js"></script>
+
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrolly.min.js"></script>
 	<script

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="PRO.S2K.CAMP.DAO.RoleDAO">
+<mapper namespace="pro.s2k.camp.dao.RoleDAO">
 
    <insert id="insert" parameterType="string">
       INSERT INTO member_role (mb_id, gr_role) VALUES (#{mb_ID},'ROLE_GUEST')

@@ -14,27 +14,6 @@
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
-	
-	<!--  업로드 관련 빈 등록 시작  -->
-	<!-- 1. 업로드될  폴더를 리소스로 등록한다. -->
-	<resources mapping="/upload/**" location="/upload/" />
-	<!-- 2. 업로드 경로를 빈으로 등록 -->
-	<beans:bean id="uploadPath" class="java.lang.String">
-		<beans:constructor-arg value="upload"/>
-	</beans:bean>
-	<!-- 3. 업로드를 담당할 객체등록 -->
-	<beans:bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
-		<beans:property name="maxUploadSize" value="20480000"></beans:property>
-		<beans:property name="maxInMemorySize" value="10240000"></beans:property>
-		<beans:property name="defaultEncoding" value="UTF-8"></beans:property>
-	</beans:bean>
-	<!-- 4. 다운로드를 담당할 객체 등록 -->
-	<beans:bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
-		<beans:property name="order" value="0"></beans:property>
-	</beans:bean>
-	<!-- 5. 실제 다운로드를 처리할 클래스를 등록한다. download.jsp참조해서 AbstractView를 상속받아 구현 -->
-	<beans:bean id="downloadView" class="PRO.S2K.CAMP.CONTROLLER.FileDownloadView"></beans:bean>
-	<!--  업로드 관련 빈 등록 종료  -->
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -42,7 +21,32 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="PRO.S2K.CAMP" />
+	<context:component-scan base-package="pro.s2k.camp" />
+	
+	<!-- ********************************************************************************** -->
+	<!-- 업로드된 파일이 저장될 폴더는 직접 접근이 가능해야 한다. -->
+	<resources mapping="/upload/**" location="/upload/" />
+	<resources mapping="/contentfile/**" location="/contentfile/" />
+	<!-- 업로드 관련 객체 등록 시작 -->
+	<!-- 1. 업로드 경로 -->
+	<beans:bean id="uploadPath" class="java.lang.String">
+		<beans:constructor-arg value="upload"/>
+	</beans:bean>
+	<!-- 2. 업로드 데이터를 처리하는 객체 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="20480000"/>
+		<beans:property name="maxInMemorySize" value="10240000"/>
+		<beans:property name="defaultEncoding" value="UTF-8"/>
+	</beans:bean>
+	<!-- 업로드 관련 객체 등록 종료 -->
+	<!-- 다운로드 객체 등록 시작 -->
+	<beans:bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<beans:property name="order" value="0"/>
+	</beans:bean>
+	<!-- 실제 다운로드를 진행할 클래스 : jsp의 download.jsp를 참조 AbstractView을 상속받아 만들면된다. -->
+	<beans:bean id="downloadView" class="pro.s2k.camp.controller.FileDownloadView"/>
+	<!-- 다운로드 객체 등록 종료 -->
+	<!-- ********************************************************************************** -->
 	
 	
 </beans:beans>

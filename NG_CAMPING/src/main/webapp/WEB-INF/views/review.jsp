@@ -1,13 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
-<title>NG캠핑 로그인</title>
+<title>NG캠핑</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -41,86 +43,101 @@
 	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
-<script type="text/javascript">
-	function logoutSubmit() {
-		var logout = document.logout;
-		logout.submit();
-	}
-	$(function() {
-		$('#summernote').summernote(
-				{
-					lang : 'ko-KR', // default: 'en-US'
-					height : 300, // set editor height
-					minHeight : null, // set minimum height of editor
-					maxHeight : null, // set maximum height of editor
-					fontNames : [ '맑은고딕', 'Arial', 'Arial Black',
-							'Comic Sans MS', 'Courier New', ],
-					fontNamesIgnoreCheck : [ '맑은고딕' ],
-					focus : true,
-					// 이미지가 1MB를 넘을경우 수동으로 업로드를 처리하고 실행될 코드를 지정해준다.
-					callbacks : {
-						onImageUpload : function(files, editor, welEditable) {
-							for (var i = files.length - 1; i >= 0; i--) {
-								sendFile(files[i], this);
-							}
-						}
-					}
-				});
-	});
 
-	// 실제 업로드되는 서버의 파일을 Ajax로 호출해 줘야한다.
-	function sendFile(file, el) {
-		// 폼 작성
-		var form_data = new FormData();
-		form_data.append('file', file);
-		// Ajax 호출
-		$.ajax({
-			data : form_data,
-			type : "POST",
-			url : 'imageUpload',
-			cache : false,
-			contentType : false,
-			enctype : 'multipart/form-data',
-			processData : false,
-			success : function(img_name) { // 성공
-				$(el).summernote('editor.insertImage', img_name);
-			}
-		});
-	}
+<script type="text/javascript">
+function logoutSubmit() {
+	var logout = document.logout;
+	logout.submit();
+}
+function certification() { // 인증안된 회원이 글쓰기 버튼을 눌렀을때
+	alert("메일인증이 필요합니다.");
+	location.href = "/review.do";
+}
+
+function loginSubmit() { // 비회원이 글쓰기를 눌렀을때
+	alert("로그인 필요합니다.");
+	location.href = "/login.do";
+}
+
+function reviewInsert() { //관리자, 회원이 글쓰기를 눌렀을때
+	location.href = "/reviewInsert.do";
+}
 </script>
 
+
+
+
+
 <style type="text/css">
+
 element.style {
 	width: 500px;
 	height: 100px;
 	margin: 0 auto;
 }
 
-#banner1 {
-	padding: 200px;
-	padding-top: 300px;
+.table-hover>tbody>tr:hover>* { -
+	-bs-table-accent-bg: var(- -bs-table-hover-bg);
+	color: var(- -bs-table-hover-color);
 }
 
-#content1 {
-	text-align: left;
+.table-hover>tbody>tr:hover>* { -
+	-bs-table-accent-bg: var(- -bs-table-hover-bg);
+	color: var(- -bs-table-hover-color);
 }
 
-textarea {
-	height: 15em;
-	border: none;
-	resize: none;
-	background-color: white;
-	color: black;
+.table>:not(caption)>*>* {
+	padding: 0.5rem 0.5rem;
+	background-color: var(- -bs-table-bg);
+	border-bottom-width: 1px;
+	box-shadow: inset 0 0 0 9999px var(- -bs-table-accent-bg);
 }
 
-#member_position {
-	padding-left: 27%;
+.table>:not(caption)>*>* {
+	padding: 0.5rem 0.5rem;
+	background-color: var(- -bs-table-bg);
+	border-bottom-width: 1px;
+	box-shadow: inset 0 0 0 9999px var(- -bs-table-accent-bg);
 }
 
-#login {
-	padding-left: 27%;
-	width: 1000px;
-	height: 1000px;
+table th {
+	color: #ffffff;
+	font-size: 0.9em;
+	font-weight: 300;
+	padding: 0 0.75em 0.75em 0.75em;
+	text-align: center;
+}
+
+table {
+	text-align: center;
+}
+
+.th-1 {
+	width: 40px;
+}
+
+.th-2 {
+	width: 80px;
+}
+
+.th-3 {
+	width: 150px;
+}
+
+.th-4 {
+	width: 90px;
+}
+
+.th-5 {
+	width: 60px;
+}
+
+.th-6 {
+	width: 40px;
+}
+
+#writebutton {
+	padding-bottom: 2%;
 }
 </style>
 
@@ -271,21 +288,24 @@ textarea {
 			<div class="col-sm-2" style="float: left;">
 				<select name="list" id="list" onchange="window.open(value,'_self');">
 					<option value="/review.do" selected>캠핑후기</option>
-					<option value="/QnA.do" >QnA</option>
-					<option value="/notice.do" >공지사항</option>
+					<option value="/notice.do">공지사항</option>
+					<option value="/QnA.do">QnA</option>
 				</select>
 			</div>
 		</div>
-		<br /> <br /> <br /> <br />
+		<br> <br>
 		<div>
-			<p style="font-size: 50px; padding-left: 12%;">캠핑후기</p>
+			<p
+				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">캠핑후기</p>
 		</div>
-
-		<div style="padding-right: 10%; padding-bottom: 5%;">
+		<div style="padding-right: 10%; padding-bottom: 3%;">
 			<div class="col-sm-1" style="float: right;">
 				<input type="button" value="검색" onclick="search();">
 			</div>
 
+			<div class="col-sm-2" style="float: right;">
+				<input type="text" />
+			</div>
 
 			<div class="col-sm-1.8" style="float: right;">
 				<select name="search" id="search" style="float: left;">
@@ -295,22 +315,97 @@ textarea {
 				</select>
 			</div>
 		</div>
-		<br />
 		<section
-			style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-			<form action="result.do" method="post">
-				<input type="text" size="60" name="subject"><br>
-				<textarea id="summernote" name="note"></textarea>
+			style="padding-right: 10%; padding-left: 10%; padding-bottom:3%; margin: 0 auto;">
+			${pv.pageInfo}
+			<script type="text/javascript">
+					$(function(){
+						$("#listCount").change(function(){
+							var pageSize = $(this).val();
+							SendPost("${pageContext.request.contextPath }/review", {"p":${cv.currentPage},"s":pageSize,"b":${cv.blockSize}});
+						});	
+					});
+				</script>	
+				<br>
+				<table class="table table-hover table-dark">
+					<tr>
+						<th class="th-1" scope="col">글번호</th>
+						<th class="th-2" scope="col">제목</th>
+						<th class="th-3" scope="col">내용</th>
+						<th class="th-4" scope="col">닉네임</th>
+						<th class="th-5" scope="col">작성일</th>
+						<th class="th-6" scope="col">조회수</th>
+					</tr>
+					<tr>
+						<c:if test="${pv.totalCount==0 }">
+							<td colspan="6">등록된 글이 없습니다.</td>
+						</c:if>
+					</tr>
+					
+					<c:if test="${not empty pv.list}">
+						<c:forEach var="vo" items="${pv.list }" varStatus="vs">
+				<tr align="center">
+					<td>${vo.idx }</td>
+					<td align="left" >
+						<a href="#" onclick='SendPost("${pageContext.request.contextPath }/board/view",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.idx },"m":"view","h":"true"},"post")'><c:out value="${vo.subject }"></c:out></a>
+						<%-- 오늘 저장한 글이면 new 아이콘을 달아보자  --%>		
+						<jsp:useBean id="today" scope="request" class="java.util.Date"></jsp:useBean>				
+						<fmt:formatDate value="${today }" pattern="yyyyMMdd" var="day"/> 
+						<fmt:formatDate value="${vo.regDate }" pattern="yyyyMMdd" var="reg"/> 
+						<c:if test="${day==reg }">
+							  <span style="color:red;">New</span>
+						</c:if>
+					</td>
+					<td>
+						<c:out value="${vo.name }"></c:out>
+					</td>
+					<td>
+						<fmt:formatDate value="${vo.regDate }" type="date" dateStyle="short"/>
+					</td>
+					<td>
+						<%-- 첨부파일을 다운 받도록 링크를 달아준다. --%>
+						<c:if test="${not empty vo.fileList }">
+							<c:forEach var="fvo" items="${vo.fileList }">
+								<c:url var="url" value="/download.do">
+									<c:param name="of" value="${fvo.originalName }"></c:param>
+									<c:param name="sf" value="${fvo.saveName }"></c:param>
+								</c:url>
+								<a href="${url }" title="${fvo.originalName }"><span class="material-icons">file_download</span></a>
+							</c:forEach>
+						</c:if>
+					</td>
+				</tr>		
+			</c:forEach>
+			
+			<tr>
+				<td style="border: none;text-align: center;" colspan="5">
+					${pv.pageList }
+				</td>
+			</tr>
+					</c:if>
+				</table>
 				<c:set value="${sessionScope.mvo.gr_role}" var="role" />
-				<c:if test="${role eq 'ROLE_ADMIN' }">
-					<input type="submit" value="글쓰기"
-						class="btn btn-outline-success btn-sm" style="float: right;">
-				</c:if>
-			</form>
+			<c:choose>
+					<c:when test="${role eq 'ROLE_ADMIN' }">
+					<button type="button" class="btn btn-outline-secondary"
+							style="float: right;" onclick="reviewInsert()">글쓰기</button>
+					</c:when>
+					<c:when test="${role eq 'ROLE_USER' }">
+						<button type="button" class="btn btn-outline-secondary"
+							style="float: right;" onclick="reviewInsert()">글쓰기</button>
+
+					</c:when>
+					<c:when test="${role eq 'ROLE_GUEST' }">
+						<button type="button" class="btn btn-outline-secondary"
+							style="float: right;" onclick="certification()">글쓰기</button>
+					</c:when>
+					<c:otherwise>
+						<button type="button" class="btn btn-outline-secondary"
+							style="float: right;" onclick="loginSubmit()">글쓰기</button>
+					</c:otherwise>
+				</c:choose>
+			<br>
 		</section>
-		<br />
-
-
 
 		<!-- Footer -->
 		<footer id="footer">
@@ -336,8 +431,6 @@ textarea {
 
 
 	<!-- Scripts -->
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/jquery.min.js"></script>
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrolly.min.js"></script>
 	<script

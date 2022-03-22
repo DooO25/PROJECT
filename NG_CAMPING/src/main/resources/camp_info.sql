@@ -126,20 +126,22 @@ CREATE TABLE `camp_question` (
 
 drop table camp_review;
 CREATE TABLE `camp_review` ( 
-  `mb_idx` int(11) NOT NULL,
+ `mb_idx` int(11) NOT NULL,
   rv_idx int not null auto_increment,
   ref int default 0,
   seq int default 0,
   lev int default 0,
-  `mb_nick` varchar(30) NOT NULL,
+--  `mb_nick` varchar(30) NOT NULL,
+   rv_password int not null,
   `rv_title` varchar(100) not NULL,
   `rv_content` text not NULL,
   `rv_regDate` timestamp default now(),
   `rv_modiDate` timestamp default now(),
+    rv_ip varchar(20) not null,
   `rv_hit` int(11) default 0,
   del int default 1,
   PRIMARY KEY (`rv_idx`),
-  CONSTRAINT `camp_review_FK` FOREIGN KEY (`mb_idx`) REFERENCES `camp_member` (`mb_idx`) ON UPDATE CASCADE
+ CONSTRAINT `camp_review_FK` FOREIGN KEY (`mb_idx`) REFERENCES `camp_member` (`mb_idx`) ON UPDATE CASCADE
 );
 
 -- CREATE TABLE `camp_comment` (
@@ -151,6 +153,14 @@ CREATE TABLE `camp_review` (
 --  PRIMARY KEY (`idx`),
 --  CONSTRAINT `camp_comment_FK` FOREIGN KEY (`idx`) REFERENCES `camp_review` (`idx`) ON UPDATE CASCADE
 -- );
+
+create table camp_upload(
+   idx int auto_increment primary key,
+   ref int default 0,
+   saveName varchar(500) not null,
+   originalName varChar(500) not null
+);
+
 
 INSERT INTO camp_grade values(0,'미인증','user');
 INSERT INTO camp_grade values(1,'인증','member');

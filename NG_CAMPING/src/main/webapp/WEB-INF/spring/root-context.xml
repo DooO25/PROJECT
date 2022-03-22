@@ -28,13 +28,13 @@
 	<!-- Mybatis연결 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
-		<property name="typeAliasesPackage" value="PRO.S2K.CAMP.VO"/>
-		<property name="mapperLocations" value="classpath*:/PRO/S2K/MEMBER/DAO/*.xml"/>
+		<property name="typeAliasesPackage" value="pro.s2k.camp.vo"/>
+		<property name="mapperLocations" value="classpath*:/por/s2k/member/dao/*.xml"/>
 	</bean>
 	
 	<!-- 다음을 추가하면 SqlSession세션을 만들 필요가 없고 DAOImpl도 만들 필요가 없다 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="PRO.S2K.CAMP.DAO"/>
+		<property name="basePackage" value="pro.s2k.camp.dao"/>
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
 	</bean>		
 	
@@ -77,7 +77,7 @@
     
     
     <!-- 로그인 성공시 처리할 객체 등록 -->
-    <bean class="PRO.S2K.CAMP.SERVICE.CustomSuccessHandler" id="customSuccessHandler"></bean>
+    <bean class="pro.s2k.camp.service.CustomSuccessHandler" id="customSuccessHandler"></bean>
     
   
     <!-- 시큐리트 암호화 객체 등록 -->

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="PRO.S2K.CAMP.DAO.MemberDAO">
+<mapper namespace="pro.s2k.camp.dao.MemberDAO">
 
 	<!-- 1. 저장하기 -->
 	<insert id="insert" parameterType="MemberVO">

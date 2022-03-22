@@ -1,4 +1,3 @@
-<%@page import="PRO.S2K.CAMP.VO.MemberVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -32,12 +31,8 @@
 		var logout = document.logout;
 		logout.submit();
 	}
-	var session = "<c:out value='${role}'/>";
-	console.log(session);
-	alert("${sessionScope.mvo}");
 </script>
 <style>
-
 .swiper-container {
 	width: 90%;
 	height: 200px;
@@ -69,6 +64,14 @@
 
 .swiper-slide:nth-child(3n) {
 	width: 20%;
+}
+
+.swiper-slide-text {
+	text-align: right;
+	position: absolute;
+	transform: translate(-50%, -50%);
+	top: 100%;
+	left : 30%;
 }
 </style>
 
@@ -103,9 +106,9 @@
 							</ul></li>
 						<li><a href="#">캠핑톡</a>
 							<ul>
-								<li><a href="#">공지사항</a></li>
-								<li><a href="#">캠핑후기</a></li>
-								<li><a href="#">QnA</a></li>
+								<li><a href="/notice.do">공지사항</a></li>
+								<li><a href="/review.do">캠핑후기</a></li>
+								<li><a href="/QnA.do">QnA</a></li>
 							</ul></li>
 						<li><a href="/insert.do">회원가입</a></li>
 						<li><a href="/login.do">로그인</a></li>
@@ -124,6 +127,13 @@
 										<li><a href="#">카라반</a></li>
 										<li><a href="#">글램핑</a></li>
 									</ul></li>
+								<li><a href="#">캠핑톡</a>
+									<ul>
+										<li><a href="/notice.do">공지사항</a></li>
+										<li><a href="/review.do">캠핑후기</a></li>
+										<li><a href="/QnA.do">QnA</a></li>
+									</ul></li>
+
 								<c:url value="/logout" var="logoutURL" />
 								<li>
 									<form action="${logoutURL }" method="post" name="logout">
@@ -144,6 +154,12 @@
 										<li><a href="#">카라반</a></li>
 										<li><a href="#">글램핑</a></li>
 									</ul></li>
+								<li><a href="#">캠핑톡</a>
+									<ul>
+										<li><a href="/notice.do">공지사항</a></li>
+										<li><a href="/review.do">캠핑후기</a></li>
+										<li><a href="/QnA.do">QnA</a></li>
+									</ul></li>
 								<c:url value="/logout" var="logoutURL" />
 								<li>
 									<form action="${logoutURL }" method="post" name="logout">
@@ -152,9 +168,8 @@
 											onclick="logoutSubmit()">로그아웃</a>
 									</form>
 								</li>
-									<li><a href="#">관리자페이지</a></li>
+								<li><a href="#">관리자페이지</a></li>
 							</c:when>
-						
 							<c:otherwise>
 								<li>"${name}"님 메일인증을 해주시길바랍니다.</li>
 								<li><a href="/main.do">Home</a></li>
@@ -164,6 +179,12 @@
 										<li><a href="#">자동차 야영장</a></li>
 										<li><a href="#">카라반</a></li>
 										<li><a href="#">글램핑</a></li>
+									</ul></li>
+								<li><a href="#">캠핑톡</a>
+									<ul>
+										<li><a href="/notice.do">공지사항</a></li>
+										<li><a href="/review.do">캠핑후기</a></li>
+										<li><a href="/QnA.do">QnA</a></li>
 									</ul></li>
 								<c:url value="/logout" var="logoutURL" />
 								<li>
@@ -188,23 +209,96 @@
 				<header class="hightitle">
 					<h2>캠핑은 NG캠핑!</h2>
 					<p>
-						여러분의 캠핑생활을 도와드립니다!<br /> 스크롤을 내려 캠핑정보를 확인하세요!
+						여러분의 캠핑생활을 도와드립니다!<br> 스크롤을 내려 캠핑정보를 확인하세요!
+					<p style="padding-top: 5%;">
+						사진을 클릭 또는 드래그를하여 <br> 캠핑장정보를 확인하세요
 					</p>
 				</header>
 
 				<!-- Swiper -->
 				<div class="swiper-container">
 					<div class="swiper-wrapper">
-						<div class="swiper-slide">Slide 1</div>
-						<div class="swiper-slide">Slide 2</div>
-						<div class="swiper-slide">Slide 3</div>
-						<div class="swiper-slide">Slide 4</div>
-						<div class="swiper-slide">Slide 5</div>
-						<div class="swiper-slide">Slide 6</div>
-						<div class="swiper-slide">Slide 7</div>
-						<div class="swiper-slide">Slide 8</div>
-						<div class="swiper-slide">Slide 9</div>
-						<div class="swiper-slide">Slide 10</div>
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp1.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">우리두리캠핑장</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp2.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">땡땡이글램핑</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp3.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">수정 오토캠핑장</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp4.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">왕터 리조트</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp5.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">칠포 그린로즈 야영장</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp6.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">달빛 담은 캠핑장</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp7.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">독립기념관 캠핑장</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp8.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">강진 사포해변공원</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp9.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">스카이운학 캠핑장</p>
+							</div>
+						</div>
+
+						<div class="swiper-slide">
+							<img width=100%
+								src="${pageContext.request.contextPath }/resources/images/Camp10.jpg">
+							<div class="swiper-slide-text">
+								<p style="font-size: 13px">다둥이네 캠핑장</p>
+							</div>
+						</div>
+
+						<p>
 					</div>
 
 					<!-- Add Pagination -->
@@ -218,13 +312,13 @@
 						slidesPerView : 4,
 						centeredSlides : true,
 						paginationClickable : true,
-						spaceBetween : 30
+						spaceBetween : 30,
+
 					});
 				</script>
 
 				<!-- Add Pagination -->
 				<div class="swiper-pagination"></div>
-				<!-- <a href="#one" class="goto-next scrolly">Next</a>  -->
 			</div>
 		</section>
 
@@ -263,7 +357,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- <a href="#two" class="goto-next scrolly">Next</a>  -->
 		</section>
 
 		<!-- Two -->
@@ -287,7 +380,6 @@
 					<li><a href="#" class="button">더보기</a></li>
 				</ul>
 			</div>
-			<!-- <a href="#three" class="goto-next scrolly">Next</a> -->
 		</section>
 
 		<!-- Three -->
@@ -311,7 +403,6 @@
 					<li><a href="#" class="button">더보기</a></li>
 				</ul>
 			</div>
-			<!--  <a href="#four" class="goto-next scrolly">Next</a>  -->
 		</section>
 
 
@@ -335,7 +426,6 @@
 					<li><a href="#" class="button">더보기</a></li>
 				</ul>
 			</div>
-			<!-- <a href="#five" class="goto-next scrolly">Next</a> -->
 		</section>
 
 
@@ -359,7 +449,6 @@
 					<li><a href="#" class="button">더보기</a></li>
 				</ul>
 			</div>
-			<!--  <a href="#six" class="goto-next scrolly">Next</a> -->
 		</section>
 
 

@@ -6,11 +6,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import lombok.Data;
-
-@Data
 @XmlRootElement
 public class PagingVO<T> {
+	
 	private List<T> list; // 1페이지 분량의 데이터를 담을 리스트
 	
 	// 3개는 생성자로 넘겨 받는다.
@@ -49,7 +47,7 @@ public class PagingVO<T> {
 			if(currentPage>totalPage) currentPage = 1;
 			
 			// 시작번호 = (현재페이지-1)*페이지사이즈
-			startNo = (currentPage-1) * pageSize; // 오라클 +1을 한다. ========================> 이 부분 변경		
+			startNo = (currentPage-1) * pageSize ; // 오라클 +1을 한다. ========================> 이 부분 변경		
 
 			// 끝번호 = 시작번호 + 페이지사이즈 - 1
 			endNo = startNo + pageSize - 1; 
@@ -67,6 +65,49 @@ public class PagingVO<T> {
 		}
 	}
 
+	public List<T> getList() {
+		return list;
+	}
+
+	public void setList(List<T> list) {
+		this.list = list;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getBlockSize() {
+		return blockSize;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public int getTotalPage() {
+		return totalPage;
+	}
+
+	public int getStartNo() {
+		return startNo;
+	}
+
+	public int getEndNo() {
+		return endNo;
+	}
+
+	public int getStartPage() {
+		return startPage;
+	}
+
+	public int getEndPage() {
+		return endPage;
+	}
 	//------------------------------------------------------------------------------------
 	// 몇개의 필요한 메서드를 추가한다.
 	// 1. 페이지 상단의 페이지 정보를 출력해주는 메서드
@@ -80,37 +121,37 @@ public class PagingVO<T> {
 	}
 	
 	// 2. 페이지 하단의 페이지번호들 출력해주는 메서드
-	public String getPageList() {
-		String message = "<nav>";
-		message += "<ul class='pagination pagination-sm justify-content-center'>";
-		// <%-- 이전 : 시작 페이지가 1보다 크다면 이전이 있다 --%>
-		if(startPage>1) {
-			message += "<li class='page-item'>";
-			message += "<a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (startPage) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Previous'>";
-			message += "<span aria-hidden='true'>&laquo;</span>";
-			message += "</a>";
-			message += "</li>";
-		}
-		//  <%-- 페이지 : 시작페이지 번호부터 끝페이지 번호까지 페이지 번호 출력 --%>
-		for(int i=startPage;i<=endPage;i++) {
-			if(i==currentPage) {
-				message += "<li class='page-item active' aria-current='page'><span class='page-link'>" + i + "</span></li>";
-			}else {
-				message += "<li class='page-item'><a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (i) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})'>" + i + "</a></li>";
-			}
-		}
-		// <%-- 다음 : 마지막 페이지가 전체페이지보다 적다면 다음이 있다 --%>
-		if(endPage<totalPage) {
-			message += "<li class='page-item'>";
-			message += "<a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (endPage+1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Next'>";
-			message += "<span aria-hidden='true'>&raquo;</span>";
-			message += "</a>";
-			message += "</li>";
-		}
-		message += "</ul>";
-		message += "</nav>";
-		return message;
-	}
+	   public String getPageList() {
+	      String message = "<nav>";
+	      message += "<ul class='pagination pagination-sm justify-content-center'>";
+	      // <%-- 이전 : 시작 페이지가 1보다 크다면 이전이 있다 --%>
+	      if(startPage>1) {
+	         message += "<li class='page-item'>";
+	         message += "<a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (startPage-1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Previous'>";
+	         message += "<span aria-hidden='true'>&laquo;</span>";
+	         message += "</a>";
+	         message += "</li>";
+	      }
+	      //  <%-- 페이지 : 시작페이지 번호부터 끝페이지 번호까지 페이지 번호 출력 --%>
+	      for(int i=startPage;i<=endPage;i++) {
+	         if(i==currentPage) {
+	            message += "<li class='page-item active' aria-current='page'><span class='page-link'>" + i + "</span></li>";
+	         }else {
+	            message += "<li class='page-item'><a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (i) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})'>" + i + "</a></li>";
+	         }
+	      }
+	      // <%-- 다음 : 마지막 페이지가 전체페이지보다 적다면 다음이 있다 --%>
+	      if(endPage<totalPage) {
+	         message += "<li class='page-item'>";
+	         message += "<a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (endPage+1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Next'>";
+	         message += "<span aria-hidden='true'>&raquo;</span>";
+	         message += "</a>";
+	         message += "</li>";
+	      }
+	      message += "</ul>";
+	      message += "</nav>";
+	      return message;
+	   }
 	
 	//------------------------------------------------------------------------------------
 	@Override

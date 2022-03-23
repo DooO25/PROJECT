@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xmlns:security="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
-		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-	
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
-	<!-- DB 연동 context -->
 	<!-- 프로퍼티 파일을 사용하겠다. -->
 	<context:property-placeholder location="classpath:jdbc.properties"/>
 	
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<!-- DB 연동 -->
+	<bean name="ds" id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${m.driver}"></property>
 		<property name="url" value="${m.url}"></property>
 		<property name="username" value="${m.username}"></property>
@@ -29,7 +33,7 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="typeAliasesPackage" value="pro.s2k.camp.vo"/>
-		<property name="mapperLocations" value="classpath*:/por/s2k/member/dao/*.xml"/>
+		<property name="mapperLocations" value="classpath:/pro/s2k/member/dao/*.xml"/>
 	</bean>
 	
 	<!-- 다음을 추가하면 SqlSession세션을 만들 필요가 없고 DAOImpl도 만들 필요가 없다 -->
@@ -38,11 +42,13 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
 	</bean>		
 	
-
-	<!-- Security 권한 설정 -기본 bean에 security:를 붙여줘야함.  -->
+	<!-- Security 권한 설정 -->
 	<security:http auto-config="true" use-expressions="true">
         <security:intercept-url pattern="/" access="permitAll" />
+        
         <security:intercept-url pattern="/admin/**" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/board/**" access="hasRole('USER')" />
+         <security:intercept-url pattern="/GUEST/**" access="hasRole('GUEST')" />
         <!-- 접근 불가능한 곳에 접근할때 에러가 아닌 보여줄 페이지 지정 -->
         <security:access-denied-handler error-page="/403"/>
         <!-- 사용자가 만든 로그인 폼을 사용하기 위해서는 이부분을 수정해 준다. -->
@@ -53,10 +59,9 @@
         default-target-url="/"
         authentication-success-handler-ref="customSuccessHandler"
         authentication-failure-url="/login.do?error" /> <!-- 로그인 실패시 이동할 페이지 -->
-        <security:logout logout-success-url="/"/> <!-- 로그아웃 성공시 이동할 페이지 -->
-        <!-- 
-        <security:logout logout-success-url="/login?logout"/> 
-         -->
+   	
+  <security:logout logout-success-url="/main.do"/>  <!-- 로그아웃 성공시 이동할 페이지  -->
+   
         <!-- csrf 프로텍션 사용하겠다. -->
         <security:csrf/>
     </security:http>
@@ -64,7 +69,7 @@
 	<!-- Security 사용자 설정 -->
     <security:authentication-manager >
     	<!-- DB정보를 이용하여 인증을 처리 하겠다. -->
-    	<security:authentication-provider> 
+    	<security:authentication-provider>
     		 <security:password-encoder ref="bCryptPasswordEncoder"/>
 			 <security:jdbc-user-service 
 			 	data-source-ref="dataSource"
@@ -72,14 +77,11 @@
 			 	authorities-by-username-query="select mb_ID as username, gr_role as role from member_role where mb_ID=?"
 			 	/>   	
     	</security:authentication-provider> 
-    </security:authentication-manager>	
-    
-    
+    </security:authentication-manager>
     
     <!-- 로그인 성공시 처리할 객체 등록 -->
-    <bean class="pro.s2k.camp.service.CustomSuccessHandler" id="customSuccessHandler"></bean>
+    <bean class="pro.s2k.camp.controller.CustomSuccessHandler" id="customSuccessHandler"></bean>
     
-  
     <!-- 시큐리트 암호화 객체 등록 -->
     <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="bCryptPasswordEncoder"/>
 

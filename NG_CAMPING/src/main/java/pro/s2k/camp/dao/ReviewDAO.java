@@ -8,6 +8,7 @@ import pro.s2k.camp.vo.ReviewVO;
 
 
 public interface ReviewDAO {
+	
 	List<ReviewVO> selectList(HashMap<String, Integer> map);
 	ReviewVO selectByIdx(int idx);
 	int selectCount();
@@ -28,7 +29,4 @@ public interface ReviewDAO {
 	
 	// <!-- 저장한 idx값 알아내기 (현재 Sequence값) -->
 	int selectSeq();
-
-	
-	
 }

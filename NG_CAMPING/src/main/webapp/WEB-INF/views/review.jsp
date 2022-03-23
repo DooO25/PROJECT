@@ -3,6 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,20 +27,6 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 	rel="stylesheet">
-
-<!-- include summernote css/js -->
-<link
-	href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
-	rel="stylesheet">
-<script
-	src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-<!-- 언어 -->
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ko-KR.min.js"></script>
-<script type="text/javascript">
-	
-</script>
-
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
 <link rel="stylesheet"
@@ -62,8 +50,10 @@ function loginSubmit() { // 비회원이 글쓰기를 눌렀을때
 function reviewInsert() { //관리자, 회원이 글쓰기를 눌렀을때
 	location.href = "/reviewInsert.do";
 }
-</script>
 
+
+alert("${pv.list}");
+</script>
 
 
 
@@ -322,7 +312,7 @@ table {
 					$(function(){
 						$("#listCount").change(function(){
 							var pageSize = $(this).val();
-							SendPost("${pageContext.request.contextPath }/review", {"p":${cv.currentPage},"s":pageSize,"b":${cv.blockSize}});
+							SendPost("${pageContext.request.contextPath }/review.do", {"p":${cv.currentPage},"s":pageSize,"b":${cv.blockSize}});
 						});	
 					});
 				</script>	
@@ -341,30 +331,72 @@ table {
 							<td colspan="6">등록된 글이 없습니다.</td>
 						</c:if>
 					</tr>
-					
-					<c:if test="${not empty pv.list}">
+					<c:if test="${pv.totalCount>0 }">
+						<c:if test="${not empty pv.list }">
+							<c:set var="no" value="${pv.totalCount - (pv.currentPage-1)*pv.pageSize}"/>
+							<c:forEach var="vo" items="${pv.list }" >
+								<tr>
+									<td>
+										${no }
+										<c:set var="no" value="${no-1}"/>
+									</td>
+									<td>
+										<a href="#" onclick='SendPost("${pageContext.request.contextPath }review.jsp",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.rv_idx },"h":1})'>
+												<c:out value="${vo.rv_title }"></c:out>
+										</a>
+									</td>
+									<td>
+										${vo.rv_content }
+									</td>
+									<td>
+										${vo.mb_nick }
+										</td>
+									
+									<td> 
+										<fmt:formatDate value="${vo.rv_regDate }" pattern="yy-MM-dd"/>
+									</td>					
+									<td>
+										${vo.rv_hit }
+									</td>
+								</tr>
+							</c:forEach>
+						</c:if>
+					</c:if>
+					</table>
+							<div style="border: none;text-align: center;">
+								${pv.pageList}
+							</div>
+		<%-- 			<c:if test="${not empty pv.list}">
+					<c:if test="${pv.totalCount>0 }">
+					<c:set var="no" value="${pv.totalCount - (pv.currentPage-1)*pv.pageSize}"></c:set>
 						<c:forEach var="vo" items="${pv.list }" varStatus="vs">
 				<tr align="center">
-					<td>${vo.idx }</td>
+					<td>${vo.rv_idx }</td>
 					<td align="left" >
-						<a href="#" onclick='SendPost("${pageContext.request.contextPath }/board/view",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.idx },"m":"view","h":"true"},"post")'><c:out value="${vo.subject }"></c:out></a>
-						<%-- 오늘 저장한 글이면 new 아이콘을 달아보자  --%>		
+						<a href="#" onclick='SendPost("${pageContext.request.contextPath }/review.do",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.rv_idx },"m":"view","h":"true"})'><c:out value="${vo.rv_title }"></c:out></a>
+						오늘 저장한 글이면 new 아이콘을 달아보자  	
 						<jsp:useBean id="today" scope="request" class="java.util.Date"></jsp:useBean>				
 						<fmt:formatDate value="${today }" pattern="yyyyMMdd" var="day"/> 
-						<fmt:formatDate value="${vo.regDate }" pattern="yyyyMMdd" var="reg"/> 
+						<fmt:formatDate value="${vo.rv_regDate }" pattern="yyyyMMdd" var="reg"/> 
 						<c:if test="${day==reg }">
 							  <span style="color:red;">New</span>
-						</c:if>
+						</c:if> 
 					</td>
 					<td>
-						<c:out value="${vo.name }"></c:out>
+						<c:out value="${vo.rv_content }"></c:out>
+					</td>
+					<td>
+						<c:out value="${vo.rv_nick }"></c:out>
 					</td>
 					<td>
 						<fmt:formatDate value="${vo.regDate }" type="date" dateStyle="short"/>
 					</td>
 					<td>
+						<c:out value="${vo.rv_hit }"></c:out>
+					</td>
+					<td> --%>
 						<%-- 첨부파일을 다운 받도록 링크를 달아준다. --%>
-						<c:if test="${not empty vo.fileList }">
+				<%-- 		<c:if test="${not empty vo.fileList }">
 							<c:forEach var="fvo" items="${vo.fileList }">
 								<c:url var="url" value="/download.do">
 									<c:param name="of" value="${fvo.originalName }"></c:param>
@@ -372,18 +404,19 @@ table {
 								</c:url>
 								<a href="${url }" title="${fvo.originalName }"><span class="material-icons">file_download</span></a>
 							</c:forEach>
-						</c:if>
-					</td>
+						</c:if> --%>
+		<%-- 			</td>
 				</tr>		
-			</c:forEach>
 			
-			<tr>
-				<td style="border: none;text-align: center;" colspan="5">
-					${pv.pageList }
-				</td>
-			</tr>
+			
+			
+			</c:forEach>
 					</c:if>
-				</table>
+				<div style="border: none;text-align: center;" colspan="6">
+					${pv.pageList}
+				</div>
+			 --%>
+
 				<c:set value="${sessionScope.mvo.gr_role}" var="role" />
 			<c:choose>
 					<c:when test="${role eq 'ROLE_ADMIN' }">
@@ -445,6 +478,8 @@ table {
 		src="${pageContext.request.contextPath }/resources/assets/js/util.js"></script>
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
+	<script 
+		src="${pageContext.request.contextPath}/resources/assets/js/commons.js"></script>
 
 
 

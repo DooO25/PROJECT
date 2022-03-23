@@ -44,6 +44,9 @@ public class ReviewVO {
 	private String rv_ip;
 	private int rv_hit;
 	private int del;
+	
+	
+	private String mb_nick;
 	// 첨부파일의 정보를 저장할 필드 추가
 	private List<FileUploadVO> fileList;
 

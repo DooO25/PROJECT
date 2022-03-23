@@ -1,364 +1,359 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+   pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <link rel="shortcut icon" type="image/x-icon"
-	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
-<title>NG캠핑 로그인</title>
+   href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
+<title>NG캠핑</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
+   href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+   rel="stylesheet">
 <script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+   src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script
-	src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+   src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+   src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 <script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
+   src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<!-- include summernote css/js -->
-<link
-	href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
-	rel="stylesheet">
+
+<!-- 서머노트를 위해 추가해야할 부분 -->
 <script
-	src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-<!-- 언어 -->
+   src="${pageContext.request.contextPath}/resources/summernote/summernote-lite.js"></script>
 <script
-	src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ko-KR.min.js"></script>
+   src="${pageContext.request.contextPath}/resources/summernote/lang/summernote-ko-KR.js"></script>
+<link rel="stylesheet"
+   href="${pageContext.request.contextPath}/resources/summernote/summernote-lite.css">
+
+
+<link rel="stylesheet"
+   href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
+<link rel="stylesheet"
+   href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <script type="text/javascript">
+   function logoutSubmit() {
+      var logout = document.logout;
+      logout.submit();
+   }
+   
+	// 폼의 값 유효성 검사하기 스크립트
+	function formCheck(){
+		var value = $("#title").val();
+		if(!value || value.trim().length==0){
+			alert('제목을 반드시 입력해야 합니다.');
+			$("#title").val("");
+			$("#title").focus();
+			return false; 
+		}
 	
+		var value = $("#content").summernote('code');
+		// alert("값 : " + value);
+		if(!value || value.trim()=="<p><br></p>"){
+			alert('내용은 반드시 입력해야 합니다.');
+			$("#content").val("");
+			$("#content").focus();
+			return false; 
+		}
+		return true;
+	}
+	function goList(){
+		SendPost("${pageContext.request.contextPath }/review.do",{"p":${cv.currentPage },"s":${cv.pageSize },"b":${cv.blockSize }});
+	}
+	
+	var test = "${sessionScope.mvo.mb_idx}";
+	
+	alert(test);
 </script>
 
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
-<script type="text/javascript">
-	function logoutSubmit() {
-		var logout = document.logout;
-		logout.submit();
-	}
-	$(function() {
-		$('#summernote').summernote(
-				{
-					lang : 'ko-KR', // default: 'en-US'
-					height : 300, // set editor height
-					minHeight : null, // set minimum height of editor
-					maxHeight : null, // set maximum height of editor
-					fontNames : [ '맑은고딕', 'Arial', 'Arial Black',
-							'Comic Sans MS', 'Courier New', ],
-					fontNamesIgnoreCheck : [ '맑은고딕' ],
-					focus : true,
-					// 이미지가 1MB를 넘을경우 수동으로 업로드를 처리하고 실행될 코드를 지정해준다.
-					callbacks : {
-						onImageUpload : function(files, editor, welEditable) {
-							for (var i = files.length - 1; i >= 0; i--) {
-								sendFile(files[i], this);
-							}
-						}
-					}
-				});
-	});
-
-	// 실제 업로드되는 서버의 파일을 Ajax로 호출해 줘야한다.
-	function sendFile(file, el) {
-		// 폼 작성
-		var form_data = new FormData();
-		form_data.append('file', file);
-		// Ajax 호출
-		$.ajax({
-			data : form_data,
-			type : "POST",
-			url : 'imageUpload',
-			cache : false,
-			contentType : false,
-			enctype : 'multipart/form-data',
-			processData : false,
-			success : function(img_name) { // 성공
-				$(el).summernote('editor.insertImage', img_name);
-			}
-		});
-	}
-</script>
 
 <style type="text/css">
 
-.note-editable { background-color: white !important; color: black !important; }
-.note-toolbar { background: white; }
-
-element.style {
-	width: 500px;
-	height: 100px;
-	margin: 0 auto;
+p {
+    margin: 0 0 1em 0;
 }
 
-#banner1 {
-	padding: 200px;
-	padding-top: 300px;
+
+.note-editor.note-frame .note-editing-area .note-editable, .note-editor.note-airframe .note-editing-area .note-editable
+   {
+   padding: 10px;
+   background: white;
+   overflow: auto;
+   word-wrap: break-word;
 }
 
-#content1 {
-	text-align: left;
-}
-
-textarea {
-	height: 15em;
-	border: none;
-	resize: none;
-	background-color: white;
-	color: black;
-}
-
-#member_position {
-	padding-left: 27%;
-}
-
-#login {
-	padding-left: 27%;
-	width: 1000px;
-	height: 1000px;
+b {
+   font-weight: bold;
 }
 </style>
-
-<noscript>
-	<link rel="stylesheet"
-		href="${pageContext.request.contextPath }/resources/assets/css/noscript.css" />
-</noscript>
-
-
-
-
 </head>
 <body class="is-preload landing">
-	<div id="page-wrapper">
+   <div id="page-wrapper">
 
 
-		<!-- Header -->
-		<header id="header">
-			<h1 id="logo">
-				<a href="/main.do"><img
-					src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png"
-					alt="" /> </a>
-			</h1>
-			<c:set value="${sessionScope.mvo.gr_role}" var="role" />
-			<c:set value="${sessionScope.mvo.mb_name}" var="name" />
-			<nav id="nav">
-				<ul>
-					<c:if test="${sessionScope.mvo eq null }">
-						<li><a href="/main.do">Home</a></li>
-						<li><a href="#">캠핑장</a>
-							<ul>
-								<li><a href="#">일반 야영장</a></li>
-								<li><a href="#">자동차 야영장</a></li>
-								<li><a href="#">카라반</a></li>
-								<li><a href="#">글램핑</a></li>
-							</ul></li>
-						<li><a href="#">캠핑톡</a>
-							<ul>
-								<li><a href="/notice.do">공지사항</a></li>
-								<li><a href="/review.do">캠핑후기</a></li>
-								<li><a href="/QnA.do">QnA</a></li>
-							</ul></li>
-						<li><a href="/insert.do">회원가입</a></li>
-						<li><a href="/login.do">로그인</a></li>
+      <!-- Header -->
+      <header id="header">
+         <h1 id="logo">
+            <a href="/main.do"><img
+               src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png"
+               alt="" /> </a>
+         </h1>
+         <c:set value="${sessionScope.mvo.gr_role}" var="role" />
+         <c:set value="${sessionScope.mvo.mb_name}" var="name" />
+         <nav id="nav">
+            <ul>
+               <c:if test="${sessionScope.mvo eq null }">
+                  <li><a href="/main.do">Home</a></li>
+                  <li><a href="#">캠핑장</a>
+                     <ul>
+                        <li><a href="#">일반 야영장</a></li>
+                        <li><a href="#">자동차 야영장</a></li>
+                        <li><a href="#">카라반</a></li>
+                        <li><a href="#">글램핑</a></li>
+                     </ul></li>
+                  <li><a href="#">캠핑톡</a>
+                     <ul>
+                        <li><a href="/notice.do">공지사항</a></li>
+                        <li><a href="/review.do">캠핑후기</a></li>
+                        <li><a href="/QnA.do">QnA</a></li>
+                     </ul></li>
+                  <li><a href="/insert.do">회원가입</a></li>
+                  <li><a href="/login.do">로그인</a></li>
 
 
-					</c:if>
-					<c:if test="${sessionScope.mvo ne null }">
-						<c:choose>
-							<c:when test="${role eq 'ROLE_USER' }">
-								<li>"${name}" 님 환영합니다.</li>
-								<li><a href="/main.do">Home</a></li>
-								<li><a href="#">캠핑장</a>
-									<ul>
-										<li><a href="#">일반 야영장</a></li>
-										<li><a href="#">자동차 야영장</a></li>
-										<li><a href="#">카라반</a></li>
-										<li><a href="#">글램핑</a></li>
-									</ul></li>
-								<li><a href="#">캠핑톡</a>
-									<ul>
-										<li><a href="/notice.do">공지사항</a></li>
-										<li><a href="/review.do">캠핑후기</a></li>
-										<li><a href="/QnA.do">QnA</a></li>
-									</ul></li>
+               </c:if>
+               <c:if test="${sessionScope.mvo ne null }">
+                  <c:choose>
+                     <c:when test="${role eq 'ROLE_USER' }">
+                        <li>"${name}" 님 환영합니다.</li>
+                        <li><a href="/main.do">Home</a></li>
+                        <li><a href="#">캠핑장</a>
+                           <ul>
+                              <li><a href="#">일반 야영장</a></li>
+                              <li><a href="#">자동차 야영장</a></li>
+                              <li><a href="#">카라반</a></li>
+                              <li><a href="#">글램핑</a></li>
+                           </ul></li>
+                        <li><a href="#">캠핑톡</a>
+                           <ul>
+                              <li><a href="/notice.do">공지사항</a></li>
+                              <li><a href="/review.do">캠핑후기</a></li>
+                              <li><a href="/QnA.do">QnA</a></li>
+                           </ul></li>
 
-								<c:url value="/logout" var="logoutURL" />
-								<li>
-									<form action="${logoutURL }" method="post" name="logout">
-										<input type="hidden" name="${_csrf.parameterName }"
-											value="${_csrf.token }"> <a href="#"
-											onclick="logoutSubmit()">로그아웃</a>
-									</form>
-								</li>
-								<li><a href="/login.do">마이페이지</a></li>
-							</c:when>
-							<c:when test="${role eq 'ROLE_ADMIN' }">
-								<li>"${name}" 님 환영합니다.</li>
-								<li><a href="/main.do">Home</a></li>
-								<li><a href="#">캠핑장</a>
-									<ul>
-										<li><a href="#">일반 야영장</a></li>
-										<li><a href="#">자동차 야영장</a></li>
-										<li><a href="#">카라반</a></li>
-										<li><a href="#">글램핑</a></li>
-									</ul></li>
-								<li><a href="#">캠핑톡</a>
-									<ul>
-										<li><a href="/notice.do">공지사항</a></li>
-										<li><a href="/review.do">캠핑후기</a></li>
-										<li><a href="/QnA.do">QnA</a></li>
-									</ul></li>
-								<c:url value="/logout" var="logoutURL" />
-								<li>
-									<form action="${logoutURL }" method="post" name="logout">
-										<input type="hidden" name="${_csrf.parameterName }"
-											value="${_csrf.token }"> <a href="#"
-											onclick="logoutSubmit()">로그아웃</a>
-									</form>
-								</li>
-								<li><a href="#">관리자페이지</a></li>
-							</c:when>
-							<c:otherwise>
-								<li>"${name}"님 메일인증을 해주시길바랍니다.</li>
-								<li><a href="/main.do">Home</a></li>
-								<li><a href="#">캠핑장</a>
-									<ul>
-										<li><a href="#">일반 야영장</a></li>
-										<li><a href="#">자동차 야영장</a></li>
-										<li><a href="#">카라반</a></li>
-										<li><a href="#">글램핑</a></li>
-									</ul></li>
-								<li><a href="#">캠핑톡</a>
-									<ul>
-										<li><a href="/notice.do">공지사항</a></li>
-										<li><a href="/review.do">캠핑후기</a></li>
-										<li><a href="/QnA.do">QnA</a></li>
-									</ul></li>
-								<c:url value="/logout" var="logoutURL" />
-								<li>
-									<form action="${logoutURL }" method="post" name="logout">
-										<input type="hidden" name="${_csrf.parameterName }"
-											value="${_csrf.token }"> <a href="#"
-											onclick="logoutSubmit()">로그아웃</a>
-									</form>
-								</li>
-								<li><a href="#">마이페이지</a></li>
+                        <c:url value="/logout" var="logoutURL" />
+                        <li>
+                           <form action="${logoutURL }" method="post" name="logout">
+                              <input type="hidden" name="${_csrf.parameterName }"
+                                 value="${_csrf.token }"> <a href="#"
+                                 onclick="logoutSubmit()">로그아웃</a>
+                           </form>
+                        </li>
+                        <li><a href="/login.do">마이페이지</a></li>
+                     </c:when>
+                     <c:when test="${role eq 'ROLE_ADMIN' }">
+                        <li>"${name}" 님 환영합니다.</li>
+                        <li><a href="/main.do">Home</a></li>
+                        <li><a href="#">캠핑장</a>
+                           <ul>
+                              <li><a href="#">일반 야영장</a></li>
+                              <li><a href="#">자동차 야영장</a></li>
+                              <li><a href="#">카라반</a></li>
+                              <li><a href="#">글램핑</a></li>
+                           </ul></li>
+                        <li><a href="#">캠핑톡</a>
+                           <ul>
+                              <li><a href="/notice.do">공지사항</a></li>
+                              <li><a href="/review.do">캠핑후기</a></li>
+                              <li><a href="/QnA.do">QnA</a></li>
+                           </ul></li>
+                        <c:url value="/logout" var="logoutURL" />
+                        <li>
+                           <form action="${logoutURL }" method="post" name="logout">
+                              <input type="hidden" name="${_csrf.parameterName }"
+                                 value="${_csrf.token }"> <a href="#"
+                                 onclick="logoutSubmit()">로그아웃</a>
+                           </form>
+                        </li>
+                        <li><a href="#">관리자페이지</a></li>
+                     </c:when>
+                     <c:otherwise>
+                        <li>"${name}"님 메일인증을 해주시길바랍니다.</li>
+                        <li><a href="/main.do">Home</a></li>
+                        <li><a href="#">캠핑장</a>
+                           <ul>
+                              <li><a href="#">일반 야영장</a></li>
+                              <li><a href="#">자동차 야영장</a></li>
+                              <li><a href="#">카라반</a></li>
+                              <li><a href="#">글램핑</a></li>
+                           </ul></li>
+                        <li><a href="#">캠핑톡</a>
+                           <ul>
+                              <li><a href="/notice.do">공지사항</a></li>
+                              <li><a href="/review.do">캠핑후기</a></li>
+                              <li><a href="/QnA.do">QnA</a></li>
+                           </ul></li>
+                        <c:url value="/logout" var="logoutURL" />
+                        <li>
+                           <form action="${logoutURL }" method="post" name="logout">
+                              <input type="hidden" name="${_csrf.parameterName }"
+                                 value="${_csrf.token }"> <a href="#"
+                                 onclick="logoutSubmit()">로그아웃</a>
+                           </form>
+                        </li>
+                        <li><a href="#">마이페이지</a></li>
 
-							</c:otherwise>
-						</c:choose>
-					</c:if>
-				</ul>
-			</nav>
-		</header>
+                     </c:otherwise>
+                  </c:choose>
+               </c:if>
+            </ul>
+         </nav>
+      </header>
 
-		<!-- Banner -->
-		<div class="col-sm-8">
-			<img src="">
-		</div>
-		<div style="padding-top: 70px; padding-left: 10%">
-			<div class="col-sm-2">
-				<select name="chart" id="chart" style="float: left;">
-					<option value="">캠핑장</option>
-					<option value="" selected>캠핑톡</option>
-				</select>
+      <!-- Banner -->
+      <div class="col-sm-8">
+         <img src="">
+      </div>
+      <div style="padding-top: 70px; padding-left: 10%">
+         <div class="col-sm-2">
+            <select name="chart" id="chart" style="float: left;">
+               <option value="">캠핑장</option>
+               <option value="" selected>캠핑톡</option>
+            </select>
 
-			</div>
-			<div class="col-sm-2" style="float: left;">
-				<select name="list" id="list" onchange="window.open(value,'_self');">
-				    <option value="/notice.do" selected>공지사항</option>
-					<option value="/QnA.do" >QnA</option>
-					<option value="/review.do">캠핑후기</option>
-				</select>
-			</div>
-		</div>
-		<br /> <br /> <br /> <br />
-		<div>
-			<p style="font-size: 50px; padding-left: 12%;">공지사항</p>
-		</div>
+         </div>
+         <div class="col-sm-2" style="float: left;">
+            <select name="list" id="list" onchange="window.open(value,'_self');">
+               <option value="/notice.do" >공지사항</option>
+               <option value="/QnA.do">QnA</option>
+               <option value="/review.do" selected>캠핑후기</option>
+            </select>
+         </div>
+      </div>
+      <br> <br>
+      <div>
+         <p
+            style="font-size: 50px; padding-left: 12%; padding-top: 3%; font-weight: bold;">캠핑후기</p>
+      </div>
+         </div>
+      <br >
+      <section
+         style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
+         <form action="${pageContext.request.contextPath}/reviewInsertOk.do" enctype="multipart/form-data" onsubmit="return formCheck();">
+             	<%-- 페이지번호, 페이지 크기, 블록크기를 숨겨서 넘긴다.  --%>
+					<input type="hidden" name="p"  value="${cv.currentPage }"/>
+					<input type="hidden" name="s"  value="${cv.pageSize }"/>
+					<input type="hidden" name="b"  value="${cv.blockSize }"/>
+					<input type="hidden" name="mb_idx"  value="${sessionScope.mvo.mb_idx }"/>
 
-		<div style="padding-right: 10%; padding-bottom: 3%;">
-			<div class="col-sm-1" style="float: right;">
-				<input type="button" value="검색" onclick="search();">
-			</div>
-			
-			<div class="col-sm-2" style="float: right;">
-				<input type="text" />
-			</div>
+				
+					<div class="row">
 
+							<div class="col-sm-7">
+			            	    <label for="ID"  style="font-size: 20px;font-weight: bold;"> 제목</label>
+			            		<input type="text" id="title" name="rv_title" style="background-color: white; color: black;"><br>
+							</div>
+						</div>
+            <textarea id="content" name="rv_content" class="summernote"></textarea>
 
-			<div class="col-sm-1.8" style="float: right;">
-				<select name="search" id="search" style="float: left;">
-					<option value="" selected>전체</option>
-					<option value="">제목</option>
-					<option value="">내용</option>
-				</select>
-			</div>
-		</div>
-		<br />
-		<section
-			style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-			<form action="result.do" method="post">
-				<input type="text" size="60" name="subject"><br>
-				<textarea id="summernote" name="note"></textarea>
-				<c:set value="${sessionScope.mvo.gr_role}" var="role" />
-				<c:if test="${role eq 'ROLE_ADMIN' }">
-					<input type="submit" value="글쓰기"
-						class="btn btn-outline-success btn-sm" style="float: right;">
-				</c:if>
-			</form>
-		</section>
-		<br />
+               <%--  <c:if test="${role eq 'ROLE_ADMIN' }"> --%>
+           <div style="padding-top: 1%; float: right;">
+            <input  value="목록" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" onclick="goList()" >
+         <input type="submit" value="전송" class="btn btn-primary btn-sm" >
+         </div>
+           <%--  </c:if> --%>
 
+         </form>
+      </section>
+      <br />
 
 
-		<!-- Footer -->
-		<footer id="footer">
-			<ul class="icons">
-				<li><a href="https://twitter.com/?lang=ko"
-					class="icon brands alt fa-twitter" target="_blank"><span
-						class="label">Twitter</span></a></li>
-				<li><a href="https://www.facebook.com/"
-					class="icon brands alt fa-facebook-f" target="_blank"><span
-						class="label">Facebook</span></a></li>
-				<li><a href="https://www.instagram.com/"
-					class="icon brands alt fa-instagram" target="_blank"><span
-						class="label">Instagram</span></a></li>
-				<li><a href="mailto:Email@email.com"
-					class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
-			</ul>
-			<ul class="copyright">
-				<li>&copy; COPYRIGHT(C) 2022. Green Academy in Sungnam.</li>
-				<li>Made by 김가람, 강두오, 서해성</li>
-			</ul>
-		</footer>
-	</div>
+
+      <!-- Footer -->
+      <footer id="footer">
+         <ul class="icons">
+            <li><a href="https://twitter.com/?lang=ko"
+               class="icon brands alt fa-twitter" target="_blank"><span
+                  class="label">Twitter</span></a></li>
+            <li><a href="https://www.facebook.com/"
+               class="icon brands alt fa-facebook-f" target="_blank"><span
+                  class="label">Facebook</span></a></li>
+            <li><a href="https://www.instagram.com/"
+               class="icon brands alt fa-instagram" target="_blank"><span
+                  class="label">Instagram</span></a></li>
+            <li><a href="mailto:Email@email.com"
+               class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
+         </ul>
+         <ul class="copyright">
+            <li>&copy; COPYRIGHT(C) 2022. Green Academy in Sungnam.</li>
+            <li>Made by 김가람, 강두오, 서해성</li>
+         </ul>
+      </footer>
 
 
-	<!-- Scripts -->
+   <!-- Scripts -->
+   <script>
+      $('.summernote').summernote(
+            {
+               // 에디터 높이
+               height : 150,
+               // 에디터 한글 설정
+               lang : "ko-KR",
+               disableDragAndDrop : true,
+               // 에디터에 커서 이동 (input창의 autofocus라고 생각하시면 됩니다.)
+               focus : true,
+               toolbar : [
+                     // 글꼴 설정
+                     [ 'fontname', [ 'fontname' ] ],
+                     // 글자 크기 설정
+                     [ 'fontsize', [ 'fontsize' ] ],
+                     // 굵기, 기울임꼴, 밑줄,취소 선, 서식지우기
+                     [
+                           'style',
+                           [ 'bold', 'italic', 'underline',
+                                 'strikethrough', 'clear' ] ],
+                     // 글자색
+                     [ 'color', [ 'forecolor', 'color' ] ],
+                     // 표만들기
+                     [ 'table', [ 'table' ] ],
+                     // 글머리 기호, 번호매기기, 문단정렬
+                     [ 'para', [ 'ul', 'ol', 'paragraph' ] ],
+                     // 줄간격
+                     [ 'height', [ 'height' ] ],
+                     // 그림첨부, 링크만들기, 동영상첨부
+                     [ 'insert', [ 'picture', 'link', 'video' ] ],
+                     // 코드보기, 확대해서보기, 도움말
+                     [ 'view', [ 'codeview', 'fullscreen', 'help' ] ] ],
+               // 추가한 글꼴
+               fontNames : [ 'Arial', 'Arial Black', 'Comic Sans MS',
+                     'Courier New', '맑은 고딕', '궁서', '굴림체', '굴림', '돋음체',
+                     '바탕체' ],
+               // 추가한 폰트사이즈
+               fontSizes : [ '8', '9', '10', '11', '12', '14', '16', '18',
+                     '20', '22', '24', '28', '30', '36', '50', '72' ]
 
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrolly.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/jquery.dropotron.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrollex.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/browser.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/breakpoints.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/util.js"></script>
-	<script
-		src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
+            });
+   </script>
+   <script
+      src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrolly.min.js"></script>
+   <script
+      src="${pageContext.request.contextPath }/resources/assets/js/jquery.dropotron.min.js"></script>
+   <script
+      src="${pageContext.request.contextPath }/resources/assets/js/jquery.scrollex.min.js"></script>
+   <script
+      src="${pageContext.request.contextPath }/resources/assets/js/browser.min.js"></script>
+   <script
+      src="${pageContext.request.contextPath }/resources/assets/js/breakpoints.min.js"></script>
+   <script
+      src="${pageContext.request.contextPath }/resources/assets/js/util.js"></script>
+   <script
+      src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
+   <script 
+		src="${pageContext.request.contextPath}/resources/assets/js/common.js"></script>
 
 
 

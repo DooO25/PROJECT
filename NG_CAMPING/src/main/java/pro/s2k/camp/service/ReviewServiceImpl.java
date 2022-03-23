@@ -15,6 +15,7 @@ import pro.s2k.camp.vo.FileUploadVO;
 import pro.s2k.camp.vo.PagingVO;
 import pro.s2k.camp.vo.ReviewVO;
 
+
 @Slf4j
 @Service("reviewService")
 public class ReviewServiceImpl implements ReviewService{
@@ -38,7 +39,7 @@ public class ReviewServiceImpl implements ReviewService{
 			HashMap<String, Integer> map = new HashMap<String, Integer>();
 			map.put("startNo", pagingVO.getStartNo() );
 			map.put("pageSize", pagingVO.getPageSize());
-//			List<ReviewVO> list = reviewDAO.selectList(map);
+			List<ReviewVO> list = reviewDAO.selectList(map);
 //			// 해당글들의 첨부파일 정보를 넣어준다.
 //			if(list!=null && list.size()>0) {
 //				for(ReviewVO vo : list) {
@@ -49,12 +50,13 @@ public class ReviewServiceImpl implements ReviewService{
 //				}
 //			}
 //			// 완성된 리스트를 페이징 객체에 넣는다.
-//			pagingVO.setList(list);
+			pagingVO.setList(list);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return pagingVO;
 	}
+	
 
 	@Override
 	public ReviewVO selectByIdx(int idx) {
@@ -73,18 +75,19 @@ public class ReviewServiceImpl implements ReviewService{
 		log.info("{}의 insert 호출 : {}", this.getClass().getName(), reviewVO);
 		// 컨트롤러에 있는 파일을 저장하는 부분을 유틸리티 클래스로 빼주면 컨트롤러가 간단해 진다.
 		if(reviewVO!=null) {
-			// 1. 글을 조장한다.
+			// 1. 글을 저장한다.
 			reviewDAO.insert(reviewVO);
+			// VO에 닉네임 저장하기
 			// 저장을 했으면 저장된 idx값을 얻어온다
-			int ref = reviewDAO.selectSeq();
-			// 2. 첨부 파일의 정보도 저장해 주어야 한다.
-			List<FileUploadVO> list = reviewVO.getFileList();
-			if(list!=null && list.size()>0) {
-				for(FileUploadVO vo : list) {
-					vo.setRef(ref); // 원본글번호
-					fileUploadDAO.insert(vo);
-				}
-			}
+//			int ref = reviewDAO.selectSeq();
+//			// 2. 첨부 파일의 정보도 저장해 주어야 한다.
+//			List<FileUploadVO> list = reviewVO.getFileList();
+//			if(list!=null && list.size()>0) {
+//				for(FileUploadVO vo : list) {
+//					vo.setRef(ref); // 원본글번호
+//					fileUploadDAO.insert(vo);
+//				}
+//			}
 		}
 	}
 

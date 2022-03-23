@@ -32,9 +32,11 @@ import pro.s2k.camp.vo.FileUploadVO;
 import pro.s2k.camp.vo.PagingVO;
 import pro.s2k.camp.vo.ReviewVO;
 
+
+
 @Slf4j
 @Controller
-public class BoardController<T> {
+public class BoardController {
 	
 	@Autowired
 	private ReviewService reviewService;
@@ -87,13 +89,13 @@ public class BoardController<T> {
 	// 리뷰 목록보기
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/review.do")
-	public String reviewList(@RequestParam Map<String, String> map, HttpServletRequest request,@ModelAttribute CommonVO commVO, Model model) {
+	public String review(@RequestParam Map<String, String> params, HttpServletRequest request,@ModelAttribute CommonVO commVO, Model model) {
 		Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(request);
 		if(flashMap!=null) {
-			map = (Map<String, String>) flashMap.get("map");
-			commVO.setP(Integer.parseInt(map.get("p")));
-			commVO.setS(Integer.parseInt(map.get("s")));
-			commVO.setB(Integer.parseInt(map.get("b")));
+			params = (Map<String, String>) flashMap.get("map");
+			commVO.setP(Integer.parseInt(params.get("p")));
+			commVO.setS(Integer.parseInt(params.get("s")));
+			commVO.setB(Integer.parseInt(params.get("b")));
 		}
 		PagingVO<ReviewVO> pv = reviewService.selectList(commVO);
 		model.addAttribute("pv", pv);
@@ -107,7 +109,7 @@ public class BoardController<T> {
 	
 	// 저장 
 	@RequestMapping(value = "/reviewInsert.do")
-	public String insertForm(@ModelAttribute CommonVO commVO, Model model) {
+	public String reviewInsert(@ModelAttribute CommonVO commVO, Model model) {
 		model.addAttribute("cv", commVO);
 		return "reviewInsert";
 	}
@@ -116,45 +118,46 @@ public class BoardController<T> {
 //		return "redirect:/review";
 //	}
 
-	@RequestMapping(value = "/reviewInsertOk.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/reviewInsertOk.do", method = RequestMethod.GET)
 	public String reviewInserOkPOST(
 		@ModelAttribute CommonVO commVO,
 		@ModelAttribute ReviewVO reviewVO, 
-		MultipartHttpServletRequest request, Model model,
+		HttpServletRequest request, Model model,
 		RedirectAttributes redirectAttributes) { // redirect시 POST전송을 위해 RedirectAttributes 변수 추가
 	// 일단 VO로 받고
 	reviewVO.setRv_ip(request.getRemoteAddr()); // 아이피 추가로 넣어주고 
+	log.info(reviewVO.getRv_ip()+"##################################################################");
 	log.info("{}의 insertOkPost 호출 : {}", this.getClass().getName(), commVO + "\n" + reviewVO);
 
-	// 넘어온 파일 처리를 하자
-	List<FileUploadVO> fileList = new ArrayList<>(); // 파일 정보를 저장할 리스트
-	
-	List<MultipartFile> multipartFiles = request.getFiles("upfile"); // 넘어온 파일 리스트
-	if(multipartFiles!=null && multipartFiles.size()>0) {  // 파일이 있다면
-		for(MultipartFile multipartFile : multipartFiles) {
-			if(multipartFile!=null && multipartFile.getSize()>0 ) { // 현재 파일이 존재한다면
-				FileUploadVO fileUploadVO = new FileUploadVO(); // 객체 생성하고
-				// 파일 저장하고
-				try {
-					// 저장이름
-					String realPath = request.getRealPath("upload");
-					String saveName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
-					// 저장
-					File target = new File(realPath, saveName);
-					FileCopyUtils.copy(multipartFile.getBytes(), target);
-					// vo를 채우고
-					fileUploadVO.setOriginalName(multipartFile.getOriginalFilename());
-					fileUploadVO.setSaveName(saveName);
-					// 리스트에 추가하고
-					fileList.add(fileUploadVO); 
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	reviewVO.setFileList(fileList);
-	// 서비스를 호출하여 저장을 수행한다.
+//	 // 넘어온 파일 처리를 하자
+//	List<FileUploadVO> fileList = new ArrayList<>(); // 파일 정보를 저장할 리스트
+//	
+//	List<MultipartFile> multipartFiles = request.getFiles("upfile"); // 넘어온 파일 리스트
+//	if(multipartFiles!=null && multipartFiles.size()>0) {  // 파일이 있다면
+//		for(MultipartFile multipartFile : multipartFiles) {
+//			if(multipartFile!=null && multipartFile.getSize()>0 ) { // 현재 파일이 존재한다면
+//				FileUploadVO fileUploadVO = new FileUploadVO(); // 객체 생성하고
+//				// 파일 저장하고
+//				try {
+//					// 저장이름
+//					String realPath = request.getRealPath("upload");
+//					String saveName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
+//					// 저장
+//					File target = new File(realPath, saveName);
+//					FileCopyUtils.copy(multipartFile.getBytes(), target);
+//					// vo를 채우고
+//					fileUploadVO.setOriginalName(multipartFile.getOriginalFilename());
+//					fileUploadVO.setSaveName(saveName);
+//					// 리스트에 추가하고
+//					fileList.add(fileUploadVO); 
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//	}
+//	reviewVO.setFileList(fileList);
+//	// 서비스를 호출하여 저장을 수행한다.
 	reviewService.insert(reviewVO);
 	
 	// redirect시 GET전송 하기
@@ -166,7 +169,7 @@ public class BoardController<T> {
 	map.put("s", commVO.getPageSize() + "");
 	map.put("b",commVO.getBlockSize() + "");
 	redirectAttributes.addFlashAttribute("map", map);
-	return "redirect:/review";
+	return "redirect:/review.do";
 	}
 
 	// 내용보기 : 글 1개를 읽어서 보여준다
@@ -220,39 +223,39 @@ public class BoardController<T> {
 		reviewVO.setRv_ip(request.getRemoteAddr()); // 아이피 추가로 넣어주고 
 		log.info("{}의 updateOKPost 호출 : {}", this.getClass().getName(), commVO + "\n" + reviewVO);
 
-		// 넘어온 파일 처리를 하자
-		List<FileUploadVO> fileList = new ArrayList<>(); // 파일 정보를 저장할 리스트
-		
-		List<MultipartFile> multipartFiles = request.getFiles("upfile"); // 넘어온 파일 리스트
-		if(multipartFiles!=null && multipartFiles.size()>0) {  // 파일이 있다면
-			for(MultipartFile multipartFile : multipartFiles) {
-				if(multipartFile!=null && multipartFile.getSize()>0 ) { // 현재 파일이 존재한다면
-					FileUploadVO fileUploadVO = new FileUploadVO(); // 객체 생성하고
-					// 파일 저장하고
-					try {
-						// 저장이름
-						String realPath = request.getRealPath("upload");
-						String saveName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
-						// 저장
-						File target = new File(realPath, saveName);
-						FileCopyUtils.copy(multipartFile.getBytes(), target);
-						// vo를 채우고
-						fileUploadVO.setOriginalName(multipartFile.getOriginalFilename());
-						fileUploadVO.setSaveName(saveName);
-						// 리스트에 추가하고
-						fileList.add(fileUploadVO); 
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		reviewVO.setFileList(fileList);
+//		// 넘어온 파일 처리를 하자
+//		List<FileUploadVO> fileList = new ArrayList<>(); // 파일 정보를 저장할 리스트
+//		
+//		List<MultipartFile> multipartFiles = request.getFiles("upfile"); // 넘어온 파일 리스트
+//		if(multipartFiles!=null && multipartFiles.size()>0) {  // 파일이 있다면
+//			for(MultipartFile multipartFile : multipartFiles) {
+//				if(multipartFile!=null && multipartFile.getSize()>0 ) { // 현재 파일이 존재한다면
+//					FileUploadVO fileUploadVO = new FileUploadVO(); // 객체 생성하고
+//					// 파일 저장하고
+//					try {
+//						// 저장이름
+//						String realPath = request.getRealPath("upload");
+//						String saveName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
+//						// 저장
+//						File target = new File(realPath, saveName);
+//						FileCopyUtils.copy(multipartFile.getBytes(), target);
+//						// vo를 채우고
+//						fileUploadVO.setOriginalName(multipartFile.getOriginalFilename());
+//						fileUploadVO.setSaveName(saveName);
+//						// 리스트에 추가하고
+//						fileList.add(fileUploadVO); 
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}
+//		reviewVO.setFileList(fileList);
 		// 삭제할 파일 번호를 받아서 삭제할 파일을 삭제해 주어야 한다.
-		String[] delFiles = request.getParameterValues("delfile");
-		// 서비스를 호출하여 저장을 수행한다.
-		String realPath = request.getRealPath("upload");
-		reviewService.update(reviewVO, delFiles, realPath);
+//		String[] delFiles = request.getParameterValues("delfile");
+//		// 서비스를 호출하여 저장을 수행한다.
+//		String realPath = request.getRealPath("upload");
+//		reviewService.update(reviewVO, delFiles, realPath);
 		
 		// redirect시 GET전송 하기
 		// return "redirect:/board/list?p=1&s=" + commVO.getPageSize() + "&b=" + commVO.getBlockSize();

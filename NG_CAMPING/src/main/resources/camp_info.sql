@@ -144,6 +144,7 @@ CREATE TABLE `camp_review` (
  CONSTRAINT `camp_review_FK` FOREIGN KEY (`mb_idx`) REFERENCES `camp_member` (`mb_idx`) ON UPDATE CASCADE
 );
 
+ALTER table camp_review ADD rv_password int not null ;
 -- CREATE TABLE `camp_comment` (
 --  `idx` int(11) NOT NULL,
 --  `mb_nick` varchar(30) NOT NULL,

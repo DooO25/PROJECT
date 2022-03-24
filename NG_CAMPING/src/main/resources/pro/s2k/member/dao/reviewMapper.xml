@@ -21,7 +21,11 @@
 	</select>
 	<!-- 2. 1개 글 구하기 -->
 	<select id="selectByIdx" parameterType="int" resultType="reviewVO">
-		select * from camp_review where idx=#{idx}
+		select a.rv_title, a.rv_modiDate, a.rv_hit, a.rv_content,
+			(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick 
+		from 
+		   camp_review a
+		where rv_idx=#{rv_idx}
 	</select>
 	<!-- 3. 전체 개수 구하기 -->
 	<select id="selectCount" resultType="int">
@@ -30,9 +34,9 @@
 	<!-- 4. 원본글 저장하기 -->
 	<insert id="insert" parameterType="reviewVO">
 		insert into camp_review
-			(mb_idx,rv_password,rv_title,rv_content,rv_regDate,rv_modiDate,rv_ip,del)
+			(mb_idx,rv_title,rv_content,rv_regDate,rv_modiDate,rv_ip,del)
 		values
-			(#{mb_idx},#{rv_password},#{rv_title},#{rv_content},now(),now(),#{rv_ip},1)
+			(#{mb_idx},#{rv_title},#{rv_content},now(),now(),#{rv_ip},1)
 	</insert>
 	<!-- 5. 수정하기 -->
 	<update id="update" parameterType="reviewVO">
@@ -47,60 +51,55 @@
 	<!-- 6. 조회수 증가하기 -->
 	<update id="updateHit" parameterType="int">
 		update camp_review set
-			hit = hit + 1
-		where idx = #{idx}
+			rv_hit = rv_hit + 1
+		where 
+			rv_idx = #{rv_idx}
 	</update>
-	
-	<!-- 답변 -->
-	<!-- 1. 저장하기 -->
+
+<!-- 	comment테이블 생성
+	1. 저장하기
 	<insert id="reply" parameterType="reviewVO">
 		insert into camp_reivew
 			(ref,seq,lev,mb_idx,rv_password,rv_content,rv_regDate,rv_modiDate,rv_ip,del)
 		values
 			(#{ref},#{seq},#{lev},#{mb_idx},#{rv_password},#{rv_content},now(),now(),#{rv_ip},1)
 	</insert>
-	<!-- 2. 나보다 seq가 큰값을 모두 1증가시킴 -->
+	2. 나보다 seq가 큰값을 모두 1증가시킴
 	<update id="updateSeq" parameterType="hashmap">
 		update guest set seq = seq + 1 where ref = #{ref} and seq > #{seq}
 	</update>
 	
-	<!-- 3. 나와 ref가 같으면서 seq가 크거나 같은것 뽑기 -->
+	3. 나와 ref가 같으면서 seq가 크거나 같은것 뽑기
 	<select id="selectSeqList" parameterType="hashmap" resultType="reviewVO">
 		select * from camp_review where ref=#{ref} and seq >= #{seq} order by seq
 	</select>
-	<select id="">
-		
-	</select>
-	
+	 -->
 	
 	<!-- 삭제 -->
 	<!-- 1. 삭제하기 -->
 	<delete id="delete1" parameterType="int">
-		delete from camp_review where idx=#{idx} and del = 0
+		delete from camp_review where rv_idx=#{rv_idx} and del = 0
 	</delete>	
 	<delete id="delete2" parameterType="int">
-		delete from camp_review where idx=#{idx}
+		delete from camp_review where rv_idx=#{rv_idx}
 	</delete>
 	<!-- 2, 삭제표시로 변경하기 -->
 	<update id="updateDel" parameterType="int">
-		update camp_review set del = 0 where idx = #{idx}	
+		update camp_review set del = 0 where rv_idx = #{rv_idx}	
 	</update>
-	<!-- 3. 삭제표시값이 'Y' 모든 데이터 가져오기 -->	
+	<!-- 3. 삭제표시값이 0인 모든 데이터 가져오기 -->	
 	<select id="selectDelList" resultType="reviewVO">
-		select*from camp_review where del = 0 order by idx desc
+		select b.del from camp_review a , camp_comment b where a.rv_idx = b.rv_idx
 	</select>
 	
 	
-	 	<!-- 현재 저장한 idx값 알아내기 -->
+	<!-- 현재 저장한 idx값 알아내기 -->
  	<select id="selectSeq" resultType="int">
  		select max(rv_idx) from camp_review
  	</select>
+
 	
-<!-- <select id="selectNick" resultType="String">
-		select mb_nick from  where (select a.mb_nick from camp_member a, camp_review b  where a.mb_idx = b.mb_idx) = #{mb_idx}
-	</select> -->
 	
-<!-- <select id="selectNick" resultType="String">
-		select distinct a.mb_nick from camp_member a, camp_review b  where a.mb_idx = b.mb_idx
-	</select>  -->
+	
+	
 </mapper>

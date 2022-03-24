@@ -128,11 +128,11 @@ drop table camp_review;
 CREATE TABLE `camp_review` ( 
  `mb_idx` int(11) NOT NULL,
   rv_idx int not null auto_increment,
-  ref int default 0,
-  seq int default 0,
-  lev int default 0,
+--  ref int default 0,
+--  seq int default 0,
+--  lev int default 0,
 --  `mb_nick` varchar(30) NOT NULL,
-   rv_password int not null,
+--   rv_password int not null,
   `rv_title` varchar(100) not NULL,
   `rv_content` text not NULL,
   `rv_regDate` timestamp default now(),
@@ -145,15 +145,21 @@ CREATE TABLE `camp_review` (
 );
 
 ALTER table camp_review ADD rv_password int not null ;
--- CREATE TABLE `camp_comment` (
---  `idx` int(11) NOT NULL,
---  `mb_nick` varchar(30) NOT NULL,
---  `cm_content` text not NULL,
---  `cm_regDate` timestamp default now(),
---  `cm_modiDate` timestamp default now(),
---  PRIMARY KEY (`idx`),
---  CONSTRAINT `camp_comment_FK` FOREIGN KEY (`idx`) REFERENCES `camp_review` (`idx`) ON UPDATE CASCADE
--- );
+ 
+CREATE TABLE `camp_comment` (
+--  `mb_idx` int(11) NOT NULL,
+  `rv_idx` int NOT NULL,
+  co_idx int NOT NULL auto_increment,
+  co_seq int DEFAULT 0, 
+  co_lev int DEFAULT 0,
+  `co_content` text not NULL,
+  `co_regDate` timestamp default now(),
+  `co_modiDate` timestamp default now(),
+  co_ip varchar(20) NOT NULL,
+  del int DEFAULT 1,
+  PRIMARY KEY (`co_idx`),
+  CONSTRAINT `camp_comment_FK` FOREIGN KEY (`rv_idx`) REFERENCES `camp_review` (`rv_idx`) ON UPDATE CASCADE
+ );
 
 create table camp_upload(
    idx int auto_increment primary key,

@@ -26,7 +26,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import pro.s2k.camp.service.CommentService;
 import pro.s2k.camp.service.ReviewService;
+import pro.s2k.camp.vo.CommentVO;
 import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.FileUploadVO;
 import pro.s2k.camp.vo.PagingVO;
@@ -40,6 +42,9 @@ public class BoardController {
 	
 	@Autowired
 	private ReviewService reviewService;
+	@Autowired
+	private CommentService commentService;
+	
 
 	// SummerNote 컨트롤러 ---------------------------------------------------
 	// 다운로드가 가능하게 하자
@@ -98,13 +103,31 @@ public class BoardController {
 			commVO.setB(Integer.parseInt(params.get("b")));
 		}
 		PagingVO<ReviewVO> pv = reviewService.selectList(commVO);
-		model.addAttribute("pv", pv);
+		model.addAttribute("pv", pv); 
 		model.addAttribute("cv", commVO);
-//		List<ReviewVO> list = reviewService.selectList();
-//		model.addAttribute("list", list);
-//		model.addAttribute("newLine", "\n");
-//		model.addAttribute("br", "<br/>");
+
+
 		return "review";
+	}
+	
+	
+	// 저장 
+	@RequestMapping(value = "/replyInsertOk.do", method = RequestMethod.GET)
+	public String replyInsertOk(
+		@ModelAttribute CommonVO commVO,
+		@ModelAttribute CommentVO commentVO, 
+		HttpServletRequest request, Model model,
+		RedirectAttributes redirectAttributes) { // redirect시 POST전송을 위해 RedirectAttributes 변수 추가
+	// 일단 VO로 받고
+	commentVO.setCo_ip(request.getRemoteAddr()); // 아이피 추가로 넣어주고 
+	commentService.insert(commentVO);
+	
+	Map<String, String> map = new HashMap<>();
+	map.put("p",commVO.getCurrentPage() + "");
+	map.put("s",commVO.getPageSize() + "");
+	map.put("b",commVO.getBlockSize() + "");
+	redirectAttributes.addFlashAttribute("map", map);
+	return "/reviewView";
 	}
 	
 	// 저장 
@@ -126,7 +149,6 @@ public class BoardController {
 		RedirectAttributes redirectAttributes) { // redirect시 POST전송을 위해 RedirectAttributes 변수 추가
 	// 일단 VO로 받고
 	reviewVO.setRv_ip(request.getRemoteAddr()); // 아이피 추가로 넣어주고 
-	log.info(reviewVO.getRv_ip()+"##################################################################");
 	log.info("{}의 insertOkPost 호출 : {}", this.getClass().getName(), commVO + "\n" + reviewVO);
 
 //	 // 넘어온 파일 처리를 하자
@@ -185,11 +207,11 @@ public class BoardController {
 			commVO.setP(Integer.parseInt(params.get("p")));
 			commVO.setS(Integer.parseInt(params.get("s")));
 			commVO.setB(Integer.parseInt(params.get("b")));
-			commVO.setIdx(Integer.parseInt(params.get("idx")));
+			commVO.setIdx(Integer.parseInt(params.get("rv_idx")));
 		}
 		
 		ReviewVO reviewVO = reviewService.selectByIdx(commVO.getIdx());
-		model.addAttribute("fv", reviewVO);
+		model.addAttribute("rv", reviewVO);
 		model.addAttribute("cv", commVO);
 		return "reviewView";
 	}
@@ -289,6 +311,7 @@ public class BoardController {
 	public String deleteOk(@ModelAttribute CommonVO commVO,Model model) {
 		return "redirect:/reviewDeleteOk";
 	}
+	
 	@RequestMapping(value = "/reviewDeleteOk.do",method = RequestMethod.POST)
 	public String deleteOkPost(@ModelAttribute CommonVO commVO,
 			@ModelAttribute ReviewVO reviewVO, 
@@ -321,14 +344,14 @@ public class BoardController {
 //		log.info("replyGet 호출");
 //		return "redirect:/review";
 //	}
-	@RequestMapping(value = "/reviewReply.do", method = RequestMethod.POST)
-	public String replyPost(@ModelAttribute ReviewVO reviewVO, HttpServletRequest request) {
-		log.info("replyPost 호출 : " + reviewVO);
-		reviewVO.setRv_ip(request.getRemoteAddr()); // ip저장
-		reviewService.reply(reviewVO);
-		return "redirect:/review";
-	}
-	
+//	@RequestMapping(value = "/reviewReply.do", method = RequestMethod.POST)
+//	public String replyPost(@ModelAttribute ReviewVO reviewVO, HttpServletRequest request) {
+//		log.info("replyPost 호출 : " + reviewVO);
+//		reviewVO.setRv_ip(request.getRemoteAddr()); // ip저장
+//		reviewService.reply(reviewVO);
+//		return "redirect:/review";
+//	}
+//	
 	
 	
 	

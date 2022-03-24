@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -47,10 +51,28 @@
 		logout.submit();
 	}
 
-	function noticeWriteSubmit() {
-		location.href = "";
+	// 폼의 값 유효성 검사하기 스크립트
+	function formCheck(){
+		var value = $("#replyContent").val();
+		if(!value || value.trim().length==0){
+			alert('답변을 반드시 입력해야 합니다.');
+			$("#replyContent").val("");
+			$("#replyContent").focus();
+			return false; 
+		}
 	}
+	const url = new URL(window.location.href);
+	   const urlParams = url.searchParams;
+	   
+	   alert(urlParams.get('idx'));
+	   
+	   
+	   alert("#rv_idx").val();
+	   document.getElementById("rv_idx").value = urlParams.get('idx');
+	  
 </script>
+		
+
 
 <style type="text/css">
 element.style {
@@ -240,8 +262,8 @@ table th {
 			</div>
 			<div class="col-sm-2" style="float: left;">
 				<select name="list" id="list" onchange="window.open(value,'_self');">
-					<option value="/notice.do" selected>공지사항</option>
-					<option value="/review.do">캠핑후기</option>
+					<option value="/notice.do">공지사항</option>
+					<option value="/review.do" selected>캠핑후기</option>
 					<option value="/QnA.do">QnA</option>
 				</select>
 			</div>
@@ -249,58 +271,182 @@ table th {
 		<br> <br>
 		<div>
 			<p
-				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">공지사항</p>
+				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">캠핑후기</p>
 		</div>
 
 
 	</div>
 	<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-		<form action="/notice.do">
 			<br>
 			<table class="table" style="border: 1px solid white;">
 				<thead class="thead-dark">
 					<tr>
 						<th>
 							<div
-								style="text-align: left; font-size: 20px; font-weight: bold; padding-bottom: 1%; padding-left: 2%;">
-								이글의 제목입니다.</div>
+								style="text-align: left; font-size: 20px; font-weight: bold; padding-bottom: 1%; padding-left: 2%;padding-right: 2%;">
+								 ${rv.rv_title }</div>
 							<div class="row" style="padding-left: 2%">
-								<div class="col-1" style="text-align: left; font-size: 15px;">관리자</div>
-								<div class="col-2" style="text-align: left; font-size: 15px;">2022/11/08
-									15:00:54</div>
-								<div class="col-2" style="text-align: left; font-size: 15px;">조회
-									50</div>
+								<div class="col-4" style="text-align: left; font-size: 15px;">닉네임 : ${rv.mb_nick }</div>
+								<div class="col-3" style="text-align: left; font-size: 15px;">등록일 : 
+								<fmt:formatDate value="${rv.rv_modiDate }" pattern="yyyy년 MM월 dd일 HH:mm:ss"/>
+									</div>
+								<div class="col-4" style="text-align: right; font-size: 15px; ">조회수 : ${rv.rv_hit }
+									</div>
 							</div>
 						</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td style="color: white; padding-left: 3%;">내용테스트</td>
+						<td style="color: white; padding-left: 3%;">${rv.rv_content }</td>
 					</tr>
 				</tbody>
 			</table>
 			<c:choose>
 			<c:when test="${role eq 'ROLE_ADMIN' }">
 			<div style="text-align: center;">
-				<button type="button" class="btn btn-outline-secondary"
-					style="margin: auto; width: 100px; height: 60px; margin-right: 1%;" onclick="/notice.do">목록으로</button>
-				<button type="button" class="btn btn-outline-secondary"
-					style="margin: auto; width: 100px; height: 60px;" onclick="/correction.do">수정하기</button>
+				<button type="button" class="btn btn-outline-secondary btn-sm"
+					style="margin: auto; margin-right: 1%;" onclick="/review.do">목록으로</button>
+				<button type="button" class="btn btn-outline-secondary btn-sm"
+					style="margin: auto; " onclick="/reviewUpdate.do">수정하기</button>
 			</div>
 			</c:when>
 			<c:otherwise>
 				<div style="text-align: center;">
-				<button type="button" class="btn btn-outline-secondary"
-					style="margin: auto;" onclick="/notice.do">목록으로</button>
+				<button type="button" class="btn btn-outline-secondary btn-sm"
+					style="margin: auto;" onclick="/review.do">목록으로</button>
+				</div>
 			</c:otherwise>
 			</c:choose>
-		</form>
 	</section>
 	<br />
+	
+
+	<!-- 글 목록이 표시되어야 한다. -->
+	<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
+		<c:if test="${empty cm.list }">
+			<div style="border: 1px solid gray; text-align: center;">등록된 댓글이 없습니다.</div>
+		</c:if>
+	</section>
+		<c:if test="${not empty cm.list }">
+			<c:forEach var="vo" items="${cm.list }" varStatus="vs">
+				<div style="paddingleft:${cm.lev}%;">
+				<!-- 삭제표시가 되어 있으면 삭제표시된 글이라고 표시한다. -->
+				<c:if test="${cm.del==0 }">
+					<div class="title" onclick="return false;" style="background-color: gray;color: red;">삭제된 글입니다.</div>
+				</c:if>
+				<!-- 삭제표시가 되어 있지 않으면 보여준다. -->
+				<c:if test="${cm.del==1 }">
+					<!-- 단계별로 타이틀 색상 변경 -->
+					<div class="title" style="background-color: ${cm.lev==0 ? 'skyblue':cm.lev==1 ? 'orange':cm.lev==2 ? 'pink':'silver' }">
+						<c:out value="${cm.mb_nick }"/>님이 ${vo.rv_ip }에서 
+						<fmt:formatDate value="${cm.rv_regDate }" pattern="yyyy년 MM월 dd일(E) HH:mm:ss"/>에서 남긴글
+						
+						<!-- 삭제표시를 달아보자 -->
+						<button class="delForm btn btn-outline-success btn-sm">삭제</button>
+						<span style="display:none;" onclick="return false;" >
+							<input type="button" value="삭제확인" onclick="deleteOk(${cm.rv_idx})" class="btn btn-outline-danger btn-sm"/>		
+							<input type="button" value="삭제취소" onclick="deleteCancel(this)" class="btn btn-outline-danger btn-sm"/>		
+						</span>
+						<!-- 아이콘에 접기/펼치기 구현 -->
+						<i class="axi axi-ion-chevron-down" style="font-size:10pt;">펼치기</i>
+						
+					</div>
+					<div class="content">
+						<div>
+						<!-- 여기에 글의 내용을 출력한다. -->
+						<c:set var="content" value="${cm.content }"/>
+						<!-- 태그 무시 -->
+						<c:set var="content" value="${fn:replace(content,'<','&lt;') }"/>
+						<!-- \n을 <br>로 변경 -->
+						<c:set var="content" value="${fn:replace(content, newLine, br ) }"/>
+						${cm_content }
+						</div>
+					
+						<div style="text-align: right;">
+							<button class="btn btn-outline-danger btn-sm updateForm">수정하기</button>
+							<button class="btn btn-outline-danger btn-sm replyForm">답변달기</button>
+						</div>
+						<div class="reply">
+							<form action="reply" method="post">
+									<input type="hidden" name="ref" value="${cm.ref }"/>
+									<input type="hidden" name="seq" value="${cm.seq }"/>
+									<input type="hidden" name="lev" value="${cm.lev }"/>
+									<input type="text" name="name" id="name" required="required"
+										placeholder="이름입력"> 
+									<input type="password" name="password"
+										id="password" required="required" placeholder="비번입력"> <br />
+									<textarea style="margin-top: 10px;" rows="3" cols="40"
+										name="content" id="content" required="required" placeholder="내용입력"></textarea>
+									<br /> 
+									<input type="submit" value="답변쓰기"
+										class="btn btn-outline-success btn-sm" /> 
+									<input type="reset"
+										value="다시쓰기" class="btn btn-outline-success btn-sm" /> 
+									<input type="button" class="btn btn-outline-success btn-sm" value="취소" />
+							</form>
+						</div>
+						<div class="reply">
+							<form action="update" method="post">
+									<input type="hidden" name="idx" value="${cm.co_idx }"/>
+									<input type="text" name="name" id="name" readonly="readonly"
+										value="${cm.mb_nick }"> 
+									<input type="password" name="password"
+										id="password" required="required" placeholder="비번입력"> <br />
+									<textarea style="margin-top: 10px;" rows="3" cols="40"
+										name="content" id="content" required="required" placeholder="내용입력">${cm.rv_content }</textarea>
+									<br /> 
+									<input type="submit" value="글수정"
+										class="btn btn-outline-success btn-sm" /> 
+									<input type="reset"
+										value="다시쓰기" class="btn btn-outline-success btn-sm" /> 
+									<input type="button" class="btn btn-outline-success btn-sm" value="취소" />
+							</form>
+						</div>
+					</div>
+				</c:if>
+				</div>
+			</c:forEach>
+		</c:if>
+
+<br /><br />
+	<div>
+	
+			<p
+				style="font-size: 20px; text-align:center; font-weight: bold;">답변작성</p>
+		</div>
+	<form action="${pageContext.request.contextPath}/replyInsertOk.do" onsubmit="return formCheck();">
+		<%-- 페이지번호, 페이지 크기, 블록크기를 숨겨서 넘긴다.  --%>
+					<input type="hidden" name="p"  value="${cv.currentPage }"/>
+					<input type="hidden" name="s"  value="${cv.pageSize }"/>
+					<input type="hidden" name="b"  value="${cv.blockSize }"/>
+<%-- 					<input type="hidden" name="rv_idx"  value="${sesstionScope.mvo.rv_idx }"/> --%>
+					<input type="hidden" id="rv_idx" name="rv_idx" value=""/>
+				
+		<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
+			<textarea id="replyContent" style="background-color: white; color: black;"></textarea>
+		</section>
+			<div style="text-align: center; padding-bottom: 3%">
+				<input type="submit" class="btn btn-outline-secondary btn-sm"
+					style="margin: auto;" value="답변달기">
+				</div>
+		</form>
 
 
 
+
+             	
+
+
+
+
+
+	
+	
+	
+	
+	
+	
 	<!-- Footer -->
 	<footer id="footer">
 		<ul class="icons">
@@ -321,7 +467,6 @@ table th {
 			<li>Made by 김가람, 강두오, 서해성</li>
 		</ul>
 	</footer>
-	</div>
 
 
 	<!-- Scripts -->

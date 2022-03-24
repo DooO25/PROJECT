@@ -16,14 +16,14 @@ public interface ReviewDAO {
 	void update(ReviewVO reviewVO);
 	void updateHit(int idx);
 	
-	// 답변
-	void reply(ReviewVO reviewVO);
-	void updateSeq(HashMap<String, Integer> map);
+//	// 답변
+//	void reply(ReviewVO reviewVO);
+//	void updateSeq(HashMap<String, Integer> map);
+//	List<ReviewVO> selectSeqList(HashMap<String, Integer> map);
 	
 	// 삭제
 	void delete1(int idx); // del비교
 	void delete2(int idx); // del비교X
-	List<ReviewVO> selectSeqList(HashMap<String, Integer> map);
 	void updateDel(int idx);
 	List<ReviewVO> selectDelList();
 	

@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import pro.s2k.camp.dao.CommentDAO;
 import pro.s2k.camp.dao.FileUploadDAO;
 import pro.s2k.camp.dao.ReviewDAO;
+import pro.s2k.camp.vo.CommentVO;
 import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.FileUploadVO;
 import pro.s2k.camp.vo.PagingVO;
@@ -22,6 +24,8 @@ public class ReviewServiceImpl implements ReviewService{
 	
 	@Autowired
 	private ReviewDAO reviewDAO;
+	@Autowired
+	private CommentDAO commentDAO;
 	@Autowired
 	private FileUploadDAO fileUploadDAO;
 
@@ -37,9 +41,10 @@ public class ReviewServiceImpl implements ReviewService{
 			pagingVO = new PagingVO<>(commVO.getCurrentPage(), commVO.getPageSize(), commVO.getBlockSize(), totalCount);
 			// 글을 읽어오기
 			HashMap<String, Integer> map = new HashMap<String, Integer>();
-			map.put("startNo", pagingVO.getStartNo() );
+			map.put("startNo", pagingVO.getStartNo());
 			map.put("pageSize", pagingVO.getPageSize());
 			List<ReviewVO> list = reviewDAO.selectList(map);
+			
 //			// 해당글들의 첨부파일 정보를 넣어준다.
 //			if(list!=null && list.size()>0) {
 //				for(ReviewVO vo : list) {
@@ -62,12 +67,14 @@ public class ReviewServiceImpl implements ReviewService{
 	public ReviewVO selectByIdx(int idx) {
 		log.info("{}의 selectByIdx 호출 : {}", this.getClass().getName(), idx);
 		ReviewVO reviewVO = reviewDAO.selectByIdx(idx); // 글 1개를 가져온다.
-		// 그 글에 해당하는 첨부파일의 정보를 가져온다.
-		if(reviewVO!= null) {
-			List<FileUploadVO> list = fileUploadDAO.selectList(idx);
-			reviewVO.setFileList(list);
-		}
-		log.info("{}의 selectByIdx 리턴 : {}", this.getClass().getName(), reviewVO);
+		reviewVO.setRv_hit(reviewVO.getRv_hit()+1);
+		reviewDAO.updateHit(idx);
+//		// 그 글에 해당하는 첨부파일의 정보를 가져온다.
+//		if(reviewVO!= null) {
+//			List<FileUploadVO> list = fileUploadDAO.selectList(idx);
+//			reviewVO.setFileList(list);
+//		}
+//		log.info("{}의 selectByIdx 리턴 : {}", this.getClass().getName(), reviewVO);
 		return reviewVO;
 	}
 	@Override
@@ -91,23 +98,23 @@ public class ReviewServiceImpl implements ReviewService{
 		}
 	}
 
-	@Override
-	public void reply(ReviewVO reviewVO) {
-		if(reviewVO!=null) {
-			// ref가 같으면서 나보다 seq가 큰값들을 모두 seq 값을 1씩 증가한다.
-			HashMap<String, Integer> map = new HashMap<>();
-			map.put("ref", reviewVO.getRef());
-			map.put("seq", reviewVO.getSeq());
-			reviewDAO.updateSeq(map);
-			// ref는 그대로
-			// seq는 +1
-			reviewVO.setSeq(reviewVO.getSeq()+1);
-			// lev는 +1
-			reviewVO.setLev(reviewVO.getLev()+1);
-			// 댓글 저장
-			reviewDAO.reply(reviewVO);
-		}
-	}
+//	@Override
+//	public void reply(ReviewVO reviewVO) {
+//		if(reviewVO!=null) {
+//			// ref가 같으면서 나보다 seq가 큰값들을 모두 seq 값을 1씩 증가한다.
+//			HashMap<String, Integer> map = new HashMap<>();
+//			map.put("ref", reviewVO.getRef());
+//			map.put("seq", reviewVO.getSeq());
+//			reviewDAO.updateSeq(map);
+//			// ref는 그대로
+//			// seq는 +1
+//			reviewVO.setSeq(reviewVO.getSeq()+1);
+//			// lev는 +1
+//			reviewVO.setLev(reviewVO.getLev()+1);
+//			// 댓글 저장
+//			reviewDAO.reply(reviewVO);
+//		}
+//	}
 
 	@Override
 	public void update(ReviewVO reviewVO, String[] delFiles, String realPath) {
@@ -154,13 +161,13 @@ public class ReviewServiceImpl implements ReviewService{
 			log.info("{}의 update 호출 : {}", this.getClass().getName(), reviewVO + "\n" + uploadPath);
 			// DB에서 해당 글번호의 글 읽어온다.
 			ReviewVO dbVO = reviewDAO.selectByIdx(reviewVO.getRv_idx()); 
-			// 글이 있으면서 비번이 같으면 삭제한다.
-			if(dbVO!=null && dbVO.getRv_password().equals(reviewVO.getRv_password())) {
+			// 글이 있으면 삭제한다.
+			if(dbVO!=null) {
 				// 자식이 있으면 삭제표시만하고 자식이 없으면 지운다.
 				HashMap<String, Integer> map = new HashMap<>();
 				map.put("ref", dbVO.getRef());
 				map.put("seq", dbVO.getSeq());
-				List<ReviewVO> list = reviewDAO.selectSeqList(map); // ref가 같으면서 seq가 크거나 같은것들 가져오기
+				List<ReviewVO> list = commentDAO.selectSeqList(map); // ref가 같으면서 seq가 크거나 같은것들 가져오기
 				
 				int childCount = 0; // 자식의 개수를 구한다.
 				if(list!=null) {
@@ -170,33 +177,23 @@ public class ReviewServiceImpl implements ReviewService{
 						childCount++; // 자식의 개수 증가
 					}
 				}
-				
 				// 자식이 있으면 삭제표시만하고 자식이 없으면 지운다.
 				if(childCount==0) {
-					reviewDAO.delete2(reviewVO.getRv_idx()); // 지우기 === 이 때는 삭제표시가 바뀌지 않은 상태 'N'에서 삭제
-					// 모든 첨부파일의 목록을 읽어온다.
-					List<FileUploadVO> list2 = fileUploadDAO.selectList(reviewVO.getRv_idx());
-					if(list2!=null && list2.size()>0) {
-						for(FileUploadVO vo : list2) {
-							// DB 파일 삭제
-							fileUploadDAO.deleteByIdx(vo.getIdx());
-							// 실제 파일삭제
-							File file = new File(uploadPath + File.separator + vo.getSaveName());
-							file.delete();
-						}
+					reviewDAO.delete2(reviewVO.getRv_idx()); // 지우기 === 이 때는 삭제표시가 바뀌지 않은 상태 '1'에서 삭제
 					}
 				}else {
 					reviewDAO.updateDel(reviewVO.getRv_idx()); // 삭제 표시
 				}
-				// 전체글을 반복하면서 del값이 'Y'이면서 자식이 없는 항목은 완전 삭제를 해줘야 한다.
-				List<ReviewVO> delList = reviewDAO.selectDelList(); // 삭제표시된 목록
+				
+				// 전체글을 반복하면서 del값이 '1'이면서 자식이 없는 항목은 완전 삭제를 해줘야 한다.
+				List<ReviewVO> delList = commentDAO.selectDelList(); // 삭제표시된 목록
 				if(delList!=null) {
 					for(ReviewVO vo : delList) { // 반복
 						// 반복하는 요소의 자식의 개수
 						HashMap<String, Integer> map2 = new HashMap<>();
 						map2.put("ref", vo.getRef());
 						map2.put("seq", vo.getSeq());
-						List<ReviewVO> list2  = reviewDAO.selectSeqList(map2);
+						List<ReviewVO> list2  = commentDAO.selectSeqList(map2);
 						int count = 0;
 						if(list2!=null) {
 							int lev = list2.get(0).getLev();
@@ -206,11 +203,13 @@ public class ReviewServiceImpl implements ReviewService{
 							}
 						}
 						if(count==0) { // 삭제 표시가 있으면서 자식이 없다면 
-							reviewDAO.delete1(vo.getRv_idx()); // 이미 삭제표시가 'Y'인 상태에서 삭제 쿼리 조건에 del='Y'를 포함
+							reviewDAO.delete1(vo.getRv_idx()); // 이미 삭제표시가 '0'인 상태에서 삭제 쿼리 조건에 del='0'를 포함
 						} // end if
 					}// end for
 				}// end if
 			}//end if
 		} // end if
 	} // end method
-}
+
+
+

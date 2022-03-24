@@ -52,7 +52,7 @@ function reviewInsert() { //관리자, 회원이 글쓰기를 눌렀을때
 }
 
 
-alert("${pv.list}");
+/* alert("${pv.list}"); */
 </script>
 
 
@@ -340,9 +340,10 @@ table {
 										${no }
 										<c:set var="no" value="${no-1}"/>
 									</td>
+									
 									<td>
-										<a href="#" onclick='SendPost("${pageContext.request.contextPath }review.jsp",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.rv_idx },"h":1})'>
-												<c:out value="${vo.rv_title }"></c:out>
+										<a href="#" onclick='SendPost("${pageContext.request.contextPath }/reviewView.do",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.rv_idx},"mode":1,"h":1})'>
+												<c:out value="${vo.rv_title }"></c:out> 
 										</a>
 									</td>
 									<td>
@@ -366,35 +367,7 @@ table {
 							<div style="border: none;text-align: center;">
 								${pv.pageList}
 							</div>
-		<%-- 			<c:if test="${not empty pv.list}">
-					<c:if test="${pv.totalCount>0 }">
-					<c:set var="no" value="${pv.totalCount - (pv.currentPage-1)*pv.pageSize}"></c:set>
-						<c:forEach var="vo" items="${pv.list }" varStatus="vs">
-				<tr align="center">
-					<td>${vo.rv_idx }</td>
-					<td align="left" >
-						<a href="#" onclick='SendPost("${pageContext.request.contextPath }/review.do",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.rv_idx },"m":"view","h":"true"})'><c:out value="${vo.rv_title }"></c:out></a>
-						오늘 저장한 글이면 new 아이콘을 달아보자  	
-						<jsp:useBean id="today" scope="request" class="java.util.Date"></jsp:useBean>				
-						<fmt:formatDate value="${today }" pattern="yyyyMMdd" var="day"/> 
-						<fmt:formatDate value="${vo.rv_regDate }" pattern="yyyyMMdd" var="reg"/> 
-						<c:if test="${day==reg }">
-							  <span style="color:red;">New</span>
-						</c:if> 
-					</td>
-					<td>
-						<c:out value="${vo.rv_content }"></c:out>
-					</td>
-					<td>
-						<c:out value="${vo.rv_nick }"></c:out>
-					</td>
-					<td>
-						<fmt:formatDate value="${vo.regDate }" type="date" dateStyle="short"/>
-					</td>
-					<td>
-						<c:out value="${vo.rv_hit }"></c:out>
-					</td>
-					<td> --%>
+
 						<%-- 첨부파일을 다운 받도록 링크를 달아준다. --%>
 				<%-- 		<c:if test="${not empty vo.fileList }">
 							<c:forEach var="fvo" items="${vo.fileList }">
@@ -407,8 +380,6 @@ table {
 						</c:if> --%>
 		<%-- 			</td>
 				</tr>		
-			
-			
 			
 			</c:forEach>
 					</c:if>
@@ -479,7 +450,7 @@ table {
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
 	<script 
-		src="${pageContext.request.contextPath}/resources/assets/js/commons.js"></script>
+		src="${pageContext.request.contextPath}/resources/assets/js/common.js"></script>
 
 
 

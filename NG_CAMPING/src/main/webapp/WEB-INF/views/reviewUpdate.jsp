@@ -259,12 +259,12 @@ b {
 						</div>
           <textarea id="content" name="rv_content" class="summernote"></textarea>
 
-           <c:if test="${role eq 'ROLE_ADMIN' }">
+               <%--  <c:if test="${role eq 'ROLE_ADMIN' }"> --%>
            <div style="padding-top: 1%; float: right;">
             <input  value="목록" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" onclick="goList()" >
          <input type="submit" value="전송" class="btn btn-primary btn-sm" >
          </div>
-           </c:if> 
+           <%--  </c:if> --%>
 
          </form>
       </section>

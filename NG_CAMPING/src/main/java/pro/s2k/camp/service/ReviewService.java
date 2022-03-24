@@ -11,10 +11,10 @@ public interface ReviewService {
 	ReviewVO selectByIdx(int idx);
 	// 원본글 저장
 	void insert(ReviewVO reviewVO);
-	// 답변저장
-	void reply(ReviewVO reviewVO);
+//	// 답변저장
+//	void reply(ReviewVO reviewVO);
 	// 수정
-	void update(ReviewVO reviewV, String[] delFiles, String realPath);
+	void update(ReviewVO reviewVO, String[] delFiles, String realPath);
 	// 삭제
 	void delete(ReviewVO reviewVO, String uploadPath);
 

@@ -32,6 +32,11 @@ public class PagingVO<T> {
 		this.totalCount = totalCount;
 		calc();
 	}
+	
+	public PagingVO(int totalCount) {
+		super();
+		this.totalCount = totalCount;
+	}
 
 	private void calc() {
 		// 나머지 값들은 계산해서 얻는다.
@@ -88,6 +93,10 @@ public class PagingVO<T> {
 	public int getTotalCount() {
 		return totalCount;
 	}
+	
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
 
 	public int getTotalPage() {
 		return totalPage;
@@ -108,6 +117,7 @@ public class PagingVO<T> {
 	public int getEndPage() {
 		return endPage;
 	}
+
 	//------------------------------------------------------------------------------------
 	// 몇개의 필요한 메서드를 추가한다.
 	// 1. 페이지 상단의 페이지 정보를 출력해주는 메서드
@@ -117,6 +127,10 @@ public class PagingVO<T> {
 		if(totalCount>0) {
 			message += "(" + currentPage + "/" + totalPage + "Page)";
 		}
+		return message;
+	}
+	public String getPageInfo2() {
+		String message = "전체 : " + totalCount + "개";
 		return message;
 	}
 	

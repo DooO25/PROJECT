@@ -1,6 +1,6 @@
 package pro.s2k.camp.vo;
 
-import java.util.List;
+import java.sql.Date;
 
 import lombok.Data;
 
@@ -29,10 +29,11 @@ public class CommentVO {
 	private int co_idx;
 	private int co_seq;
 	private int co_lev;
-	private int co_content;
-	private int co_regDate;
-	private int co_modiDate;
+	private String co_content;
+	private Date co_regDate;
+	private Date co_modiDate;
 	private String co_ip;
-	private int del;
+	private int del2;
 	
+	private String mb_nick;
 }

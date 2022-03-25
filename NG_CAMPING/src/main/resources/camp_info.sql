@@ -156,7 +156,7 @@ CREATE TABLE `camp_comment` (
   `co_regDate` timestamp default now(),
   `co_modiDate` timestamp default now(),
   co_ip varchar(20) NOT NULL,
-  del int DEFAULT 1,
+  del2 int DEFAULT 1,
   PRIMARY KEY (`co_idx`),
   CONSTRAINT `camp_comment_FK` FOREIGN KEY (`rv_idx`) REFERENCES `camp_review` (`rv_idx`) ON UPDATE CASCADE
  );

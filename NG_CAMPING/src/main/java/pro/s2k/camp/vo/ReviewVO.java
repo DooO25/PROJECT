@@ -33,10 +33,6 @@ import lombok.NoArgsConstructor;
 public class ReviewVO {
 	private int mb_idx;
 	private int rv_idx;
-	private int ref;
-	private int seq;
-	private int lev;
-	private String rv_password;
 	private String rv_title;
 	private String rv_content;
 	private Date rv_regDate;

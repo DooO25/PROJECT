@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -334,7 +334,7 @@ table {
 					<c:if test="${pv.totalCount>0 }">
 						<c:if test="${not empty pv.list }">
 							<c:set var="no" value="${pv.totalCount - (pv.currentPage-1)*pv.pageSize}"/>
-							<c:forEach var="vo" items="${pv.list }" >
+							<c:forEach var="vo" items="${pv.list }" varStatus="vs" >
 								<tr>
 									<td>
 										${no }
@@ -342,9 +342,18 @@ table {
 									</td>
 									
 									<td>
-										<a href="#" onclick='SendPost("${pageContext.request.contextPath }/reviewView.do",{"p":${pv.currentPage },"s":${pv.pageSize },"b":${pv.blockSize },"idx":${vo.rv_idx},"mode":1,"h":1})'>
-												<c:out value="${vo.rv_title }"></c:out> 
-										</a>
+
+										<form action='<c:url value='${pageContext.request.contextPath }/reviewView.do'/>' method="post" id="rView${vs.index }">
+				                    	     <sec:csrfInput/>
+					                           <input type="hidden" name="p" value="${pv.currentPage }"/>
+					                           <input type="hidden" name="s" value="${pv.pageSize }"/>
+					                           <input type="hidden" name="b" value="${pv.blockSize }"/>
+					                           <input type="hidden" name="rv_idx" value="${vo.rv_idx }"/>
+					                           <input type="hidden" name="mode" value="1"/>
+					                           <input type="hidden" name="h" value="1"/>
+				                        
+				                        </form>
+				                        <a href="#"   onclick="document.getElementById('rView${vs.index}').submit()"><c:out value="${vo.rv_title }"></c:out></a>
 									</td>
 									<td>
 										${vo.rv_content }

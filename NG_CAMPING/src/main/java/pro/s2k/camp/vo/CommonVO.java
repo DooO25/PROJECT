@@ -13,6 +13,10 @@ public class CommonVO {
 	private int pageSize;
 	private int blockSize;
 	private int idx;
+	private int rv_idx;
+	private int qna_idx;
+	private int nt_idx;
+
 	private String mode;
 	
 	public CommonVO() {
@@ -43,6 +47,15 @@ public class CommonVO {
 	public int getIdx() {
 		return idx;
 	}
+	public int getRv_idx() {
+		return rv_idx;
+	}
+	public int getQna_idx() {
+		return qna_idx;
+	}
+	public int getNt_idx() {
+		return nt_idx;
+	}
 
 	public void setIdx(int idx) {
 		this.idx = idx;
@@ -50,6 +63,25 @@ public class CommonVO {
 			this.idx = 0;
 		}
 	}
+	public void setRv_idx(int rv_idx) {
+		this.rv_idx = rv_idx;
+		if(rv_idx<1) {
+			this.rv_idx = 0;
+		}
+	}
+	public void setQna_idx(int qna_idx) {
+		this.qna_idx = qna_idx;
+		if(qna_idx<1) {
+			this.qna_idx = 0;
+		}
+	}
+	public void setNt_idx(int nt_idx) {
+		this.nt_idx = nt_idx;
+		if(nt_idx<1) {
+			this.nt_idx = 0;
+		}
+	}
+
 
 	public String getMode() {
 		return mode;
@@ -112,7 +144,10 @@ public class CommonVO {
 
 	@Override
 	public String toString() {
-		return "ParamVO [p=" + p + ", s=" + s + ", b=" + b + ", currentPage=" + currentPage + ", pageSize=" + pageSize
-				+ ", blockSize=" + blockSize + ", idx=" + idx + ", mode=" + mode + "]";
+		return "CommonVO [p=" + p + ", s=" + s + ", b=" + b + ", currentPage=" + currentPage + ", pageSize=" + pageSize
+				+ ", blockSize=" + blockSize + ", idx=" + idx + ", rv_idx=" + rv_idx + ", qna_idx=" + qna_idx
+				+ ", nt_idx=" + nt_idx + ", mode=" + mode + "]";
 	}
+
+
 }

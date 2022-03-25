@@ -112,18 +112,19 @@ textarea {
 		<section id="banner1">		
 			<div class="row">
 					<div class="col-md-8" style="padding-left: 30% ">
-					<form action="${pageContext.request.contextPath}/login.do" method="post" >
-						<br />
-						<div style="text-align: center;">이메일로 임시 비밀번호가 발급 됩니다.</div>
-					</div>
-					<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
-					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-				 
-					<div class="col-md-4">
-						<input type="submit" value="로그인 가기" style="height: 95px; float: left;"/>
-					</div>
-					</form>
+						<form action="${pageContext.request.contextPath}/login.do" method="post" >
+							<br />
+							<div style="text-align: center;">이메일로 임시 비밀번호가 발급 됩니다.</div>
 					
+						<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					 
+						<div class="col-md-4">
+							<input type="submit" value="로그인 가기" style="height: 95px; float: left;"/>
+						</div>
+						
+						</form>
+					</div>
 			</div>
 		</section>
 		

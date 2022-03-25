@@ -14,7 +14,7 @@ public interface ReviewService {
 //	// 답변저장
 //	void reply(ReviewVO reviewVO);
 	// 수정
-	void update(ReviewVO reviewVO, String[] delFiles, String realPath);
+	void update(ReviewVO reviewVO);
 	// 삭제
 	void delete(ReviewVO reviewVO, String uploadPath);
 

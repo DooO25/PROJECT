@@ -9,11 +9,11 @@ import pro.s2k.camp.vo.ReviewVO;
 public interface CommentDAO {
 	
 	// rv_idx에 따른 모두얻기
-	CommentVO selectList(HashMap<String, Integer> map);
+	List<CommentVO> selectList(int idx);
 	// rv_idx에 따른 1개얻기
 	CommentVO selectByIdx(int idx);
 	// 1개에서 댓글 개수 구하기
-	int selectCounet();
+	int selectCount(int idx);
 	// 저장하기
 	void insert(CommentVO commentVO);
 	// 수정하기

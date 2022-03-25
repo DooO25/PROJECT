@@ -40,10 +40,10 @@
 	</insert>
 	<!-- 5. 수정하기 -->
 	<update id="update" parameterType="reviewVO">
-		update camp_reivew set
+		update camp_review set
 			rv_title = #{rv_title},
 			rv_content = #{rv_content},
-			rv_modidate = #{rv_modidate},
+			rv_modiDate = #{rv_modiDate},
 			rv_ip = #{rv_ip}
 		where
 			rv_idx = #{rv_idx}

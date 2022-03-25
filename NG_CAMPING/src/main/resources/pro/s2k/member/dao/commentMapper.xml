@@ -6,20 +6,20 @@
 	<!-- rv_idx에 따른 모두얻기 -->
 	<select id="selectList" parameterType="hashmap" resultType="commentVO">
 		select
-			a.rv_idx, a.co_idx, a.co_content, a.co_regDate, a.co_modiDate,
+			a.rv_idx, a.co_idx, a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate, a.co_ip, a.del2,
 				(select mb_nick from camp_member where mb_idx
 				 = (select b.mb_idx from camp_review b where b.rv_idx = a.rv_idx)) as mb_nick
 		from
 			camp_comment a
-		order by co_idx desc
+		where rv_idx = #{rv_idx}
+		order by co_idx
 	</select>
 	
 	<!-- co_idx에 따른 1개얻기 -->
 	<select id="selectByIdx" parameterType="int" resultType="commentVO">
 		select
-			a.rv_idx, a.co_idx, a.co_content, a.co_regDate, a.co_modiDate,
-				(select mb_nick from camp_member where mb_idx
-				 = (select b.mb_idx from camp_review b where b.rv_idx = a.rv_idx)) as mb_nick
+			a.rv_idx, a.co_idx,a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate, a.co_ip, a.del2,
+				(select mb_nick from camp_member where mb_idx = (select b.mb_idx from camp_review b where b.rv_idx = a.rv_idx)) as mb_nick
 		from
 			camp_comment a
 		where co_idx = #{co_idx}
@@ -27,8 +27,8 @@
 	</select>
 	
 	<!-- 1개에서 댓글 개수 구하기 -->
-	<select id="selectCount" resultType="int">
-		select count(*) from camp_comment where rv_idx=#{rv_idx}
+	<select id="selectCount" parameterType="int" resultType="int">
+		select count(co_idx) from camp_comment where rv_idx=#{rv_idx}
 	</select>
 	
 	<!-- 저장하기 -->
@@ -61,19 +61,19 @@
 	 
 	 <!-- 삭제 -->
 	 <!-- 삭제하기 -->
-	 	<delete id="delete1" parameterType="int">
-		delete from camp_comment where co_idx=#{co_idx} and del = 0
+	 <delete id="delete1" parameterType="int">
+		delete from camp_comment where co_idx=#{co_idx} and del2 = 0
 	</delete>	
 	<delete id="delete2" parameterType="int">
 		delete from camp_comment where co_idx=#{co_idx}
 	</delete>
 	<!-- 삭제표시로 변경하기 -->
 	<update id="updateDel" parameterType="int">
-		update camp_comment set del = 0 where co_idx = #{co_idx}	
+		update camp_comment set del2 = 0 where co_idx = #{co_idx}	
 	</update>
 	<!-- 삭제표시값이 'Y' 모든 데이터 가져오기 -->	
 	<select id="selectDelList" resultType="commentVO">
-		select*from camp_comment where del = 0 order by co_idx desc
+		select*from camp_comment where del2 = 0 order by co_idx desc
 	</select>
 	
 	  	<!-- 현재 저장한 idx값 알아내기 -->

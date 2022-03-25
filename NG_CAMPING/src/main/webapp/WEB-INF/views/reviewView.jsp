@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -27,6 +27,9 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 	rel="stylesheet">
+<!-- axicon -->
+<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath }/resources/axicon/axicon.min.css" />
 
 <!-- include summernote css/js -->
 <link
@@ -61,15 +64,64 @@
 			return false; 
 		}
 	}
-	const url = new URL(window.location.href);
+const url = new URL(window.location.href);
 	   const urlParams = url.searchParams;
-	   
 	   alert(urlParams.get('idx'));
-	   
-	   
-	   alert("#rv_idx").val();
-	   document.getElementById("rv_idx").value = urlParams.get('idx');
-	  
+	alert("${rv.rv_idx}");
+	document.getelementbyid('rv_idx').value = urlParams.get('idx');
+	
+	$(function(){
+		$("#rere").click(function(){
+			//alert($(this).parent().next().css('display'));
+			if($(this).parent().next().css('display') == 'none'){
+				$(this).parent().next().slideDown(500) // 내용보이기
+				$(this).html("대댓") // 글자 변경
+				$(this).attr("class", "axi axi-ion-chevron-up") // 아이콘 변경
+			}else{
+				$(this).parent().next().slideUp(500);
+				$(this).html("대댓글")
+				$(this).attr("class", "axi axi-ion-chevron-down")
+			}
+		});
+		
+	});
+
+	// 아이디 체크여부
+	var idCheckYn = false; // 전역변수여서 어디든 사용 가능.
+
+	function FnIdcheck() {
+		var check = /^[a-zA-Z0-9]{6,12}$/;
+		var value = $('#ID').val();
+		if (value != null && check.test(value)) {
+			$.ajax({
+				type : "GET", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
+				url : "idCheck.do", // 컨트롤러에서 대기중인 URL 주소이다.
+				data : {
+					"userid" : value
+				},
+				dataType : "text",
+				success : function(count) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+					// 보니깐 count로 할거같던데
+					if (count == 0) { // 있으면
+						alert("ID 사용가능");
+						idCheckYn = true; // 아이디 중복처리를 했다는걸 여기서 true값을 줌.
+					} else if (count > 0) { // 0 이면 없음
+						alert("ID 중복 또는 공백문제입니다. 특수문자도 제외");
+						idCheckYn = false; // 중복된걸 통과시킬순없음 X
+
+					} else { // 이건 오류 (밑에도 타겠지만 값이 안넘오는 경우에 여기서 걸릴거임.)
+						alert("기타 오류입니다.");
+					}
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+					alert("회원가입 실패")
+				}
+			});
+		} else {
+			alert("이름은 6글자이상 12자 이하만 입력되며 공백 및 특수문자가 불가능합니다.");
+		}
+	}
+	
 </script>
 		
 
@@ -273,10 +325,22 @@ table th {
 			<p
 				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">캠핑후기</p>
 		</div>
-
-
 	</div>
+	
+	
 	<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
+		<form action='<c:url value='${pageContext.request.contextPath }/reviewUpdate.do'/>' method="post" id="rView">
+   	     <sec:csrfInput/>
+           <input type="hidden" name="p" value="${cv.currentPage }"/>
+           <input type="hidden" name="s" value="${cv.pageSize }"/>
+           <input type="hidden" name="b" value="${cv.blockSize }"/>
+           <input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
+				<div style="text-align: right;">
+					<input type="button" onclick="location.href='/review.do'" class="btn btn-outline-secondary btn-sm" value="목록"/>
+			       	<a href="#"   onclick="document.getElementById('rView').submit()"><input type="submit" class="btn btn-outline-secondary btn-sm" value="수정"/></a>	
+				</div>
+       </form>
+
 			<br>
 			<table class="table" style="border: 1px solid white;">
 				<thead class="thead-dark">
@@ -302,150 +366,90 @@ table th {
 					</tr>
 				</tbody>
 			</table>
-			<c:choose>
-			<c:when test="${role eq 'ROLE_ADMIN' }">
-			<div style="text-align: center;">
-				<button type="button" class="btn btn-outline-secondary btn-sm"
-					style="margin: auto; margin-right: 1%;" onclick="/review.do">목록으로</button>
-				<button type="button" class="btn btn-outline-secondary btn-sm"
-					style="margin: auto; " onclick="/reviewUpdate.do">수정하기</button>
-			</div>
-			</c:when>
-			<c:otherwise>
-				<div style="text-align: center;">
-				<button type="button" class="btn btn-outline-secondary btn-sm"
-					style="margin: auto;" onclick="/review.do">목록으로</button>
-				</div>
-			</c:otherwise>
-			</c:choose>
+
+
 	</section>
 	<br />
-	
-
 	<!-- 글 목록이 표시되어야 한다. -->
 	<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
 		<c:if test="${empty cm.list }">
 			<div style="border: 1px solid gray; text-align: center;">등록된 댓글이 없습니다.</div>
 		</c:if>
-	</section>
 		<c:if test="${not empty cm.list }">
 			<c:forEach var="vo" items="${cm.list }" varStatus="vs">
-				<div style="paddingleft:${cm.lev}%;">
-				<!-- 삭제표시가 되어 있으면 삭제표시된 글이라고 표시한다. -->
-				<c:if test="${cm.del==0 }">
-					<div class="title" onclick="return false;" style="background-color: gray;color: red;">삭제된 글입니다.</div>
-				</c:if>
-				<!-- 삭제표시가 되어 있지 않으면 보여준다. -->
-				<c:if test="${cm.del==1 }">
-					<!-- 단계별로 타이틀 색상 변경 -->
-					<div class="title" style="background-color: ${cm.lev==0 ? 'skyblue':cm.lev==1 ? 'orange':cm.lev==2 ? 'pink':'silver' }">
-						<c:out value="${cm.mb_nick }"/>님이 ${vo.rv_ip }에서 
-						<fmt:formatDate value="${cm.rv_regDate }" pattern="yyyy년 MM월 dd일(E) HH:mm:ss"/>에서 남긴글
-						
+				<div style="paddingleft:${vo.co_lev*50}px;">
+					<!-- 삭제표시가 되어 있으면 삭제표시된 글이라고 표시한다. -->
+					<c:if test="${vo.del2==0 }">
+						<div onclick="return false;" style="background-color: gray;color: red;">삭제된 댓글입니다.</div>
+					</c:if>
+					<!-- 삭제표시가 되어 있지 않으면 보여준다. -->
+					<c:if test="${vo.del2==1 }">
+						<c:out value="${vo.mb_nick }"/>&nbsp;&nbsp;&nbsp;&nbsp; 
+						<fmt:formatDate value="${vo.co_regDate }" pattern="yyyy년 MM월 dd일 HH:mm:ss"/>
 						<!-- 삭제표시를 달아보자 -->
-						<button class="delForm btn btn-outline-success btn-sm">삭제</button>
+						
+						<button class="delForm btn btn-outline-success btn-sm" id="rere">대댓글</button>
 						<span style="display:none;" onclick="return false;" >
-							<input type="button" value="삭제확인" onclick="deleteOk(${cm.rv_idx})" class="btn btn-outline-danger btn-sm"/>		
+							<input type="button" value="삭제확인" onclick="deleteOk(${vo.rv_idx})" class="btn btn-outline-danger btn-sm"/>		
 							<input type="button" value="삭제취소" onclick="deleteCancel(this)" class="btn btn-outline-danger btn-sm"/>		
 						</span>
-						<!-- 아이콘에 접기/펼치기 구현 -->
-						<i class="axi axi-ion-chevron-down" style="font-size:10pt;">펼치기</i>
-						
-					</div>
-					<div class="content">
-						<div>
-						<!-- 여기에 글의 내용을 출력한다. -->
-						<c:set var="content" value="${cm.content }"/>
-						<!-- 태그 무시 -->
-						<c:set var="content" value="${fn:replace(content,'<','&lt;') }"/>
-						<!-- \n을 <br>로 변경 -->
-						<c:set var="content" value="${fn:replace(content, newLine, br ) }"/>
-						${cm_content }
-						</div>
-					
-						<div style="text-align: right;">
-							<button class="btn btn-outline-danger btn-sm updateForm">수정하기</button>
-							<button class="btn btn-outline-danger btn-sm replyForm">답변달기</button>
-						</div>
-						<div class="reply">
-							<form action="reply" method="post">
-									<input type="hidden" name="ref" value="${cm.ref }"/>
-									<input type="hidden" name="seq" value="${cm.seq }"/>
-									<input type="hidden" name="lev" value="${cm.lev }"/>
-									<input type="text" name="name" id="name" required="required"
-										placeholder="이름입력"> 
-									<input type="password" name="password"
-										id="password" required="required" placeholder="비번입력"> <br />
-									<textarea style="margin-top: 10px;" rows="3" cols="40"
-										name="content" id="content" required="required" placeholder="내용입력"></textarea>
-									<br /> 
-									<input type="submit" value="답변쓰기"
-										class="btn btn-outline-success btn-sm" /> 
-									<input type="reset"
-										value="다시쓰기" class="btn btn-outline-success btn-sm" /> 
-									<input type="button" class="btn btn-outline-success btn-sm" value="취소" />
-							</form>
-						</div>
-						<div class="reply">
-							<form action="update" method="post">
-									<input type="hidden" name="idx" value="${cm.co_idx }"/>
-									<input type="text" name="name" id="name" readonly="readonly"
-										value="${cm.mb_nick }"> 
-									<input type="password" name="password"
-										id="password" required="required" placeholder="비번입력"> <br />
-									<textarea style="margin-top: 10px;" rows="3" cols="40"
-										name="content" id="content" required="required" placeholder="내용입력">${cm.rv_content }</textarea>
-									<br /> 
-									<input type="submit" value="글수정"
-										class="btn btn-outline-success btn-sm" /> 
-									<input type="reset"
-										value="다시쓰기" class="btn btn-outline-success btn-sm" /> 
-									<input type="button" class="btn btn-outline-success btn-sm" value="취소" />
-							</form>
-						</div>
-					</div>
-				</c:if>
+					</c:if>
 				</div>
+						<div class="content">
+							<div style="border: 1px solid white; size:50px; padding-right: 2%; padding-left: 2%; margin: 0 auto;">
+								<!-- 여기에 글의 내용을 출력한다. -->
+								<c:set var="content" value="${vo.co_content }"/>
+								<!-- 태그 무시 -->
+								<c:set var="content" value="${fn:replace(content,'<','&lt;') }"/>
+								<!-- \n을 <br>로 변경 -->
+								<c:set var="content" value="${fn:replace(content, newLine, br ) }"/>
+									${vo.co_content }
+							</div>
+							
+							<!-- 권한 주시면됨 본인 이면 수정삭제-->
+							<div style="text-align: right;">
+								<button class="btn btn-outline-success btn-sm ">수정</button>
+								<button class="btn btn-outline-danger btn-sm ">삭제</button>
+							</div>
+							
+							
+							<div class="reply">
+								<form action="reply" method="post">
+									<input type="hidden" name="rv_idx" value="${vo.rv_idx }"/>
+									<input type="hidden" name="co_seq" value="${vo.co_seq }"/>
+									<input type="hidden" name="co_lev" value="${vo.co_lev }"/>
+								</form>
+							</div>
+						</div>
 			</c:forEach>
-		</c:if>
-
+					</c:if>
+	
+	</section>
+	
 <br /><br />
 	<div>
 	
 			<p
-				style="font-size: 20px; text-align:center; font-weight: bold;">답변작성</p>
+				style="font-size: 20px; text-align:center; font-weight: bold;">댓글작성</p>
 		</div>
-	<form action="${pageContext.request.contextPath}/replyInsertOk.do" onsubmit="return formCheck();">
+	<form action="${pageContext.request.contextPath}/replyInsertOk.do" onsubmit="return formCheck();" method="post">
 		<%-- 페이지번호, 페이지 크기, 블록크기를 숨겨서 넘긴다.  --%>
 					<input type="hidden" name="p"  value="${cv.currentPage }"/>
 					<input type="hidden" name="s"  value="${cv.pageSize }"/>
 					<input type="hidden" name="b"  value="${cv.blockSize }"/>
-<%-- 					<input type="hidden" name="rv_idx"  value="${sesstionScope.mvo.rv_idx }"/> --%>
-					<input type="hidden" id="rv_idx" name="rv_idx" value=""/>
+					<input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
 				
 		<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
-			<textarea id="replyContent" style="background-color: white; color: black;"></textarea>
+			<textarea id="replyContent" name="co_content" style="background-color: white; color: black;"></textarea>
 		</section>
 			<div style="text-align: center; padding-bottom: 3%">
 				<input type="submit" class="btn btn-outline-secondary btn-sm"
-					style="margin: auto;" value="답변달기">
+					style="margin: auto;" value="댓글달기">
 				</div>
 		</form>
 
 
 
-
-             	
-
-
-
-
-
-	
-	
-	
-	
-	
 	
 	<!-- Footer -->
 	<footer id="footer">

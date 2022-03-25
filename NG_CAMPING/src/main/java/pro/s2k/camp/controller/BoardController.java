@@ -105,14 +105,39 @@ public class BoardController {
 		PagingVO<ReviewVO> pv = reviewService.selectList(commVO);
 		model.addAttribute("pv", pv); 
 		model.addAttribute("cv", commVO);
-
-
 		return "review";
+	}
+	
+	// 내용보기 : 글 1개를 읽어서 보여준다
+	@SuppressWarnings({ "unchecked"})
+	@RequestMapping(value = "/reviewView.do", method = RequestMethod.POST)
+	public String reviewView(@RequestParam Map<String, String> params, HttpServletRequest request,@ModelAttribute CommonVO commVO,Model model) {
+		log.info("{}의 view호출 : {}", this.getClass().getName(), commVO);
+		// POST전송된것을 받으려면 RequestContextUtils.getInputFlashMap(request)로 맵이 존재하는지 판단해서
+		// 있으면 POST처리를 하고 없으면 GET으로 받아서 처리를 한다.
+		Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(request);
+		if(flashMap!=null) {
+			params = (Map<String, String>) flashMap.get("map");
+			commVO.setP(Integer.parseInt(params.get("p")));
+			commVO.setS(Integer.parseInt(params.get("s")));
+			commVO.setB(Integer.parseInt(params.get("b")));
+			commVO.setRv_idx(Integer.parseInt(params.get("rv_idx")));
+		}
+		ReviewVO reviewVO = reviewService.selectByIdx(commVO.getRv_idx());
+		reviewVO.setRv_idx(commVO.getRv_idx());
+		log.info(reviewVO.getRv_idx()+"############################################################################################################");
+		model.addAttribute("rv", reviewVO);
+		model.addAttribute("cv", commVO);
+		CommentVO commentVO = commentService.selectByIdx(commVO.getRv_idx());
+		model.addAttribute("f", commentVO); // 이걸로 한개를 불러옴.
+		PagingVO<CommentVO> vo = commentService.selectList(commVO.getRv_idx());
+		model.addAttribute("cm", vo);
+		return "reviewView";
 	}
 	
 	
 	// 저장 
-	@RequestMapping(value = "/replyInsertOk.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/replyInsertOk.do")
 	public String replyInsertOk(
 		@ModelAttribute CommonVO commVO,
 		@ModelAttribute CommentVO commentVO, 
@@ -121,14 +146,14 @@ public class BoardController {
 	// 일단 VO로 받고
 	commentVO.setCo_ip(request.getRemoteAddr()); // 아이피 추가로 넣어주고 
 	commentService.insert(commentVO);
-	
 	Map<String, String> map = new HashMap<>();
 	map.put("p",commVO.getCurrentPage() + "");
 	map.put("s",commVO.getPageSize() + "");
 	map.put("b",commVO.getBlockSize() + "");
 	redirectAttributes.addFlashAttribute("map", map);
-	return "/reviewView";
+	return "reviewView";
 	}
+	
 	
 	// 저장 
 	@RequestMapping(value = "/reviewInsert.do")
@@ -141,7 +166,7 @@ public class BoardController {
 //		return "redirect:/review";
 //	}
 
-	@RequestMapping(value = "/reviewInsertOk.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/reviewInsertOk.do", method = RequestMethod.POST)
 	public String reviewInserOkPOST(
 		@ModelAttribute CommonVO commVO,
 		@ModelAttribute ReviewVO reviewVO, 
@@ -194,28 +219,7 @@ public class BoardController {
 	return "redirect:/review.do";
 	}
 
-	// 내용보기 : 글 1개를 읽어서 보여준다
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/reviewView.do")
-	public String view(@RequestParam Map<String, String> params, HttpServletRequest request,@ModelAttribute CommonVO commVO,Model model) {
-		log.info("{}의 view호출 : {}", this.getClass().getName(), commVO);
-		// POST전송된것을 받으려면 RequestContextUtils.getInputFlashMap(request)로 맵이 존재하는지 판단해서
-		// 있으면 POST처리를 하고 없으면 GET으로 받아서 처리를 한다.
-		Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(request);
-		if(flashMap!=null) {
-			params = (Map<String, String>) flashMap.get("map");
-			commVO.setP(Integer.parseInt(params.get("p")));
-			commVO.setS(Integer.parseInt(params.get("s")));
-			commVO.setB(Integer.parseInt(params.get("b")));
-			commVO.setIdx(Integer.parseInt(params.get("rv_idx")));
-		}
-		
-		ReviewVO reviewVO = reviewService.selectByIdx(commVO.getIdx());
-		model.addAttribute("rv", reviewVO);
-		model.addAttribute("cv", commVO);
-		return "reviewView";
-	}
-	
+
 	// 수정하기
 //	@RequestMapping(value = "/reviewUpdate.do", method = RequestMethod.GET)
 //	public String update(ModelAttribute CommonVO commVO,Model model) {
@@ -223,28 +227,46 @@ public class BoardController {
 //		return "redirect:/review";
 //	}
 	
-	@RequestMapping(value = "/reviewUpdate.do", method = RequestMethod.POST)
-	public String updatePost(@ModelAttribute CommonVO commVO,Model model) {
-		ReviewVO reviewVO = reviewService.selectByIdx(commVO.getIdx());
-		model.addAttribute("fv", reviewVO);
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/reviewUpdate.do",method = RequestMethod.POST , produces = "text/plain;charset=UTF-8")
+	public String updatePost(@RequestParam Map<String, String> params, HttpServletRequest request,@ModelAttribute CommonVO commVO,Model model) {
+		Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(request);
+		if(flashMap!=null) {
+			params = (Map<String, String>) flashMap.get("map");
+			commVO.setP(Integer.parseInt(params.get("p")));
+			commVO.setS(Integer.parseInt(params.get("s")));
+			commVO.setB(Integer.parseInt(params.get("b")));
+			commVO.setRv_idx(Integer.parseInt(params.get("rv_idx")));
+		}
+		ReviewVO reviewVO = reviewService.selectByIdx(commVO.getRv_idx());
+		reviewVO.setRv_idx(commVO.getRv_idx());
+		model.addAttribute("rv", reviewVO);
 		model.addAttribute("cv", commVO);
 		return "reviewUpdate";
 	}
-
-	@RequestMapping(value = "/reviewUpdateOk",method = RequestMethod.GET)
-	public String updateOk(@ModelAttribute CommonVO commVO,Model model) {
-		return "redirect:/review";
-	}
 	
-	@RequestMapping(value = "/reviewUpdateOk",method = RequestMethod.POST)
-	public String updateOkPost(@ModelAttribute CommonVO commVO,
+
+
+//	@RequestMapping(value = "/reviewUpdateOk.do",method = RequestMethod.GET)
+//	public String updateOk(@ModelAttribute CommonVO commVO,Model model) {
+//		return "redirect:/review";
+//	}
+	
+	
+	
+	
+	
+	@RequestMapping(value = "/reviewUpdateOk.do",method = RequestMethod.POST, produces = "application/json; charset=UTF8")
+	@ResponseBody
+	public Map<String, String> updateOkPost(@ModelAttribute CommonVO commVO,
 			@ModelAttribute ReviewVO reviewVO, 
-			MultipartHttpServletRequest request, Model model,
+			HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		// 일단 VO로 받고
 		reviewVO.setRv_ip(request.getRemoteAddr()); // 아이피 추가로 넣어주고 
 		log.info("{}의 updateOKPost 호출 : {}", this.getClass().getName(), commVO + "\n" + reviewVO);
-
+		String a = null;
+		a = reviewVO.getRv_idx() + "";
 //		// 넘어온 파일 처리를 하자
 //		List<FileUploadVO> fileList = new ArrayList<>(); // 파일 정보를 저장할 리스트
 //		
@@ -277,7 +299,7 @@ public class BoardController {
 //		String[] delFiles = request.getParameterValues("delfile");
 //		// 서비스를 호출하여 저장을 수행한다.
 //		String realPath = request.getRealPath("upload");
-//		reviewService.update(reviewVO, delFiles, realPath);
+		reviewService.update(reviewVO);
 		
 		// redirect시 GET전송 하기
 		// return "redirect:/board/list?p=1&s=" + commVO.getPageSize() + "&b=" + commVO.getBlockSize();
@@ -287,10 +309,15 @@ public class BoardController {
 		map.put("p", commVO.getCurrentPage() + "");
 		map.put("s", commVO.getPageSize() + "");
 		map.put("b",commVO.getBlockSize() + "");
-		map.put("idx",commVO.getIdx() + "");
+		map.put("rv_idx",commVO.getRv_idx() + "");
 		redirectAttributes.addFlashAttribute("map", map);
-		return "redirect:/reviewView";
+		return map;
 	}
+	 
+	
+	
+	
+	
 	
 	// 글삭제
 //	@RequestMapping(value = "/reviewDelete.do", method = RequestMethod.GET)

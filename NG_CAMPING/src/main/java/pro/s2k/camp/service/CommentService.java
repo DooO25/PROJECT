@@ -7,7 +7,7 @@ import pro.s2k.camp.vo.PagingVO;
 public interface CommentService {
 	
 	//목록보기
-	CommentVO selectList(CommonVO commonVO);
+	PagingVO<CommentVO> selectList(int idx);
 	// 리뷰 답글 보기
 	CommentVO selectByIdx(int idx);
 	// 답글 저장

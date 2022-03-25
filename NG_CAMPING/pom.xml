@@ -52,6 +52,11 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${springsecurity.version}</version>
 		</dependency>
+		<dependency>
+         <groupId>org.springframework.security</groupId>
+         <artifactId>spring-security-taglibs</artifactId>
+         <version>${springsecurity.version}</version>
+      </dependency>
 
 		<!-- JDBC 추가 시작 -->
 		<dependency>
@@ -296,6 +301,7 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
+
 
 		<!-- Test -->
 		<dependency>

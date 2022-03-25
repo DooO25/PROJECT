@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-   pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -65,9 +65,34 @@
 		SendPost("${pageContext.request.contextPath }/review.do",{"p":${cv.currentPage },"s":${cv.pageSize },"b":${cv.blockSize }});
 	}
 	
-	var test = "${sessionScope.mvo.mb_idx}";
+/* 	const url = new URL(window.location.href);
+	   const urlParams = url.searchParams;
+	   alert(urlParams.get('idx'));
+	alert("${rv.rv_idx}");
+	document.getelementbyid('rv_idx').value = urlParams.get('idx');
+	 */
+	function sendData() {
+			$.ajax({
+				type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
+				url : "reviewUpdateOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
+				data :$('#rView').serialize(),
+				dataType : "text",
+				
+				success : function(idx) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+					var jsonStr = JSON.parse(idx); console.log(jsonStr);
+					/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
+					document.sendData.p.value = jsonStr.p;
+					document.sendData.s.value = jsonStr.s;
+					document.sendData.b.value = jsonStr.b;
+					document.sendData.rv_idx.value = jsonStr.rv_idx;
+					document.sendData.submit(); 
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+				}
+			});
+	}
 	
-	alert(test);
+
 </script>
 
 
@@ -241,36 +266,41 @@ b {
       </div>
          </div>
       <br >
-      <section
-         style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-         <form action="${pageContext.request.contextPath}/reviewInsertOk.do" enctype="multipart/form-data" onsubmit="return formCheck();">
-             	<%-- 페이지번호, 페이지 크기, 블록크기를 숨겨서 넘긴다.  --%>
-					<input type="hidden" name="p"  value="${cv.currentPage }"/>
-					<input type="hidden" name="s"  value="${cv.pageSize }"/>
-					<input type="hidden" name="b"  value="${cv.blockSize }"/>
-					<input type="hidden" name="mb_idx"  value="${sessionScope.mvo.mb_idx }"/>
-
-				
+      <section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
+         
+         	<form action='<c:url value='${pageContext.request.contextPath }/reviewUpdateOk.do'/>' method="post" id="rView">
+        	    <sec:csrfInput/>
+                <input type="hidden" name="p" value="${cv.currentPage }"/>
+                <input type="hidden" name="s" value="${cv.pageSize }"/>
+                <input type="hidden" name="b" value="${cv.blockSize }"/>
+                <input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
+          
+         
 					<div class="row">
 							<div class="col-sm-7">
 			            	    <label for="ID"  style="font-size: 20px;font-weight: bold;"> 제목</label>
-			            		<input type="text" id="title" name="rv_title" style="background-color: white; color: black;"><br>
+			            		<input type="text" id="title" name="rv_title" style="background-color: white; color: black;" value="${rv.rv_title }" ><br>
 							</div>
 						</div>
-          <textarea id="content" name="rv_content" class="summernote"></textarea>
+          <textarea id="content" name="rv_content" class="summernote" >${rv.rv_content }</textarea>
 
-               <%--  <c:if test="${role eq 'ROLE_ADMIN' }"> --%>
            <div style="padding-top: 1%; float: right;">
-            <input  value="목록" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" onclick="goList()" >
-         <input type="submit" value="전송" class="btn btn-primary btn-sm" >
+            <input  value="취소" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" onclick="goList()" >
+            <a href="#"   onclick="document.getElementById('rView').submit()"> <input type="submit" value="수정" class="btn btn-primary btn-sm" ></a>
          </div>
-           <%--  </c:if> --%>
+      
 
          </form>
       </section>
       <br />
 
-
+<form action='<c:url value='${pageContext.request.contextPath }/reviewView.do'/>' method="post" id="sendData" name="sendData">
+        	    <sec:csrfInput/>
+                <input type="hidden" name="p" value="${cv.currentPage }"/>
+                <input type="hidden" name="s" value="${cv.pageSize }"/>
+                <input type="hidden" name="b" value="${cv.blockSize }"/>
+                <input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
+</form>
 
       <!-- Footer -->
       <footer id="footer">

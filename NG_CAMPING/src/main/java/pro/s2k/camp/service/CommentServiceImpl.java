@@ -1,6 +1,7 @@
 package pro.s2k.camp.service;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import pro.s2k.camp.dao.CommentDAO;
 import pro.s2k.camp.vo.CommentVO;
 import pro.s2k.camp.vo.CommonVO;
+import pro.s2k.camp.vo.PagingVO;
 import pro.s2k.camp.vo.ReviewVO;
 
 @Slf4j
@@ -19,15 +21,36 @@ public class CommentServiceImpl implements CommentService {
 	private CommentDAO commentDAO;
 	
 	@Override
-	public CommentVO selectList(CommonVO commonVO) {
-		// TODO Auto-generated method stub
-		return null;
+	public PagingVO<CommentVO> selectList(int idx) {
+		PagingVO<CommentVO> pagingVO = null;
+		try {
+			// 1개글에서 총 개수 구하기
+			int totalCount = commentDAO.selectCount(idx);
+			pagingVO = new PagingVO<>(totalCount);
+//			 글을 읽어오기
+			List<CommentVO> list = commentDAO.selectList(idx);
+//			// 해당글들의 첨부파일 정보를 넣어준다.
+//			if(list!=null && list.size()>0) {
+//				for(ReviewVO vo : list) {
+//					// 해당글의 첨부파일 목록을 가져온다.
+//					List<FileUploadVO> fileList =  fileUploadDAO.selectList(vo.getRv_idx());
+//					// vo에 넣는다.
+//					vo.setFileList(fileList);
+//				}
+//			}
+//			// 완성된 리스트를 페이징 객체에 넣는다.
+			pagingVO.setList(list);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pagingVO;
 	}
+	
 	
 	@Override
 	public CommentVO selectByIdx(int idx) {
 		CommentVO commentVO = commentDAO.selectByIdx(idx);
-		return null;
+		return commentVO;
 	}
 
 	@Override

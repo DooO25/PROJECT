@@ -14,9 +14,12 @@ public class CommonVO {
 	private int blockSize;
 	private int idx;
 	private int rv_idx;
+	private int co_idx;
+	private int co_ref;
+	private int co_seq;
 	private int qna_idx;
 	private int nt_idx;
-
+	
 	private String mode;
 	
 	public CommonVO() {
@@ -50,6 +53,15 @@ public class CommonVO {
 	public int getRv_idx() {
 		return rv_idx;
 	}
+	public int getCo_idx() {
+		return co_idx;
+	}
+	public int getCo_ref() {
+		return co_ref;
+	}
+	public int getCo_seq() {
+		return co_seq;
+	}
 	public int getQna_idx() {
 		return qna_idx;
 	}
@@ -67,6 +79,24 @@ public class CommonVO {
 		this.rv_idx = rv_idx;
 		if(rv_idx<1) {
 			this.rv_idx = 0;
+		}
+	}
+	public void setCo_idx(int co_idx) {
+		this.co_idx = co_idx;
+		if(co_idx<1) {
+			this.co_idx = 0;
+		}
+	}
+	public void setCo_ref(int co_ref) {
+		this.co_ref = co_ref;
+		if(co_ref<1) {
+			this.co_ref = 0;
+		}
+	}
+	public void setCo_seq(int co_seq) {
+		this.co_seq = co_seq;
+		if(co_seq<1) {
+			this.co_seq = 0;
 		}
 	}
 	public void setQna_idx(int qna_idx) {
@@ -145,9 +175,11 @@ public class CommonVO {
 	@Override
 	public String toString() {
 		return "CommonVO [p=" + p + ", s=" + s + ", b=" + b + ", currentPage=" + currentPage + ", pageSize=" + pageSize
-				+ ", blockSize=" + blockSize + ", idx=" + idx + ", rv_idx=" + rv_idx + ", qna_idx=" + qna_idx
-				+ ", nt_idx=" + nt_idx + ", mode=" + mode + "]";
+				+ ", blockSize=" + blockSize + ", idx=" + idx + ", rv_idx=" + rv_idx + ", co_idx=" + co_idx
+				+ ", co_ref=" + co_ref + ", co_seq=" + co_seq + ", qna_idx=" + qna_idx + ", nt_idx=" + nt_idx
+				+ ", mode=" + mode + "]";
 	}
+
 
 
 }

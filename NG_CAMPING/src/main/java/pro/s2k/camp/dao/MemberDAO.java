@@ -12,8 +12,6 @@ public interface MemberDAO {
 		void insert(MemberVO memberVO); 
 		// 2. 1개 얻기
 		MemberVO selectByIdx(int idx);
-		// 3. 수정하기
-		void update(MemberVO memberVO);
 		// 4. 삭제하기
 		void delete(int idx);
 		// 5. 모두보기(관리자만 사용) 
@@ -31,14 +29,18 @@ public interface MemberDAO {
 		// 11. 인증여부를 변경하는 쿼리
 		void updateRole(HashMap<String, String> map);
 		// 12. 비밀번호 변경하기
-		void updatePassword(HashMap<String, String> map);
+		int updatePassword(HashMap<String, String> map);
 		// 13. ID로 가져오기
 		MemberVO selectUserId(String userid);
-		
-		//14. 카카오 정보 찾기
-		MemberVO findKakao(HashMap<String, Object> userInfo);
-		//15. 카카오 정보 저장
-		void kakaoInsert(HashMap<String, Object> userInfo);
+		// 14. 주소 변경하기
+		void updateaddress(HashMap<String, String> map);
+		// 15. 닉네임 변경하기
+		int updatenick(HashMap<String, String> map);
+		int userdelete(String userid);		
+		/*
+		 * //14. 카카오 정보 찾기 MemberVO findKakao(HashMap<String, Object> userInfo); //15.
+		 * 카카오 정보 저장 void kakaoInsert(HashMap<String, Object> userInfo);
+		 */
 
 
 } 

@@ -10,14 +10,14 @@ public interface CommentService {
 	PagingVO<CommentVO> selectList(int idx);
 	// 리뷰 답글 보기
 	CommentVO selectByIdx(int idx);
-	// 답글 저장
+	// 댓글 저장
 	void insert(CommentVO commentVO);
 	// 수정
 	void update(CommentVO commentVO, String[] delFiles, String realPath);
 	// 삭제
 	void delete(CommentVO commentVO, String uploadPath);
-	
-	
+	// 댓글
+	void reply(CommentVO commentVO);
 	
 	
 	

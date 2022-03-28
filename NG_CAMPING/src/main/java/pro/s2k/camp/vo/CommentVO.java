@@ -27,6 +27,7 @@ import lombok.Data;
 public class CommentVO {
 	private int rv_idx;
 	private int co_idx;
+	private int co_ref;
 	private int co_seq;
 	private int co_lev;
 	private String co_content;

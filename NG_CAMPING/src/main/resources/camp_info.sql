@@ -91,20 +91,22 @@ CREATE TABLE `camp_notice` (
 
 drop table camp_question;
 
-CREATE TABLE `camp_question` (
+CREATE TABLE `camp_qna` (
   `mb_idx` int(11) NOT null ,
-  q_idx int not null auto_increment,
-  ref int default 0,
-  seq int default 0,
-  lev int default 0,
-  `q_title` varchar(100) not NULL,
-  `q_content` text not NULL,
-  `mb_nick` varchar(30) NOT NULL,
-  `q_regDate` timestamp default now(),
-  `q_modiDate` timestamp default now(),
-  `q_hit` int(11) default 0,
-  del int default 1,
-  PRIMARY KEY (`q_idx`),
+  qna_idx int not null auto_increment,
+  qna_ref int default 0,
+--  seq int default 0,
+--  lev int default 0,
+  `qna_title` varchar(100) not NULL,
+  `qna_content` text not NULL,
+--  `mb_nick` varchar(30) NOT NULL,
+  `qna_regDate` timestamp default now(),
+  `qna_modiDate` timestamp default now(),
+	qna_ip varchar(20) NOT NULL,
+  --  `q_hit` int(11) default 0,
+--  del int default 1,
+	qna_read int DEFAULT 0,
+  PRIMARY KEY (`qna_idx`),
   CONSTRAINT `camp_question_FK` FOREIGN KEY (`mb_idx`) REFERENCES `camp_member` (`mb_idx`) ON UPDATE CASCADE
 );
 
@@ -145,11 +147,12 @@ CREATE TABLE `camp_review` (
 );
 
 ALTER table camp_review ADD rv_password int not null ;
- 
+ drop table camp_comment ;
 CREATE TABLE `camp_comment` (
 --  `mb_idx` int(11) NOT NULL,
-  `rv_idx` int NOT NULL,
-  co_idx int NOT NULL auto_increment,
+ `rv_idx` int NOT NULL,  
+co_idx int NOT NULL auto_increment,
+  co_ref int DEFAULT 0,
   co_seq int DEFAULT 0, 
   co_lev int DEFAULT 0,
   `co_content` text not NULL,
@@ -190,3 +193,4 @@ CREATE TABLE `sns_kakao` (
 			mr.mb_ID='rkdendh' and a.authkey='b516e506-649a-4ff7-99e7-112088b65491';
 
 alter table camp_member add column sns_email varchar (200);
+alter table camp_comment  auto_increment =1;

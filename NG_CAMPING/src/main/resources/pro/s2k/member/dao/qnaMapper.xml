@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pro.s2k.camp.dao.QnADAO">
+	<!-- 전체 가져오기 -->
+	<select  id="selectList" parameterType="hashmap" resultType="QnAVO">
+		select 
+			a.qna_idx, a.qna_title, a.qna_content, a.qna_regDate, a.qna_modiDate, a.qna_ip,
+			(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+		from
+			camp_qna a
+		order by
+			qna_idx desc limit #{startNo}, #{pageSize}
+	</select>
+	
+	<!--  1개 가져오기 -->
+	<select id="selectByIdx" parameterType="int" resultType="QnAVO">
+		select a.qna_title,a.qna_ref, a.qna_content, a.qna_modiDate, a.qna_ip,
+		 (select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+		from
+			camp_qna a
+		where qna_idx=#{qna_idx}
+	</select>
+	
+	<!-- 전체 개수 구하기 -->
+	<select id="selectCount" resultType="int">
+		select count(*) from camp_qna		
+	</select>
+	<!-- 원본글 저장 -->
+	<insert id="insert" parameterType="QnAVO">
+		insert into camp_qna
+			(mb_idx, qna_title, qna_content, qna_regDate, qna_modiDate, qna_ip)
+		values
+			(#{mb_idx}, #{qna_title}, #{qna_content}, now(), now(), #{qna_ip})
+	</insert>	
+	<!-- 답변 저장 -->
+	<insert id="reply" parameterType="QnAVO">
+		insert into camp_qna
+			(qna_ref, mb_idx, qna_title, qna_content, qna_regDate, qna_modiDate, qna_ip)
+		values
+			(#{qna_ref},#{mb_idx}, #{qna_title}, #{qna_content}, now(), now(), #{qna_ip})
+	</insert>	
+
+	
+	<!-- 수정하기 -->
+	<update id="update" parameterType="QnAVO">
+		update camp_qna set
+			qna_title = #{qna_title},
+			qna_content = #{qna_content},
+			qna_modiDate = #{rv_modiDate},
+			qna_ip = ${qna_ip}
+		where
+			qna_idx = #{qna_idx}
+	</update>
+	<!-- 삭제하기 -->
+	<delete id="delete" parameterType="int">
+		delete from camp_qna where qna_idx=#{qna_idx}
+	</delete>
+	
+	<!-- 관리자가 읽으면 +1 -->
+	<update id="updateRead" parameterType="int">
+		update camp_qna set
+			qna_read = qna_read +1
+		where
+			qna_idx = #{qna_idx}
+	</update>
+
+
+</mapper>

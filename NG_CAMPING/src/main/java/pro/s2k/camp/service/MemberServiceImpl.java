@@ -30,6 +30,7 @@ import pro.s2k.camp.dao.MemberDAO;
 import pro.s2k.camp.dao.RoleDAO;
 import pro.s2k.camp.vo.KakaoVO;
 import pro.s2k.camp.vo.MemberVO;
+import pro.s2k.camp.vo.RoleVO;
 
 @Slf4j
 @Service("memberService")
@@ -73,43 +74,27 @@ public class MemberServiceImpl implements MemberService{
 		}
 	}
 	
+	
+	// 유저 탈퇴
 	@Override
-	public MemberVO update(MemberVO memberVO) {
-		if(memberVO!=null) {
-			MemberVO dbVO = memberDAO.selectByIdx(memberVO.getMb_idx());
-			if(dbVO!=null) {
-				String dbPassword = dbVO.getMb_password();
-				if(bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
-					memberDAO.update(memberVO);
-					dbVO = memberDAO.selectByIdx(memberVO.getMb_idx());
-					return dbVO;
-				}
-			}
-		}
-		return null;
+	public int userdelete(String mb_ID) {
+		memberDAO.userdelete(mb_ID);
+		return memberDAO.userdelete(mb_ID);
 	}
+	
+	
+	
+	
+	
 
-	@Override
-	public void delete(MemberVO memberVO) {
-		if(memberVO!=null) {
-			MemberVO vo = memberDAO.selectUserId(memberVO.getMb_ID());
-			if(vo!=null) {
-				String dbPassword = vo.getMb_password();
-				if(bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
-					memberDAO.delete(vo.getMb_idx());
-				}
-			}
-		}
-	}
+	/*
+	 * @Override public void delete(MemberVO memberVO) { if(memberVO!=null) {
+	 * MemberVO vo = memberDAO.selectUserId(memberVO.getMb_ID()); if(vo!=null) {
+	 * String dbPassword = vo.getMb_password();
+	 * if(bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
+	 * memberDAO.delete(vo.getMb_idx()); } } } }
+	 */
  
-	@Override
-	public void updatePassword(MemberVO memberVO) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("mb_ID", memberVO.getMb_ID());
-		String encryptPassword = bCryptPasswordEncoder.encode(memberVO.getMb_password());
-		map.put("mb_password", encryptPassword);
-		memberDAO.updatePassword(map);
-		}
 
 	@Override
 	   public MemberVO updateRole(String mb_ID, String authkey) {
@@ -119,13 +104,53 @@ public class MemberServiceImpl implements MemberService{
 	      map.put("authkey", authkey);
 	      memberDAO.updateRole(map);
 	      return memberDAO.selectUserId(mb_ID);
-	   }
+	}	
+ // 비번 변경     
+	  	@Override
+		public int updatePassword(MemberVO memberVO) {
+	  		int result = 0;
+			HashMap<String, String> map = new HashMap<String, String>();
+			String encryptPassword =bCryptPasswordEncoder.encode(memberVO.getMb_password());
+			map.put("mb_ID", memberVO.getMb_ID());			 
+			map.put("mb_password", encryptPassword);
+			result += memberDAO.updatePassword(map);
+			
+			return result;
+			}	      
+
+	  	  	
+	  	@Override
+		public int updatenick(MemberVO memberVO) {
+	  		int result = 0;
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("mb_ID", memberVO.getMb_ID());	
+			map.put("mb_nick", memberVO.getMb_nick());
+			result += memberDAO.updatenick(map);
+			return result;
+			}	      
+
+	  	
+	  	
+	  	
+	  	
+	  	
+// 주소변경
+	@Override
+	public void updateaddress(MemberVO memberVO) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("mb_zipcode", memberVO.getMb_zipcode());
+		map.put("mb_address1", memberVO.getMb_address1());
+		map.put("mb_address2", memberVO.getMb_address2());
+		memberDAO.updateaddress(map);
+	}
 
 	@Override
 	public int idCheck(String mb_ID) {
-		return memberDAO.selectCountByUserId(mb_ID);		
+		return memberDAO.selectCountByUserId(mb_ID);	
 	}
+		
 	
+	// 닉네임 변경	
 	@Override
 	public int nickCheck(String mb_nick) {
 		return memberDAO.selectCountByUsernick(mb_nick);
@@ -142,6 +167,11 @@ public class MemberServiceImpl implements MemberService{
 		}
 		return vo;
 	}
+		
+	
+	
+	
+	
 
 	@Override // 비밀번호 찾기 :아이디와 이메일을 넘겨서 DB에서 가져온다.
 	public MemberVO passwordsearch(MemberVO memberVO) {
@@ -151,7 +181,6 @@ public class MemberServiceImpl implements MemberService{
 			map.put("mb_ID", memberVO.getMb_ID());
 			map.put("mb_email", memberVO.getMb_email());
 			vo = memberDAO.selectByUserId(map);
-			
 		}
 		
 		return vo;
@@ -186,7 +215,7 @@ public class MemberServiceImpl implements MemberService{
             	helper.setSubject(subject);
             	helper.setText(content, true);
             }
-        };
+        }; 
         return preparator;
     }
     
@@ -265,6 +294,11 @@ public class MemberServiceImpl implements MemberService{
 		}
 		return vo; 
 	}
+	
+	
+	
+	
+	
 
 	// 카카오 엑세스토큰 받아오는 메서드 
 	public String getAccessToken (String authorize_code) {
@@ -326,62 +360,49 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 	// 카캌오 회원정보 가져오는 메서드
-	@Override
-	public KakaoVO getUserInfo(String access_Token) {
-
-		// 요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
-		HashMap<String, Object> userInfo = new HashMap<String, Object>();
-		String reqURL = "https://kapi.kakao.com/v2/user/me";
-		try {
-			URL url = new URL(reqURL);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-
-			// 요청에 필요한 Header에 포함될 내용
-			conn.setRequestProperty("Authorization", "Bearer " + access_Token);
-
-			int responseCode = conn.getResponseCode();
-			System.out.println("responseCode : " + responseCode);
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-			String line = "";
-			String result = "";
-
-			while ((line = br.readLine()) != null) {
-				result += line;
-			}
-			System.out.println("response body : " + result);
-
-			JsonParser parser = new JsonParser();
-			JsonElement element = parser.parse(result);
-
-			JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
-			JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
-
-			String nickname = properties.getAsJsonObject().get("nickname").getAsString();
-			String email = kakao_account.getAsJsonObject().get("email").getAsString();
-			userInfo.put("nickname", nickname);
-			userInfo.put("email", email);
-			log.info(nickname+"#######################################");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		KakaoVO result = kakaoDAO.findKakao(userInfo);
-		// 위 코드는 먼저 정보가 저장되있는지 확인하는 코드.
-		System.out.println("S:" + result);
-		if(result==null) {
-		// result가 null이면 정보가 저장이 안되있는거므로 정보를 저장.
-			kakaoDAO.kakaoInsert(userInfo);
-			// 위 코드가 정보를 저장하기 위해 Repository로 보내는 코드임.
-			return kakaoDAO.findKakao(userInfo);
-			// 위 코드는 정보 저장 후 컨트롤러에 정보를 보내는 코드임.
-			//  result를 리턴으로 보내면 null이 리턴되므로 위 코드를 사용.
-		} else {
-			return result;
-			// 정보가 이미 있기 때문에 result를 리턴함.
-		}
-	}
+	/*
+	 * @Override public KakaoVO getUserInfo(String access_Token) {
+	 * 
+	 * // 요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언 HashMap<String, Object>
+	 * userInfo = new HashMap<String, Object>(); String reqURL =
+	 * "https://kapi.kakao.com/v2/user/me"; try { URL url = new URL(reqURL);
+	 * HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	 * conn.setRequestMethod("GET");
+	 * 
+	 * // 요청에 필요한 Header에 포함될 내용 conn.setRequestProperty("Authorization", "Bearer "
+	 * + access_Token);
+	 * 
+	 * int responseCode = conn.getResponseCode();
+	 * System.out.println("responseCode : " + responseCode);
+	 * 
+	 * BufferedReader br = new BufferedReader(new
+	 * InputStreamReader(conn.getInputStream()));
+	 * 
+	 * String line = ""; String result = "";
+	 * 
+	 * while ((line = br.readLine()) != null) { result += line; }
+	 * System.out.println("response body : " + result);
+	 * 
+	 * JsonParser parser = new JsonParser(); JsonElement element =
+	 * parser.parse(result);
+	 * 
+	 * JsonObject properties =
+	 * element.getAsJsonObject().get("properties").getAsJsonObject(); JsonObject
+	 * kakao_account =
+	 * element.getAsJsonObject().get("kakao_account").getAsJsonObject();
+	 * 
+	 * String nickname = properties.getAsJsonObject().get("nickname").getAsString();
+	 * String email = kakao_account.getAsJsonObject().get("email").getAsString();
+	 * userInfo.put("nickname", nickname); userInfo.put("email", email);
+	 * log.info(nickname+"#######################################"); } catch
+	 * (IOException e) { e.printStackTrace(); } KakaoVO result =
+	 * kakaoDAO.findKakao(userInfo); // 위 코드는 먼저 정보가 저장되있는지 확인하는 코드.
+	 * System.out.println("S:" + result); if(result==null) { // result가 null이면 정보가
+	 * 저장이 안되있는거므로 정보를 저장. kakaoDAO.kakaoInsert(userInfo); // 위 코드가 정보를 저장하기 위해
+	 * Repository로 보내는 코드임. return kakaoDAO.findKakao(userInfo); // 위 코드는 정보 저장 후
+	 * 컨트롤러에 정보를 보내는 코드임. // result를 리턴으로 보내면 null이 리턴되므로 위 코드를 사용. } else { return
+	 * result; // 정보가 이미 있기 때문에 result를 리턴함. } }
+	 */
 
 	@Override
 	public void sendPassword(MemberVO memberVO) {
@@ -398,11 +419,11 @@ public class MemberServiceImpl implements MemberService{
     		System.err.println(ex.getMessage());
     	}
     }
-    
-	
-	
-	
-		
-	
 
 }
+	/*
+	 * @Override public RoleVO selectUserId(String mb_ID) { return
+	 * roleDAO.selectUserId(mb_ID); }
+	 */
+
+

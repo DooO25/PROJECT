@@ -24,15 +24,18 @@ public interface CommentDAO {
 	void delete1(int idx); // del비교
 	void delete2(int idx); // del비교X
 	// 나와 ref가 같으면서 seq가 크거나 같은것 뽑기
-	List<ReviewVO> selectSeqList(HashMap<String, Integer> map);
+	List<CommentVO> selectSeqList(HashMap<String, Integer> map);
 	// 삭제 표시로 변경
 	void updateDel(int idx);
 	// 삭제표시값이 0인 모든 데이터 가져오기
-	List<ReviewVO> selectDelList();
+	List<CommentVO> selectDelList();
 	
 	// 저장한 idx값 알아내기 (현재 Sequence값)
 	int selectSeq();
-	
+	// 대댓
+	void reply(CommentVO commentVO);
+	// ref=idx
+	void refEqalIdx();
 	
 	
 }

@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -243,9 +245,9 @@ b {
       <br >
       <section
          style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-         <form action="${pageContext.request.contextPath}/reviewInsertOk.do" enctype="multipart/form-data" onsubmit="return formCheck();">
+         <form action="${pageContext.request.contextPath}/reviewInsertOk.do" enctype="multipart/form-data" method="get" onsubmit="return formCheck();">
              	<%-- 페이지번호, 페이지 크기, 블록크기를 숨겨서 넘긴다.  --%>
-					<input type="hidden" name="p"  value="${cv.currentPage }"/>
+             	
 					<input type="hidden" name="s"  value="${cv.pageSize }"/>
 					<input type="hidden" name="b"  value="${cv.blockSize }"/>
 					<input type="hidden" name="mb_idx"  value="${sessionScope.mvo.mb_idx }"/>
@@ -296,13 +298,13 @@ b {
 
    <!-- Scripts -->
    <script>
-      $('.summernote').summernote(
+   $(function() {
+   		$('.summernote').summernote(
             {
                // 에디터 높이
                height : 150,
                // 에디터 한글 설정
                lang : "ko-KR",
-               disableDragAndDrop : true,
                // 에디터에 커서 이동 (input창의 autofocus라고 생각하시면 됩니다.)
                focus : true,
                toolbar : [
@@ -335,7 +337,7 @@ b {
                fontSizes : [ '8', '9', '10', '11', '12', '14', '16', '18',
                      '20', '22', '24', '28', '30', '36', '50', '72' ],
          // 이미지가 1MB를 넘을경우 수동으로 업로드를 처리하고 실행될 코드를 지정해준다.
-			callbacks : {
+			callbacks : { // 여기 부분이 이미지를 첨부하는 부분.
 				onImageUpload : function(files, editor, welEditable) {
 					for (var i = files.length - 1; i >= 0; i--) {
 						sendFile(files[i], this);
@@ -343,13 +345,15 @@ b {
 				}
 			}
 		});
-  	function sendFile(file, el) {
+	});
+  	
+   function sendFile(file, el) {
 		var form_data = new FormData();
       	form_data.append('file', file);
       	$.ajax({
         	data: form_data,
         	type: "POST",
-        	url: '${pageContext.request.contextPath}/imageUpload.do',
+        	url: 'imageUpload.do',
         	cache: false,
         	contentType: false,
         	enctype: 'multipart/form-data',

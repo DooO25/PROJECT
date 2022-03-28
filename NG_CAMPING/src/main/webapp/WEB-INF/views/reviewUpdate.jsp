@@ -61,17 +61,8 @@
 		}
 		return true;
 	}
-	function goList(){
-		SendPost("${pageContext.request.contextPath }/review.do",{"p":${cv.currentPage },"s":${cv.pageSize },"b":${cv.blockSize }});
-	}
 	
-/* 	const url = new URL(window.location.href);
-	   const urlParams = url.searchParams;
-	   alert(urlParams.get('idx'));
-	alert("${rv.rv_idx}");
-	document.getelementbyid('rv_idx').value = urlParams.get('idx');
-	 */
-	function sendData() {
+	function sendUpdateParam() {
 			$.ajax({
 				type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
 				url : "reviewUpdateOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
@@ -251,13 +242,24 @@ b {
             </select>
 
          </div>
-         <div class="col-sm-2" style="float: left;">
+         <div class="col-sm-2" style="float: left; ">
             <select name="list" id="list" onchange="window.open(value,'_self');">
                <option value="/notice.do" >공지사항</option>
                <option value="/QnA.do">QnA</option>
                <option value="/review.do" selected>캠핑후기</option>
             </select>
          </div>
+      </div>
+      <div style="float:right; padding-right: 10%;">
+	      <form action='<c:url value='${pageContext.request.contextPath }/reviewView.do'/>' method="post" id="cancel">
+	        	    <sec:csrfInput/>
+	                <input type="hidden" name="p" value="${cv.currentPage }"/>
+	                <input type="hidden" name="s" value="${cv.pageSize }"/>
+	                <input type="hidden" name="b" value="${cv.blockSize }"/>
+	                <input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
+	      
+	            <a href="#"   onclick="document.getElementById('cancel').submit()"><input type="submit" value="취소" class="btn btn-dark btn-sm"  style="margin-right: 2px;"></a>
+	      </form>
       </div>
       <br> <br>
       <div>
@@ -268,7 +270,7 @@ b {
       <br >
       <section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
          
-         	<form action='<c:url value='${pageContext.request.contextPath }/reviewUpdateOk.do'/>' method="post" id="rView">
+         	<form action='<c:url value='${pageContext.request.contextPath }/reviewUpdateOk.do'/>' method="post" id="rView" name="rView">
         	    <sec:csrfInput/>
                 <input type="hidden" name="p" value="${cv.currentPage }"/>
                 <input type="hidden" name="s" value="${cv.pageSize }"/>
@@ -276,31 +278,30 @@ b {
                 <input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
           
          
-					<div class="row">
-							<div class="col-sm-7">
-			            	    <label for="ID"  style="font-size: 20px;font-weight: bold;"> 제목</label>
-			            		<input type="text" id="title" name="rv_title" style="background-color: white; color: black;" value="${rv.rv_title }" ><br>
-							</div>
-						</div>
+			<div class="row">
+				<div class="col-sm-7">
+            	    <label for="ID"  style="font-size: 20px;font-weight: bold;"> 제목</label>
+            		<input type="text" id="title" name="rv_title" style="background-color: white; color: black;" value="${rv.rv_title }" ><br>
+				</div>
+			</div>
           <textarea id="content" name="rv_content" class="summernote" >${rv.rv_content }</textarea>
 
+         </form>
            <div style="padding-top: 1%; float: right;">
-            <input  value="취소" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" onclick="goList()" >
-            <a href="#"   onclick="document.getElementById('rView').submit()"> <input type="submit" value="수정" class="btn btn-primary btn-sm" ></a>
+            <input type="button" value="수정" onclick="sendUpdateParam();" class="btn btn-primary btn-sm" >
+            
          </div>
       
-
-         </form>
       </section>
       <br />
-
-<form action='<c:url value='${pageContext.request.contextPath }/reviewView.do'/>' method="post" id="sendData" name="sendData">
-        	    <sec:csrfInput/>
-                <input type="hidden" name="p" value="${cv.currentPage }"/>
-                <input type="hidden" name="s" value="${cv.pageSize }"/>
-                <input type="hidden" name="b" value="${cv.blockSize }"/>
-                <input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
-</form>
+	<%-- 실제적으로 갈 jsp --%>
+	<form action='<c:url value='${pageContext.request.contextPath }/reviewView.do'/>' method="post" id="sendData" name="sendData">
+       	    <sec:csrfInput/>
+               <input type="hidden" name="p" value="${cv.currentPage }"/>
+               <input type="hidden" name="s" value="${cv.pageSize }"/>
+               <input type="hidden" name="b" value="${cv.blockSize }"/>
+               <input type="hidden" name="rv_idx" value="${rv.rv_idx }"/>
+	</form>
 
       <!-- Footer -->
       <footer id="footer">

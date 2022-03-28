@@ -4,108 +4,139 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pro.s2k.camp.dao.MemberDAO">
 
+	<!-- <resultMap type="MemberVO" id="test">쭈욱 작성해주셈 <result property="mb_idx" 
+		column="mb_idx"/> <result property="mb_ID" column="mb_ID" jdbcType="VARCHAR"/> 
+		<result property="mb_password" column="mb_password"/> <result property="mb_name" 
+		column="mb_name"/> <result property="mb_nick" column="mb_nick"/> <result 
+		property="mb_email" column="mb_email"/> <result property="mb_tel" column="mb_tel"/> 
+		<result property="mb_birth" column="mb_birth"/> <result property="mb_zipcode" 
+		column="mb_zipcode"/> <result property="mb_address1" column="mb_address1"/> 
+		<result property="mb_address2" column="mb_address2"/> <result property="mb_use" 
+		column="mb_use"/> <result property="authkey" column="authkey"/> <result property="gr_role" 
+		column="gr_role"/> </resultMap> -->
+
 	<!-- 1. 저장하기 -->
 	<insert id="insert" parameterType="MemberVO">
 		insert into camp_member
-		(mb_ID,mb_password,mb_name,mb_nick,mb_email,mb_tel,mb_birth,mb_zipcode,mb_address1,mb_address2,mb_use,authkey)
-		<!-- insert into camp_member로 그냥 해놓으면 전체적인 값을 집어넣어줘야함 
-			위에 같이 이렇게 명시해서 넣으면 필요한 값만 넣음.
-		 -->
-		 values
+		(mb_ID,mb_password,mb_name,mb_nick,mb_email,mb_tel,mb_birth,mb_zipcode,mb_address1,mb_address2,mb_use,authkey,del)
+		<!-- insert into camp_member로 그냥 해놓으면 전체적인 값을 집어넣어줘야함 위에 같이 이렇게 명시해서 넣으면 
+			필요한 값만 넣음. -->
+		values
 		(
 		<!-- #{mb_idx}, -->
-			#{mb_ID},
-			#{mb_password},
-			#{mb_name},
-			#{mb_nick},
-			#{mb_email},
-			#{mb_tel},
-			#{mb_birth},
-			#{mb_zipcode},
-			#{mb_address1},
-			#{mb_address2},
-			'1', <!-- 인증 유무 -->
-			#{authkey}  <!-- 임시 authKey 나중에 바꿔야함. -->
-			
+		#{mb_ID},
+		#{mb_password},
+		#{mb_name},
+		#{mb_nick},
+		#{mb_email},
+		#{mb_tel},
+		#{mb_birth},
+		#{mb_zipcode},
+		#{mb_address1},
+		#{mb_address2},
+		'1', <!-- 인증 유무 -->
+		#{authkey},  <!-- 임시 authKey 나중에 바꿔야함. -->
+		'1'
 		)
 	</insert>
 
 	<!-- 2. 1개 얻기 -->
-	<select id="selectByIdx" parameterType="int" resultType="MemberVO">
+	<select id="selectByIdx" parameterType="int"
+		resultType="MemberVO">
 		select * from camp_member where mb_idx=#{mb_idx}
 	</select>
 	<!-- 3. 수정하기 -->
-   <update id="update" parameterType="MemberVO">
-	      update member set
-	         mb_nick = #{mb_nick}
-	      where
-	         mb_idx=#{mb_idx}
-   </update>
-	<!-- 4. 삭제하기 -->
-	<delete id="delete" parameterType="int">
-		delete from camp_member where mb_idx=#{mb_idx}
-	</delete>
+	<update id="updatenick" parameterType="MemberVO">
+		update camp_member set
+		mb_nick = #{mb_nick}
+		where
+		mb_ID=#{mb_ID}
+	</update>
+	<!-- 4. 유저 탈퇴 / 유저가 회원 탈퇴를 할 경우 DB에 회원정보는 일단 남아있어야한다. -->
+	<update id ="userdelete" parameterType="MemberVO">
+		update camp_member set
+		del = 0
+		where
+		mb_ID = #{mb_ID}
+
+	</update>
+
+
 	<!-- 5. 모두보기(관리자만 사용) -->
 	<select id="selectList" resultType="MemberVO">
-		select * from camp_member order by mb_idx desc
+		select * from camp_member
+		order by mb_idx desc
 	</select>
 	<!-- 6. 개수세기 -->
 	<select id="selectCount" resultType="int">
-		select count(*) from camp_member
+		select count(*) from
+		camp_member
 	</select>
 	<!-- 7. 해당아이디의 개수세기(아이디 중복확인 : 0이면 없는아이디, 1이상이면 존재하는 아이디) -->
-	<select id="selectCountByUserId" resultType="int" parameterType="string">
+	<select id="selectCountByUserId" resultType="int"
+		parameterType="string">
 		select count(*) from camp_member where mb_ID=#{mb_ID}
 	</select>
-		<!-- 8. 해당아이디의 개수세기(아이디 중복확인 : 0이면 없는아이디, 1이상이면 존재하는 아이디) -->
-	<select id="selectCountByUsernick" resultType="int" parameterType="string">
-		select count(*) from camp_member where mb_nick=#{mb_nick}
+	<!-- 8. 해당아이디의 개수세기(아이디 중복확인 : 0이면 없는아이디, 1이상이면 존재하는 아이디) -->
+	<select id="selectCountByUsernick" resultType="int"
+		parameterType="string">
+		select count(*) from camp_member where
+		mb_nick=#{mb_nick}
 	</select>
 	<!-- 8. 이름과 전화번호로 가져오기(아이디찾기 사용) -->
-	<select id="selectByUsername" parameterType="hashmap" resultType="MemberVO">
-		select * from camp_member where mb_name=#{mb_name} and mb_tel=#{mb_tel}
+	<select id="selectByUsername" parameterType="hashmap"
+		resultType="MemberVO">
+		select * from camp_member where mb_name=#{mb_name} and
+		mb_tel=#{mb_tel}
 	</select>
 	<!-- 9. ID와과 전화번호로 가져오기(비번찾기 사용) -->
-	<select id="selectByUserId" parameterType="hashmap" resultType="MemberVO">
-		select * from camp_member where mb_ID=#{mb_ID} and mb_email=#{mb_email}
+	<select id="selectByUserId" parameterType="hashmap"
+		resultType="MemberVO">
+		select * from camp_member where mb_ID=#{mb_ID} and
+		mb_email=#{mb_email}
 	</select>
 	<!-- 10. 인증여부를 변경하는 쿼리 -->
 	<update id="updateRole" parameterType="hashmap">
-		update camp_member a 
-			join member_role mr on 
-			a.mb_ID = mr.mb_ID
-		set 
-			mr.gr_role ='ROLE_USER'
-		where 
-			mr.mb_ID=#{mb_ID} and a.authkey=#{authkey}
+		update camp_member a
+		join member_role mr on
+		a.mb_ID = mr.mb_ID
+		set
+		mr.gr_role ='ROLE_USER'
+		where
+		mr.mb_ID=#{mb_ID} and a.authkey=#{authkey}
 	</update>
 	<!-- 11. 비밀번호 변경하기 -->
 	<update id="updatePassword" parameterType="hashmap">
-		update camp_member set mb_password=#{mb_password} where mb_ID=#{mb_ID}
+		update camp_member set
+		mb_password=#{mb_password} where mb_ID=#{mb_ID}
 	</update>
 	<!-- 12. ID로 가져오기 -->
 	<select id="selectUserId" parameterType="string"
 		resultType="MemberVO">
 		select
-			*
+		a.mb_idx
+		,a.mb_ID
+		,a.mb_password
+		,a.mb_name
+		,a.mb_nick
+		,a.mb_email
+		,a.mb_tel
+		,a.mb_birth
+		,a.mb_zipcode
+		,a.mb_address1
+		,a.mb_address2
+		,a.mb_use
+		,a.authkey
+		,mr.gr_idx
+		,mr.gr_role
 		from camp_member a
-			join member_role mr on a.mb_ID = mr.mb_ID
-		where 
-			a.mb_ID=#{mb_ID}
-	</select>
-	<!-- 13. 해당이메일의 개수세기(이메일 중복확인 : 0이면 없는 이메일, 1이상이면 존재하는 이메일 -->
-	<select id="selectCountByEmail" resultType="int" parameterType="string">
-		select count(*) from camp_member where mb_email=#{mb_email}
-	</select>
-	
-	<!-- 정보 찾기 -->
-	<select id="findKakao" parameterType="hashmap" resultType="KakaoVO">
-		select * from sns_kakao where k_nick=#{nickname} and k_email=#{email}
+		join member_role mr on a.mb_ID = mr.mb_ID
+		where
+		a.mb_ID=#{mb_ID}
 	</select>
 
-	<!-- 정보 저장 -->
-	<insert id="kakaoInsert" parameterType="hashmap">
-		insert into sns_kakao(k_nick, k_email)
-			values(#{nickname}, #{email})
-	</insert>
+	<!-- 정보 찾기 <select id="findKakao" parameterType="hashmap" resultType="KakaoVO"> 
+		select * from sns_kakao where k_nick=#{nickname} and k_email=#{email} </select> 
+		정보 저장 <insert id="kakaoInsert" parameterType="hashmap"> insert into sns_kakao(k_nick, 
+		k_email) values(#{nickname}, #{email}) </insert> -->
 </mapper>

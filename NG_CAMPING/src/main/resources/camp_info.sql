@@ -164,11 +164,13 @@ co_idx int NOT NULL auto_increment,
   CONSTRAINT `camp_comment_FK` FOREIGN KEY (`rv_idx`) REFERENCES `camp_review` (`rv_idx`) ON UPDATE CASCADE
  );
 
-create table camp_upload(
-   idx int auto_increment primary key,
-   ref int default 0,
-   saveName varchar(500) not null,
-   originalName varChar(500) not null
+drop table camp_upload ;
+CREATE TABLE `camp_upload` (
+  `up_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `up_ref` int(11) DEFAULT 0,
+  `saveName` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `originalName` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`up_idx`)
 );
 
 

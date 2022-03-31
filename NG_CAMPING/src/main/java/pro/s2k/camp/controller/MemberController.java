@@ -37,8 +37,7 @@ public class MemberController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Autowired
-	private HttpSession session;
+
 
 	@RequestMapping(value = "/memberdelete.do", method = RequestMethod.GET)
 	public String memberdelete() {
@@ -120,7 +119,7 @@ public class MemberController {
 		int result = 0;
 		log.info(mb_nick + "######################################");
 		memberVO.setMb_nick(mb_nick);
-		result += memberService.updatenick(memberVO);
+		result += memberService.updatePassword(memberVO);
 		session.removeAttribute("mvo");
 		System.out.println(result);
 		return result + "";

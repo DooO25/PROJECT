@@ -287,7 +287,8 @@ b {
           <textarea id="content" name="rv_content" class="summernote" >${rv.rv_content }</textarea>
 
          </form>
-           <div style="padding-top: 1%; float: right;">
+         
+           <div style="pad0ding-top: 1%; float: right;">
             <input type="button" value="수정" onclick="sendUpdateParam();" class="btn btn-primary btn-sm" >
             
          </div>

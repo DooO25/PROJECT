@@ -11,5 +11,5 @@ public class FileUploadVO {
 	private int idx;
 	private int ref;
 	private String saveName;
-	private String originalName;
+	private String oriName;
 }

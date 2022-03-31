@@ -12,7 +12,7 @@
 	
 	<!-- 1. 모두 얻기 -->
 	<select id="selectList" parameterType="hashmap" resultType="reviewVO">
-		select a.rv_idx, a.rv_title, a.rv_content, a.rv_regDate, a.rv_hit, 
+		select a.rv_idx, a.rv_title, a.rv_content, a.rv_regDate, a.rv_hit, a.del,
 			(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick 
 		from 
 			camp_review a 
@@ -21,12 +21,17 @@
 	</select>
 	<!-- 2. 1개 글 구하기 -->
 	<select id="selectByIdx" parameterType="int" resultType="reviewVO">
-		select a.rv_title, a.rv_modiDate, a.rv_hit, a.rv_content,
+		select a.rv_idx, a.rv_title, a.rv_modiDate, a.rv_hit, a.rv_content, a.del,
 			(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick 
 		from 
 		   camp_review a
 		where rv_idx=#{rv_idx}
 	</select>
+	<!-- mb_idx만 불러오기 -->
+	<select id="selectMb_idx" parameterType="int" resultType="int">
+		select mb_idx from camp_review where rv_idx = #{rv_idx}	
+	</select>
+	
 	<!-- 3. 전체 개수 구하기 -->
 	<select id="selectCount" resultType="int">
 		select count(*) from camp_review
@@ -97,7 +102,10 @@
  	<select id="selectSeq" resultType="int">
  		select max(rv_idx) from camp_review
  	</select>
-
+	
+	<select id="selectCoCount" parameterType="int" resultType="int" >
+		select count(*) from camp_comment where rv_idx = #{rv_idx}	
+	</select>
 	
 	
 	

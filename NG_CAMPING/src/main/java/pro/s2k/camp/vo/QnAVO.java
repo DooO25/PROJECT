@@ -37,6 +37,7 @@ public class QnAVO {
 	private Date qna_regDate;
 	private Date qna_modiDate;
 	private String qna_ip;
+	private int qna_read;
 	
 	private String mb_nick;
 }

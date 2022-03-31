@@ -1,5 +1,7 @@
 package pro.s2k.camp.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.PagingVO;
 import pro.s2k.camp.vo.ReviewVO;
@@ -16,6 +18,7 @@ public interface ReviewService {
 	// 수정
 	void update(ReviewVO reviewVO);
 	// 삭제
-	void delete(ReviewVO reviewVO, String uploadPath);
+	void delete(ReviewVO reviewVO);
 
+	int selectMb_idx(int idx);
 }

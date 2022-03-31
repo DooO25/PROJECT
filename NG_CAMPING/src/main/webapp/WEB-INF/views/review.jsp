@@ -308,14 +308,6 @@ table {
 		<section
 			style="padding-right: 10%; padding-left: 10%; padding-bottom:3%; margin: 0 auto;">
 			${pv.pageInfo}
-			<script type="text/javascript">
-					$(function(){
-						$("#listCount").change(function(){
-							var pageSize = $(this).val();
-							SendPost("${pageContext.request.contextPath }/review.do", {"p":${cv.currentPage},"s":pageSize,"b":${cv.blockSize}});
-						});	
-					});
-				</script>	
 				<br>
 				<table class="table table-hover table-dark">
 					<tr>
@@ -335,6 +327,7 @@ table {
 						<c:if test="${not empty pv.list }">
 							<c:set var="no" value="${pv.totalCount - (pv.currentPage-1)*pv.pageSize}"/>
 							<c:forEach var="vo" items="${pv.list }" varStatus="vs" >
+								<c:if test="${vo.del == 1 }">
 								<tr>
 									<td>
 										${no }
@@ -353,7 +346,9 @@ table {
 					                           <input type="hidden" name="h" value="1"/>
 				                        
 				                        </form>
-				                        <a href="#"   onclick="document.getElementById('rView${vs.index}').submit()"><c:out value="${vo.rv_title }"></c:out></a>
+				                        <%--  <c:forEach var="vo2" items="${pv2.list }">  --%>
+				                        	<a href="#"   onclick="document.getElementById('rView${vs.index}').submit()"><c:out value="${vo.rv_title }"/></a><%-- <c:out value="${vo2.totalCount }"/> --%>
+										<%--  </c:forEach>  --%>
 									</td>
 									<td>
 										${vo.rv_content }
@@ -369,33 +364,15 @@ table {
 										${vo.rv_hit }
 									</td>
 								</tr>
-							</c:forEach>
+							</c:if>
+								</c:forEach>
 						</c:if>
-					</c:if>
+						</c:if>
 					</table>
 							<div style="border: none;text-align: center;">
 								${pv.pageList}
 							</div>
 
-						<%-- 첨부파일을 다운 받도록 링크를 달아준다. --%>
-				<%-- 		<c:if test="${not empty vo.fileList }">
-							<c:forEach var="fvo" items="${vo.fileList }">
-								<c:url var="url" value="/download.do">
-									<c:param name="of" value="${fvo.originalName }"></c:param>
-									<c:param name="sf" value="${fvo.saveName }"></c:param>
-								</c:url>
-								<a href="${url }" title="${fvo.originalName }"><span class="material-icons">file_download</span></a>
-							</c:forEach>
-						</c:if> --%>
-		<%-- 			</td>
-				</tr>		
-			
-			</c:forEach>
-					</c:if>
-				<div style="border: none;text-align: center;" colspan="6">
-					${pv.pageList}
-				</div>
-			 --%>
 
 				<c:set value="${sessionScope.mvo.gr_role}" var="role" />
 			<c:choose>

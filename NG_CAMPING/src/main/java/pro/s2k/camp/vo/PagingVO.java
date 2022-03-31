@@ -25,6 +25,7 @@ public class PagingVO<T> {
 	private int startPage;		// 시작 페이지 번호
 	private int endPage;		// 끝 페이지 번호 
 	
+	
 	public PagingVO(int currentPage, int pageSize, int blockSize, int totalCount) {
 		this.currentPage = currentPage;
 		this.pageSize = pageSize;
@@ -151,7 +152,7 @@ public class PagingVO<T> {
 	         if(i==currentPage) {
 	            message += "<li class='page-item active' aria-current='page'><span class='page-link'>" + i + "</span></li>";
 	         }else {
-	            message += "<li class='page-item'><a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (i) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})'>" + i + "</a></li>";
+	            message += "<li class='page-item'><a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (i) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\",\"csr})'>" + i + "</a></li>";
 	         }
 	      }
 	      // <%-- 다음 : 마지막 페이지가 전체페이지보다 적다면 다음이 있다 --%>

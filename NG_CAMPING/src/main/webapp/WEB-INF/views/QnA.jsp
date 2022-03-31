@@ -39,7 +39,7 @@ function logoutSubmit() {
 }
 function certification() { // 인증안된 회원이 글쓰기 버튼을 눌렀을때
 	alert("메일인증이 필요합니다.");
-	location.href = "/review.do";
+	location.href = "/QnA.do";
 }
 
 function loginSubmit() { // 비회원이 글쓰기를 눌렀을때
@@ -51,8 +51,7 @@ function QnAInsert() { //관리자, 회원이 글쓰기를 눌렀을때
 	location.href = "/QnAInsert.do";
 }
 
-
-/* alert("${pv.list}"); */
+alert("${qv.qna_idx}");
 </script>
 
 
@@ -316,7 +315,7 @@ table {
 						<th class="th-3" scope="col">내용</th>
 						<th class="th-4" scope="col">닉네임</th>
 						<th class="th-5" scope="col">작성일</th>
-						<th class="th-6" scope="col">관리자 확인</th>
+						<th class="th-6" scope="col">관리자</th>
 					</tr>
 					<tr>
 						<c:if test="${pv.totalCount==0 }">
@@ -340,9 +339,9 @@ table {
 					                           <input type="hidden" name="p" value="${pv.currentPage }"/>
 					                           <input type="hidden" name="s" value="${pv.pageSize }"/>
 					                           <input type="hidden" name="b" value="${pv.blockSize }"/>
+					                           <input type="hidden" name="role" value="${mvo.gr_role}"/>
 					                           <input type="hidden" name="qna_idx" value="${vo.qna_idx }"/>
-					                           <input type="hidden" name="mode" value="1"/>
-					                           <input type="hidden" name="h" value="1"/>
+					     
 				                        
 				                        </form>
 				                        <a href="#"   onclick="document.getElementById('rView${vs.index}').submit()"><c:out value="${vo.qna_title }"></c:out></a>
@@ -355,8 +354,19 @@ table {
 										</td>
 									
 									<td> 
-										<fmt:formatDate value="${vo.qna_regDate }" pattern="yy-MM-dd"/>
+										<fmt:formatDate value="${vo.qna_modiDate }" pattern="yy-MM-dd"/>
 									</td>					
+										<c:choose>
+											<c:when test="${vo.qna_read==0 }">
+												<td>미확인</td>
+											</c:when>
+											<c:when test="${vo.qna_read==1 }">
+												<td>확인중</td>
+											</c:when>
+											<c:when test="${vo.qna_read==2 }">
+												<td>답변완</td>
+											</c:when>
+										</c:choose>
 								</tr>
 							</c:forEach>
 						</c:if>

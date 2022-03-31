@@ -3,8 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="sec"
-	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <!DOCTYPE html>
 <html>
@@ -87,8 +86,8 @@
 	function sendInsertParam() {
 		$.ajax({
 			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
-			url : "replyInsertOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
-			data : $('#rView2').serialize(),
+			url : "answerInsertOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
+			data : $('#answerInsert').serialize(),
 			dataType : "text",
 
 			success : function(idx) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
@@ -98,7 +97,34 @@
 				document.sendData.p.value = jsonStr.p;
 				document.sendData.s.value = jsonStr.s;
 				document.sendData.b.value = jsonStr.b;
-				document.sendData.rv_idx.value = jsonStr.rv_idx;
+				document.sendData.qna_idx.value = jsonStr.qna_idx;
+				document.sendData.role.value = jsonStr.role;
+				document.sendData.mb_idx.value = jsonStr.mb_idx;
+
+				document.sendData.submit();
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+			}
+		});
+	}
+	 
+	function sendUpdateParam() {
+		$.ajax({
+			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
+			url : "answerInsertOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
+			data : $('#answerUpdate').serialize(),
+			dataType : "text",
+
+			success : function(idx) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+				var jsonStr = JSON.parse(idx);
+				console.log(jsonStr);
+				/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
+				document.sendData.p.value = jsonStr.p;
+				document.sendData.s.value = jsonStr.s;
+				document.sendData.b.value = jsonStr.b;
+				document.sendData.qna_idx.value = jsonStr.qna_idx;
+				document.sendData.role.value = jsonStr.role;
+				document.sendData.mb_idx.value = jsonStr.mb_idx;
 
 				document.sendData.submit();
 			},
@@ -107,64 +133,21 @@
 		});
 	}
 	
-	 function sendReplyParam(index) {
-		 $.ajax({
-			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
-			url : "rereply.do", // 컨트롤러에서 대기중인 URL 주소이다.
-			data : $('#rView3'+index).serialize(),
-			dataType : "text",
-
-			success : function(res) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
-				var jsonStr = JSON.parse(res);
-				console.log(jsonStr);
-				/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
-				document.sendData.p.value = jsonStr.p;
-				document.sendData.s.value = jsonStr.s;
-				document.sendData.b.value = jsonStr.b;
-				document.sendData.rv_idx.value = jsonStr.rv_idx;
-				document.sendData.submit();
-			},
-			error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
-			}
-		});
-	}
-	
-	 function deleteParam(index) {
-		 $.ajax({
-			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
-			url : "replyDeleteOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
-			data : $('#deleteRe'+index).serialize(),
-			dataType : "text",
-
-			success : function(res) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
-				var jsonStr = JSON.parse(res);
-				console.log(jsonStr);
-				/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
-				document.sendData.p.value = jsonStr.p;
-				document.sendData.s.value = jsonStr.s;
-				document.sendData.b.value = jsonStr.b;
-				document.sendData.rv_idx.value = jsonStr.rv_idx;
-				document.sendData.submit();
-			},
-			error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
-			}
-		});
-	}
 
 		
 
 			
 	$(function() {
-			$(".hide").css('display','none');
+			$("#answerUpdate").css('display','none');
 		});
-	function move(idx) {
-			$("#rereplyy"+idx).click(function() {
-					 if ($("#rereply"+idx).css('display') == 'none') {
-						$("#rereply"+idx).css('display', 'inline');
+	function update() {
+			$("#updateBtn").click(function() {
+					 if ($("#answerUpdate").css('display') == 'none') {
+						$("#answerUpdate").css('display', 'inline');
 					
 			
 				} else {
-					$("#rereply"+idx).css('display', 'none');
+					$("#answerUpdate").css('display', 'none');
 				
 				} 
 				/* if ($(this).parent().next().css('display') == 'inline') {
@@ -176,9 +159,8 @@
 				} */
 			});
 	}
-	
-	alert("${rv.rv_idx}");
-	alert("${rv.del}");
+
+	alert("${qv.qna_idx}");
 	</script>
 
 
@@ -372,185 +354,126 @@ table th {
 			<div class="col-sm-2" style="float: left;">
 				<select name="list" id="list" onchange="window.open(value,'_self');">
 					<option value="/notice.do">공지사항</option>
-					<option value="/review.do" selected>캠핑후기</option>
-					<option value="/QnA.do">QnA</option>
+					<option value="/review.do" >캠핑후기</option>
+					<option value="/QnA.do"selected>QnA</option>
 				</select>
 			</div>
 		</div>
 		<br> <br>
 		<div>
 			<p
-				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">캠핑후기</p>
+				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">QnA</p>
 		</div>
 	</div>
 
-	
+
 	<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
 		<form
-			action='<c:url value='${pageContext.request.contextPath }/reviewUpdate.do'/>'
+			action='<c:url value='${pageContext.request.contextPath }/QnAUpdate.do'/>'
 			method="post" id="ruView">
 			<sec:csrfInput />
-			<input type="hidden" name="p" value="${cv.currentPage }" /> <input
-				type="hidden" name="s" value="${cv.pageSize }" /> <input
-				type="hidden" name="b" value="${cv.blockSize }" /> <input
-				type="hidden" name="rv_idx" value="${rv.rv_idx }" />
-		<c:choose>
-			<c:when test="${mi==mvo.mb_idx }">
+			<input type="hidden" name="p" value="${cv.currentPage }" /> 
+			<input type="hidden" name="s" value="${cv.pageSize }" /> 
+			<input type="hidden" name="b" value="${cv.blockSize }" /> 
+			<input type="hidden" name="qna_idx" value="${qv.qna_idx }" />
+			<input type="hidden" name="mb_idx" value="${mvo.mb_idx }" />
 				<div style="text-align: right;">
-					<a href="#" onclick="document.getElementById('ruView').submit()">
-					<input type="submit" class="btn btn-outline-secondary btn-sm" value="수정" /></a>
-					<input type="submit" formaction="/reviewDeleteOk.do"
-							class="btn btn-outline-secondary btn-sm" value="삭제" />
-					<input type="button" onclick="location.href='/review.do'"
-						class="btn btn-outline-secondary btn-sm" value="목록" /> 
-			</div>
-			</c:when>
-			<c:otherwise>
-				<div style="text-align: right;">
-					<input type="button" onclick="location.href='/review.do'"
-						class="btn btn-outline-secondary btn-sm" value="목록" /> 
+					<c:choose>
+						<c:when test="${mi == mvo.mb_idx }">
+							<c:if test="${qv.qna_read == 0  }">
+								 <a href="#"onclick="document.getElementById('QnA').submit()">
+								 <input type="submit" class="btn btn-outline-secondary btn-sm" value="수정" /></a>
+							</c:if>
+							<c:if test="${qv.qna_read < 2}">
+								<input type="submit" formaction="/QnADeleteOk.do"
+									class="btn btn-outline-secondary btn-sm" value="삭제" />
+							</c:if>
+								<input type="button" onclick="location.href='/QnA.do'"
+									class="btn btn-outline-secondary btn-sm" value="목록" />
+						</c:when>
+						<c:otherwise>
+								<input type="button" onclick="location.href='/QnA.do'"
+									class="btn btn-outline-secondary btn-sm" value="목록" />
+						</c:otherwise>
+					</c:choose>
 				</div>
-			</c:otherwise>
-		</c:choose>
 		</form>
-		<c:if test="${rv.del==0}">
-			<div onclick="return false;"
-				style="background-color: gray; height:80px; color: red; padding-left: 2%; margin-bottom: 5px;">삭제된 후기입니다. </div>
-		</c:if>
-		<c:if test="${rv.del==1}">
-			<br>
-			<table class="table" style="border: 1px solid white;">
-				<thead class="thead-dark">
-					<tr>
-						<th>
-							<div
-								style="text-align: left; font-size: 20px; font-weight: bold; padding-bottom: 1%; padding-left: 2%; padding-right: 2%;">
-								${rv.rv_title }</div>
-							<div class="row" style="padding-left: 2%">
-								<div class="col-4" style="text-align: left; font-size: 15px;">닉네임
-									: ${rv.mb_nick }</div>
-								<div class="col-3" style="text-align: left; font-size: 15px;">
-									등록일 :
-									<fmt:formatDate value="${rv.rv_modiDate }"
-										pattern="yyyy년 MM월 dd일 HH:mm:ss" />
-								</div>
-								<div class="col-4" style="text-align: right; font-size: 15px;">조회수
-									: ${rv.rv_hit }</div>
+
+		<br>
+		<table class="table" style="border: 1px solid white;">
+			<thead class="thead-dark">
+				<tr>
+					<th>
+						<div
+							style="text-align: left; font-size: 20px; font-weight: bold; padding-bottom: 1%; padding-left: 2%; padding-right: 2%;">
+							${qv.qna_title }</div>
+						<div class="row" style="padding-left: 2%">
+							<div class="col-4" style="text-align: left; font-size: 15px;">닉네임
+								: ${qv.mb_nick }</div>
+							<div class="col-3" style="text-align: left; font-size: 15px;">
+								등록일 :
+								<fmt:formatDate value="${qv.qna_modiDate }"
+									pattern="yyyy년 MM월 dd일 HH:mm:ss" />
 							</div>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td style="color: white; padding-left: 3%;">${rv.rv_content }</td>
-					</tr>
-				</tbody>
-			</table>
-		</c:if>
-		
+							<div class="col-4" style="text-align: right; font-size: 15px;">관리자
+									<c:choose>
+											<c:when test="${qv.qna_read==0 }">
+												<div>미확인</div>
+											</c:when>
+											<c:when test="${qv.qna_read==1 }">
+												<div>확인중</div>
+											</c:when>
+											<c:when test="${qv.qna_read==2 }">
+												<div>답변완</div>
+											</c:when>
+									</c:choose>
+							</div>
+						</div>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="color: white; padding-left: 3%;">${qv.qna_content }</td>
+				</tr>
+			</tbody>
+		</table>
 						
 							</section>
 	<br />
 	<!-- 글 목록이 표시되어야 한다. -->
 	<section style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-		<c:if test="${empty cm.list }">
-			<div style="border: 1px solid gray; text-align: center;">
-				등록된	댓글이 없습니다.
-			</div>
-		</c:if>
-		<c:if test="${not empty cm.list }">
-			<c:forEach var="vo" items="${cm.list }" varStatus="vs">
-				<div style="margin-left:${vo.co_lev*50}px;">
-					<!-- 삭제표시가 되어 있으면 삭제표시된 글이라고 표시한다. -->
-					<c:if test="${vo.del2==0 }">
-						<div onclick="return false;"
-							style="background-color: gray; color: red; padding-left: 2%; margin-bottom: 5px;">삭제된 댓글입니다. </div>
-					</c:if>
-					<!-- 삭제표시가 되어 있지 않으면 보여준다. -->
-
-					<c:if test="${vo.del2==1 }">
-
-						<c:out value="${vo.mb_nick }" />&nbsp;&nbsp;&nbsp;&nbsp; 
-						<fmt:formatDate value="${vo.co_regDate }"
-							pattern="yyyy년 MM월 dd일 HH:mm:ss" />
-						<!-- 삭제표시를 달아보자 -->
-						<div class="content">
-							<div
-								style="border: 1px solid white; size: 50px; padding-right: 2%; padding-left: 2%; margin: 0 auto;">
-								<!-- 여기에 글의 내용을 출력한다. -->
-								<c:set var="content" value="${vo.co_content }" />
-								<!-- 태그 무시 -->
-								<c:set var="content" value="${fn:replace(content,'<','&lt;') }" />
-								<!-- \n을 <br>로 변경 -->
-								<c:set var="content"
-									value="${fn:replace(content, newLine, br ) }" />
-								${content }
-											
-								
-								
-								<div style="text-align: right;">
-									
-									<input type="submit" class="btn btn-outline-success btn-sm " onclick="updateParam('${vs.index}');" value="수정">
-									<form action="${pageContext.request.contextPath}/reply.do" method="post" id="updateRe${vs.index}">
-										<sec:csrfInput/> 										
-										<input type="hidden" name="p" value="${cv.currentPage }" /> 
-										<input type="hidden" name="s" value="${cv.pageSize }" />
-										<input type="hidden" name="b" value="${cv.blockSize }" />
-										<input type="hidden" name="rv_idx" value="${vo.rv_idx }"/>
-										<input type="hidden" name="co_idx" value="${vo.co_idx }"/>
-										<input type="hidden" name="co_ref" value="${vo.co_ref }"/>
-										<input type="hidden" name="co_seq" value="${vo.co_seq }"/>
-										<input type="hidden" name="co_lev" value="${vo.co_lev }"/>
-										
-										<input type="submit" class="btn btn-outline-success btn-sm " onclick="updateParam('${vs.index}');" value="수정">
-										<input type="submit" class="btn btn-outline-danger btn-sm " onclick="deleteParam('${vs.index }');" value="삭제"/>
-									</form>
-									<form action="${pageContext.request.contextPath}/replyDeleteOk.do" method="post" id="deleteRe${vs.index}">
-										<sec:csrfInput/> 										
-										<input type="hidden" name="p" value="${cv.currentPage }" /> 
-										<input type="hidden" name="s" value="${cv.pageSize }" />
-										<input type="hidden" name="b" value="${cv.blockSize }" />
-										<input type="hidden" name="rv_idx" value="${vo.rv_idx }"/>
-										<input type="hidden" name="co_idx" value="${vo.co_idx }"/>
-										<input type="hidden" name="co_ref" value="${vo.co_ref }"/>
-										<input type="hidden" name="co_seq" value="${vo.co_seq }"/>
-										<input type="hidden" name="co_lev" value="${vo.co_lev }"/>
-										
-										<input type="submit" class="btn btn-outline-danger btn-sm " onclick="deleteParam('${vs.index }');" value="삭제"/>
-									</form>
-								</div>
-								<br />
-							</div>
-						</div>
-								<div style="text-align: right;">
-									<span id="rereplyy${vo.co_idx }"  style="cursor: pointer;" onclick="move('${vo.co_idx}');"  >ㄴ대댓글</span>
-								</div>
-							<div id="rereply${vo.co_idx }" class="hide"> 
-							<form action="${pageContext.request.contextPath}/rereply.do" method="post"  id="rView3${vs.index}" >
-								<sec:csrfInput/>
-									<input type="hidden" name="p" value="${cv.currentPage }" /> 
-									<input type="hidden" name="s" value="${cv.pageSize }" />
-									<input type="hidden" name="b" value="${cv.blockSize }" />
-									<input type="hidden" name="rv_idx" value="${vo.rv_idx }"/>
-									<input type="hidden" name="co_idx" value="${vo.co_idx }"/>
-									<input type="hidden" name="co_ref" value="${vo.co_ref }"/>
-									<input type="hidden" name="co_seq" value="${vo.co_seq }"/>
-									<input type="hidden" name="co_lev" value="${vo.co_lev }"/>
-									<textarea name="co_content" id="rereplyContent" required="required"></textarea> 
-									<div style="text-align: right;"  >
-										<input class="btn-outline-success btn-sm" type="submit"  value="대댓글" onclick="sendReplyParam('${vs.index }');"/>
-									</div>
-								
-								
-							</form>
+				
+				<c:if test="${qv2.qna_ref==null }">
+					<div style="border: 1px solid gray; text-align: center;">
+						등록된	답변이 없습니다.
+					</div>
+				</c:if>
+			<c:if test="${qv2.qna_ref!=null }">
+	<table class="table" style="border: 1px solid white;">
+			<thead class="thead-dark">
+				<tr>
+					<th>
+						<div class="row" style="padding-left: 2%">
+							<div class="col-4" style="text-align: left; font-size: 15px;">닉네임
+								: ${qv2.mb_nick }</div>
+							<div class="col-3" style="text-align: left; font-size: 15px;">
+								등록일 :
+								<fmt:formatDate value="${qv2.qna_modiDate }"
+									pattern="yyyy년 MM월 dd일 HH:mm:ss" />
 							</div>
 					
-					</c:if>
-				</div>
-						
-						
-			</c:forEach>
-		</c:if>
+							</div>
+					</th>
+				</tr>
+			</thead>
+				<tbody>
+				<tr>
+					<td style="color: white; padding-left: 3%;">${qv2.qna_content }</td>
+				</tr>
+			</tbody>
+		</table>				
+			</c:if>
 	</section>
 			
 	
@@ -558,40 +481,66 @@ table th {
 	 
 	
 	<br />
-	<div>
-
-		<p style="font-size: 20px; text-align: center; font-weight: bold;">댓글작성</p>
-	</div>
-	<form action="${pageContext.request.contextPath}/replyInsertOk.do"
-		 method="post" id="rView2">
-		<sec:csrfInput />
-		<input type="hidden" name="p" value="${cv.currentPage }" /> <input
-			type="hidden" name="s" value="${cv.pageSize }" /> <input
-			type="hidden" name="b" value="${cv.blockSize }" /> <input
-			type="hidden" name="rv_idx" value="${rv.rv_idx }" />
-		<section
-			style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
-			<textarea id="replyContent" name="co_content"
-				style="background-color: white; color: black;"></textarea>
-		</section>
-		<div style="text-align: center; padding-bottom: 3%">
-			<input type="button" onclick="sendInsertParam();"
-				class="btn btn-outline-secondary btn-sm" style="margin: auto;"
-				value="댓글달기">
+	<c:if test="${role eq 'ROLE_ADMIN' }">
+		<%-- 답변글 은 3 --%>
+		<c:if test="${qv2.qna_read != 3 }">
+		<div>
+			<p style="font-size: 20px; text-align: center; font-weight: bold;">관리자 답변</p>
 		</div>
-	</form>
-
+		<form action="${pageContext.request.contextPath}/answerInsertOk.do"
+			 method="post" id="answerInsert">
+			<sec:csrfInput />
+			<input type="hidden" name="mb_idx" value="${mvo.mb_idx }" />
+			<input type="hidden" name="qna_idx" value="${qv.qna_idx }" />
+			<input type="hidden" name="qna_title" value="답변" />
+			<input type="hidden" name="role" value="${mvo.gr_role }" />
+			<section
+				style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
+	          <textarea id="content" name="qna_content" style="height:250px;color:black; background-color: white;" required="required">안녕하십니까, ${mvo.mb_nick } 입니다.</textarea>
+			</section>
+			<div style="text-align: center; padding-bottom: 3%">
+				<input type="button" 
+					class="btn btn-outline-secondary btn-sm" style="margin: auto;" onclick="sendInsertParam();"
+					value="답변달기">
+			</div>
+		</form>
+		</c:if>
+		<c:if test="${qv2.qna_read == 3 }">
+		<div style="text-align: center; padding-bottom: 3%">
+				<input type="submit"  id="updateBtn"
+					class="btn btn-outline-secondary btn-sm" style="margin: auto;"  onclick="update();"
+					value="수정하기">
+		</div>
+			<form id="answerUpdate" action="${pageContext.request.contextPath}/answerUpdateOk.do"
+				 method="post" id="answerUpdate">
+				<sec:csrfInput />
+				<input type="hidden" name="mb_idx" value="${mvo.mb_idx }" />
+				<input type="hidden" name="qna_idx" value="${qv.qna_idx }" />
+					<input type="hidden" name="qna_title" value="답변" />
+					<input type="hidden" name="role" value="${mvo.gr_role }" />
+				<section
+					style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
+		          <textarea id="content" name="qna_content" style="height:250px;color:black; background-color: white;" required="required">안녕하십니까, ${mvo.mb_nick } 입니다.</textarea>
+				</section>
+				<div style="text-align: center; padding-bottom: 3%">
+					<input type="button" 
+						class="btn btn-outline-secondary btn-sm" style="margin: auto;"  onclick="sendUpdateParam();"
+						value="수정">
+				</div>
+			</form>
+		</c:if>
+	</c:if>
 	<%-- 실제적으로 갈 jsp --%>
-	<form action="${pageContext.request.contextPath}/reviewView.do"
+	<form action="${pageContext.request.contextPath}/QnA.do"
 		method="post" id="sendData" name="sendData">
 		<sec:csrfInput />
 		<input type="hidden" name="p" value="${cv.currentPage }" /> <input
 			type="hidden" name="s" value="${cv.pageSize }" /> <input
 			type="hidden" name="b" value="${cv.blockSize }" /> <input
-			type="hidden" name="rv_idx" value="${rv.rv_idx }" />
+			type="hidden" name="qna_idx" value="${qv.qna_idx }" /> <input
+			type="hidden" name="role" value="${mvo.gr_role }" />
+			<input type="hidden" name="mb_idx" value="${mvo.mb_idx }" />
 	</form>
-
-
 
 	<!-- Footer -->
 	<footer id="footer">

@@ -13,13 +13,12 @@ public interface CommentService {
 	// 댓글 저장
 	void insert(CommentVO commentVO);
 	// 수정
-	void update(CommentVO commentVO, String[] delFiles, String realPath);
+	void update(CommentVO commentVO);
 	// 삭제
-	void delete(CommentVO commentVO, String uploadPath);
+	void delete(CommentVO commentVO);
 	// 댓글
 	void reply(CommentVO commentVO);
 	
-	
-	
+	int selectCoCount(int idx);
 	
 }

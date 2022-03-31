@@ -29,4 +29,11 @@ public interface ReviewDAO {
 	
 	// <!-- 저장한 idx값 알아내기 (현재 Sequence값) -->
 	int selectSeq();
+	
+	// 해당 리뷰 작성한 mb_idx만 불러오기
+	int selectMb_idx(int idx);
+	// 댓글 개수 세기
+	int selectCoCount(int idx);
+	
+	
 }

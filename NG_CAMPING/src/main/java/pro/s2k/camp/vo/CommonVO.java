@@ -19,6 +19,7 @@ public class CommonVO {
 	private int co_seq;
 	private int qna_idx;
 	private int nt_idx;
+	private String token;
 	
 	private String mode;
 	
@@ -99,6 +100,10 @@ public class CommonVO {
 			this.co_seq = 0;
 		}
 	}
+	public String getToken() {
+		return token;
+		
+	}
 	public void setQna_idx(int qna_idx) {
 		this.qna_idx = qna_idx;
 		if(qna_idx<1) {
@@ -112,6 +117,10 @@ public class CommonVO {
 		}
 	}
 
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 
 	public String getMode() {
 		return mode;
@@ -177,9 +186,10 @@ public class CommonVO {
 		return "CommonVO [p=" + p + ", s=" + s + ", b=" + b + ", currentPage=" + currentPage + ", pageSize=" + pageSize
 				+ ", blockSize=" + blockSize + ", idx=" + idx + ", rv_idx=" + rv_idx + ", co_idx=" + co_idx
 				+ ", co_ref=" + co_ref + ", co_seq=" + co_seq + ", qna_idx=" + qna_idx + ", nt_idx=" + nt_idx
-				+ ", mode=" + mode + "]";
+				+ ", token=" + token + ", mode=" + mode + "]";
 	}
 
+	
 
 
 }

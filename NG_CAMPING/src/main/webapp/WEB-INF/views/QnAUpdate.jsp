@@ -54,6 +54,26 @@
 		}
 		return true;
 	}
+	function sendUpdateParam() {
+		$.ajax({
+			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
+			url : "QnAUpdateOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
+			data :$('#qnaView').serialize(),
+			dataType : "text",
+			
+			success : function(idx) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+				var jsonStr = JSON.parse(idx); console.log(jsonStr);
+				document.sendData.p.value = jsonStr.p;
+				document.sendData.s.value = jsonStr.s;
+				document.sendData.b.value = jsonStr.b;
+				document.sendData.qna_idx.value = jsonStr.qna_idx;
+				document.sendData.role.value = jsonStr.role;
+				document.sendData.submit(); 
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+			}
+		});
+}
 </script>
 
 
@@ -64,7 +84,7 @@ p {
 }
 
 b {
-   font-weight: bold;
+  	 font-weight: bold;
 }
 </style>
 </head>
@@ -220,34 +240,41 @@ b {
       <br >
       <section
          style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-         <form action="${pageContext.request.contextPath}/QnAInsertOk.do" method="get" onsubmit="return formCheck();">
+         <form action="${pageContext.request.contextPath}/QnAUpdateOk.do" method="post" id="qnaView" onsubmit="return formCheck();">
              	<%-- 페이지번호, 페이지 크기, 블록크기를 숨겨서 넘긴다.  --%>
-             	
+             	<sec:csrfInput/>	
+					<input type="hidden" name="p"  value="${cv.pageSize }"/>
 					<input type="hidden" name="s"  value="${cv.pageSize }"/>
 					<input type="hidden" name="b"  value="${cv.blockSize }"/>
-					<input type="hidden" name="mb_idx"  value="${sessionScope.mvo.mb_idx }"/>
+					<input type="hidden" name="qna_idx"  value="${qv.qna_idx }"/>
 
 				
 					<div class="row">
 							<div class="col-sm-7">
 			            	    <label for="ID"  style="font-size: 20px;font-weight: bold;"> 제목</label>
-			            		<input type="text" id="title" name="qna_title" style="background-color: white; color: black;"><br>
+			            		<input type="text" id="title" name="qna_title" style="background-color: white; color: black;" value="${qv.qna_title }"><br>
 							</div>
 						</div>
 		  <label for="ID"  style="font-size: 20px;font-weight: bold;"> 질문</label>
-          <textarea id="content" name="qna_content" style="height:250px;color:black; background-color: white;" required="required">내용을 작성하여 주세요</textarea>
+          <textarea id="content" name="qna_content" style="height:250px;color:black; background-color: white;">${qv.qna_content }</textarea>
 
-           <c:if test="${role ne 'ROLE_GUEST' }">
-           <div style="padding-top: 1%; float: right;">
-            <input  value="목록" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" onclick="location.href='/QnA.do'" >
-         <input type="submit" value="전송" class="btn btn-primary btn-sm" >
-         </div>
-           </c:if> 
 
          </form>
+           <div style="padding-top: 1%; float: right;">
+         <input type="button" value="수정" class="btn btn-primary btn-sm" onclick="sendUpdateParam();">
+         </div>
       </section>
       <br />
-
+	<%-- 실제적으로 갈 jsp --%>
+	<form action='<c:url value='${pageContext.request.contextPath }/QnAView.do'/>' method="post" id="sendData" name="sendData">
+       	    <sec:csrfInput/>
+               <input type="hidden" name="p" value="${cv.currentPage }"/>
+               <input type="hidden" name="s" value="${cv.pageSize }"/>
+               <input type="hidden" name="b" value="${cv.blockSize }"/>
+               <input type="hidden" name="qna_idx" value="${qv.qna_idx }"/>
+               <input type="hidden" name="role" value="${mvo.gr_role}"/>
+               
+	</form>
 
 
       <!-- Footer -->

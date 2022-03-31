@@ -5,7 +5,7 @@
  */
 function SendPost(url, params) {
     var form = document.createElement('form');
-    form.setAttribute('method', 'post'); //POST 메서드 적용
+    form.setAttribute('method', 'GET'); //POST 메서드 적용
     form.setAttribute('action', url);	// 데이터를 전송할 url
     document.charset = "utf-8";
     for ( var key in params) {	// key, value로 이루어진 객체 params

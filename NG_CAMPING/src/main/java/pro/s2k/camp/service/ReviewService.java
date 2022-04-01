@@ -1,6 +1,5 @@
 package pro.s2k.camp.service;
 
-import org.springframework.web.multipart.MultipartFile;
 
 import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.PagingVO;

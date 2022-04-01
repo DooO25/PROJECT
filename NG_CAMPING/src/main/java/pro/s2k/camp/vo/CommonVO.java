@@ -20,6 +20,8 @@ public class CommonVO {
 	private int qna_idx;
 	private int nt_idx;
 	private String token;
+	private String csrf;
+
 	
 	private String mode;
 	
@@ -68,6 +70,9 @@ public class CommonVO {
 	}
 	public int getNt_idx() {
 		return nt_idx;
+	}
+	public String getCsrf() {
+		return csrf;
 	}
 
 	public void setIdx(int idx) {

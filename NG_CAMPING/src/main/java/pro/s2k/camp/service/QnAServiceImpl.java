@@ -6,25 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-import pro.s2k.camp.dao.MemberDAO;
 import pro.s2k.camp.dao.QnADAO;
 import pro.s2k.camp.vo.CommonVO;
-import pro.s2k.camp.vo.MemberVO;
 import pro.s2k.camp.vo.PagingVO;
 import pro.s2k.camp.vo.QnAVO;
 
-@Slf4j
 @Service("QnAService")
 public class QnAServiceImpl implements QnAService{
 
 	@Autowired
 	private QnADAO qnaDAO;
-	
-	
-	
-	
-	
 	
 	@Override
 	public PagingVO<QnAVO> selectList(CommonVO commVO) {
@@ -34,7 +25,6 @@ public class QnAServiceImpl implements QnAService{
 			pagingVO = new PagingVO<>(commVO.getCurrentPage(), commVO.getPageSize(), commVO.getBlockSize(), totalCount);
 			HashMap<String, Integer> map = new HashMap<String, Integer>();
 			map.put("startNo", pagingVO.getStartNo());
-			log.info(pagingVO.getStartNo() + "#################################");
 			map.put("pageSize", pagingVO.getPageSize());
 			List<QnAVO> list = qnaDAO.selectList(map);
 			pagingVO.setList(list);

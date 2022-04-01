@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
 <title>캠핑은 NG캠핑!</title>
@@ -55,37 +56,11 @@
 </head>
 </head>
 <body class="is-preload landing">
-	<div id="page-wrapper">
+
 
 		<!-- Header -->
-		<header id="header">
-			<h1 id="logo">
-				<a href="/main.do"><img
-					src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png"
-					alt="" /> </a>
-			</h1>
-			<nav id="nav">
-				<ul>
-					<li><a href="/main.do">Home</a></li>
-					<li><a href="#">캠핑장</a>
-						<ul>
-							<li><a href="#">일반 야영장</a></li>
-							<li><a href="#">자동차 야영장</a></li>
-							<li><a href="#">카라반</a></li>
-							<li><a href="#">글램핑</a></li>
-						</ul></li>
-
-					<li><a href="#">캠핑톡</a>
-						<ul>
-							<li><a href="#">공지사항</a></li>
-							<li><a href="#">캠핑후기</a></li>
-							<li><a href="#">QnA</a></li>
-						</ul></li>
-					<li><a href="/insert.do">회원가입</a></li>
-					<li><a href="/login.do">로그인</a></li>
-				</ul>
-			</nav>
-		</header>
+		<%@ include file="headerFooter/header.jsp"%>
+		
 		<section id="banner1">
 				<div
 				style="width: 50%; text-align: center; border: 1px solid white; padding: 10px; margin: 0 auto;">
@@ -99,26 +74,7 @@
 		</section>
 
 		<!-- Footer -->
-		<footer id="footer">
-			<ul class="icons">
-				<li><a href="https://twitter.com/?lang=ko"
-					class="icon brands alt fa-twitter" target="_blank"><span
-						class="label">Twitter</span></a></li>
-				<li><a href="https://www.facebook.com/"
-					class="icon brands alt fa-facebook-f" target="_blank"><span
-						class="label">Facebook</span></a></li>
-				<li><a href="https://www.instagram.com/"
-					class="icon brands alt fa-instagram" target="_blank"><span
-						class="label">Instagram</span></a></li>
-				<li><a href="mailto:Email@email.com"
-					class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
-			</ul>
-			<ul class="copyright">
-				<li>&copy; COPYRIGHT(C) 2022. Green Academy in Sungnam.</li>
-				<li>Made by 김가람, 강두오, 서해성</li>
-			</ul>
-		</footer>
-	</div>
+		<%@ include file="headerFooter/footer.jsp"%>
 
 
 	<!-- Scripts -->

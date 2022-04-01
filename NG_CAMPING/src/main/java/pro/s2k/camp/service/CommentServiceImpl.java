@@ -6,13 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
 import pro.s2k.camp.dao.CommentDAO;
 import pro.s2k.camp.vo.CommentVO;
 import pro.s2k.camp.vo.PagingVO;
 
 
-@Slf4j
 @Service("commentService")
 public class CommentServiceImpl implements CommentService {
 
@@ -80,7 +78,7 @@ public class CommentServiceImpl implements CommentService {
 	
 	
 	@Override
-	public void update(CommentVO commentVO) {
+	public void update(CommentVO commentVO, String[] delFiles, String realPath) {
 		if(commentVO!=null) {
 			// DB에서 해당 글번호의 글 읽어온다.
 			CommentVO dbVO = commentDAO.selectByIdx(commentVO.getCo_idx());
@@ -91,7 +89,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public void delete(CommentVO commentVO) {
+	public void delete(CommentVO commentVO, String uploadPath) {
 		if(commentVO!=null) {		
 			CommentVO dbVO = commentDAO.selectByIdx(commentVO.getCo_idx());
 			if(dbVO!=null) {
@@ -150,6 +148,15 @@ public class CommentServiceImpl implements CommentService {
 		return coCount;
 	}
 
-
+	@Override
+	public void update(CommentVO commentVO) {
+		if(commentVO!=null) {
+			// DB에서 해당 글번호의 글 읽어온다.
+			CommentVO dbVO = commentDAO.selectByIdx(commentVO.getCo_idx());
+			if(dbVO!=null) {
+				commentDAO.update(commentVO);
+			}
+		}
+	}
 }
 

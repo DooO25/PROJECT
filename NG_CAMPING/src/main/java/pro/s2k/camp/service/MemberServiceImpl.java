@@ -1,12 +1,5 @@
 package pro.s2k.camp.service;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -20,40 +13,29 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import lombok.extern.slf4j.Slf4j;
-import pro.s2k.camp.dao.KakaoDAO;
 import pro.s2k.camp.dao.MemberDAO;
 import pro.s2k.camp.dao.RoleDAO;
-import pro.s2k.camp.vo.KakaoVO;
 import pro.s2k.camp.vo.MemberVO;
-import pro.s2k.camp.vo.RoleVO;
 
-@Slf4j
 @Service("memberService")
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private MemberDAO memberDAO;
-	
-	@Autowired
-	private KakaoDAO kakaoDAO;
-	
+	/*
+	 * @Autowired private KakaoDAO kakaoDAO;
+	 */
 	@Autowired
 	private RoleDAO roleDAO;
-	
+
 	@Autowired
 	private JavaMailSender mailSender;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
-	
+
 	@Override
-	public MemberVO loginOk(MemberVO memberVO) { 
+	public MemberVO loginOk(MemberVO memberVO) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -67,99 +49,92 @@ public class MemberServiceImpl implements MemberService{
 	@Override
 	public void insert(MemberVO memberVO) {
 		// DB에 저장한다.
-		if(memberVO!=null) {
+		if (memberVO != null) {
 			memberDAO.insert(memberVO);
 			roleDAO.insert(memberVO.getMb_ID());
 			sendEmail(memberVO);
 		}
 	}
-	
-	
-	// 유저 탈퇴
+
 	@Override
-	public int userdelete(String mb_ID) {
-		memberDAO.userdelete(mb_ID);
-		return memberDAO.userdelete(mb_ID);
+	public MemberVO update(MemberVO memberVO) {
+		if (memberVO != null) {
+			MemberVO dbVO = memberDAO.selectByIdx(memberVO.getMb_idx());
+			if (dbVO != null) {
+				String dbPassword = dbVO.getMb_password();
+				if (bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
+					memberDAO.update(memberVO);
+					dbVO = memberDAO.selectByIdx(memberVO.getMb_idx());
+					return dbVO;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void delete(MemberVO memberVO) {
+		if (memberVO != null) {
+			MemberVO vo = memberDAO.selectUserId(memberVO.getMb_ID());
+			if (vo != null) {
+				String dbPassword = vo.getMb_password();
+				if (bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
+					memberDAO.delete(vo.getMb_idx());
+				}
+			}
+		}
 	}
 	
-	
-	
-	
-	
-
-	/*
-	 * @Override public void delete(MemberVO memberVO) { if(memberVO!=null) {
-	 * MemberVO vo = memberDAO.selectUserId(memberVO.getMb_ID()); if(vo!=null) {
-	 * String dbPassword = vo.getMb_password();
-	 * if(bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
-	 * memberDAO.delete(vo.getMb_idx()); } } } }
-	 */
- 
+	@Override
+	public void userDelete(MemberVO memberVO) {
+		if (memberVO != null) {
+			MemberVO vo = memberDAO.selectUserId(memberVO.getMb_ID());
+			if (vo != null) {
+				String dbPassword = vo.getMb_password();
+				if (bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
+					memberDAO.userDelete(vo.getMb_idx());
+				}
+			}
+		}
+	}
 
 	@Override
-	   public MemberVO updateRole(String mb_ID, String authkey) {
-	      HashMap<String, String> map = new HashMap<String, String>();
-	      map.put("gr_role", "ROLE_USER");
-	      map.put("mb_ID", mb_ID);
-	      map.put("authkey", authkey);
-	      memberDAO.updateRole(map);
-	      return memberDAO.selectUserId(mb_ID);
-	}	
- // 비번 변경     
-	  	@Override
-		public int updatePassword(MemberVO memberVO) {
-	  		int result = 0;
-			HashMap<String, String> map = new HashMap<String, String>();
-			String encryptPassword =bCryptPasswordEncoder.encode(memberVO.getMb_password());
-			map.put("mb_ID", memberVO.getMb_ID());			 
-			map.put("mb_password", encryptPassword);
-			result += memberDAO.updatePassword(map);
-			
-			return result;
-			}	      
-
-	  	  	
-	  	@Override
-		public int updatenick(MemberVO memberVO) {
-	  		int result = 0;
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("mb_ID", memberVO.getMb_ID());	
-			map.put("mb_nick", memberVO.getMb_nick());
-			result += memberDAO.updatenick(map);
-			return result;
-			}	      
-
-	  	
-	  	
-	  	
-	  	
-	  	
-// 주소변경
-	@Override
-	public void updateaddress(MemberVO memberVO) {
+	public int updatePassword(MemberVO memberVO) {
+  		int result = 0;
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("mb_zipcode", memberVO.getMb_zipcode());
-		map.put("mb_address1", memberVO.getMb_address1());
-		map.put("mb_address2", memberVO.getMb_address2());
-		memberDAO.updateaddress(map);
+		String encryptPassword =bCryptPasswordEncoder.encode(memberVO.getMb_password());
+		map.put("mb_ID", memberVO.getMb_ID());			 
+		map.put("mb_password", encryptPassword);
+		result += memberDAO.updatePassword(map);
+		
+		return result;
+		}	      
+
+
+	@Override
+	public MemberVO updateRole(String mb_ID, String authkey) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("gr_role", "ROLE_USER");
+		map.put("mb_ID", mb_ID);
+		map.put("authkey", authkey);
+		memberDAO.updateRole(map);
+		return memberDAO.selectUserId(mb_ID);
 	}
 
 	@Override
 	public int idCheck(String mb_ID) {
-		return memberDAO.selectCountByUserId(mb_ID);	
+		return memberDAO.selectCountByUserId(mb_ID);
 	}
-		
-	
-	// 닉네임 변경	
+
 	@Override
 	public int nickCheck(String mb_nick) {
-		return memberDAO.selectCountByUsernick(mb_nick);
+		return memberDAO.selectCountByUserNick(mb_nick);
 	}
 
 	@Override // 아이디 찾기 :이름과 전화번호를 넘겨서 DB에서 가져온다.
 	public MemberVO idSearch(MemberVO memberVO) {
 		MemberVO vo = null;
-		if(memberVO!=null) {
+		if (memberVO != null) {
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("mb_name", memberVO.getMb_name());
 			map.put("mb_tel", memberVO.getMb_tel());
@@ -167,200 +142,189 @@ public class MemberServiceImpl implements MemberService{
 		}
 		return vo;
 	}
-		
-	
-	
-	
-	
 
 	@Override // 비밀번호 찾기 :아이디와 이메일을 넘겨서 DB에서 가져온다.
 	public MemberVO passwordsearch(MemberVO memberVO) {
 		MemberVO vo = null;
-		if(memberVO!=null) {
+		if (memberVO != null) {
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("mb_ID", memberVO.getMb_ID());
 			map.put("mb_email", memberVO.getMb_email());
 			vo = memberDAO.selectByUserId(map);
+
 		}
-		
+
 		return vo;
-		
+
 	}
-	// 회원 가입시 인증 메일 보내는 메서드 
+
+	// 회원 가입시 인증 메일 보내는 메서드
 	public void sendEmail(MemberVO memberVO) {
-	      String subject = "회원 가입을 축하드립니다.";
-	      String to = memberVO.getMb_email();
-	      String content = "반갑습니다. " + memberVO.getMb_nick() + "님!!!<br>" + "회원 가입을 축하드립니다.<br> "
-	            + "회원 가입을 완료하려면 다음의 링크를 클릭해서 인증하시기 바랍니다.<br>" 
-	    		+ "<a href='http://localhost:8080/confirm.do?mb_ID="
-	            + memberVO.getMb_ID() + "&authkey=" + memberVO.getAuthkey() + "'>인증</a><br>";
+		String subject = "회원 가입을 축하드립니다.";
+		String to = memberVO.getMb_email();
+		String content = "반갑습니다. " + memberVO.getMb_nick() + "님!!!<br>" + "회원 가입을 축하드립니다.<br> "
+				+ "회원 가입을 완료하려면 다음의 링크를 클릭해서 인증하시기 바랍니다.<br>" + "<a href='http://localhost:8080/confirm.do?mb_ID="
+				+ memberVO.getMb_ID() + "&authkey=" + memberVO.getAuthkey() + "'>인증</a><br>";
 
-	      MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
-	      try {
-	         mailSender.send(preparator);
-	         System.out.println("메일 보내기 성공 ***************************************************");
-	      } catch (MailException ex) {
-	         System.err.println(ex.getMessage());
-	      }
-	   }
-	
+		MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
+		try {
+			mailSender.send(preparator);
+			System.out.println("메일 보내기 성공 ***************************************************");
+		} catch (MailException ex) {
+			System.err.println(ex.getMessage());
+		}
+	}
+
 	// 메일 내용 완성
-    private MimeMessagePreparator getMessagePreparator(String to, String subject, String content) {
-        MimeMessagePreparator preparator = new MimeMessagePreparator() {
- 
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-            	MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            	helper.setFrom("ngcamppp@gmail.com");
-            	helper.setTo(to);
-            	helper.setSubject(subject);
-            	helper.setText(content, true);
-            }
-        }; 
-        return preparator;
-    }
-    
-    // 비밀번호 찾기 임시비밀번호 메일 보내는 메서드 
-    
-    public void sendPasswor(MemberVO memberVO) {
-    	String subject = "NG_CAMP 임시 비밀번호 입니다.";
-    	String to = memberVO.getMb_email();
-    	String content = "반갑습니다. " + memberVO.getMb_ID() + "님!!!<br>" + "NG_CAMP에서 요청하신 비밀번호 찾기 메일로,<br> "
-    			+ "회원님의 임시 비밀번호는 "+ memberVO.getMb_password()+ " 입니다.";
-    	
-    	MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
-    	try {
-    		mailSender.send(preparator);
-    		System.out.println("메일 보내기 성공 ***************************************************");
-    	} catch (MailException ex) {
-    		System.err.println(ex.getMessage());
-    	}
-    }
-    
-	
- // 임시 비번
- 	@Override
- 	public String makePassword(int length) {
- 		Random random = new Random();
- 		String password = "";
- 		String str = "~@!#$%^&*+-*";
- 		for (int i = 0; i < length; i++) {
- 			// case의 개수가 많을수록 나타날 확율이 높아진다.
- 			switch (random.nextInt(20)) { // 0(숫자), 1(영어소문자), 2(영어 대문자), 3(특수문자)
- 			case 0:
- 			case 18:
- 			case 19:
- 				password += (char) ('0' + random.nextInt(10));
- 				break;
- 			case 1:
- 			case 4:
- 			case 5:
- 			case 6:
- 			case 7:
- 			case 8:
- 			case 9:
- 			case 10:
- 				password += (char) ('a' + random.nextInt(26));
- 				break;
- 			case 2:
- 			case 11:
- 			case 12:
- 			case 13:
- 			case 14:
- 			case 15:
- 			case 16:
- 			case 17:
- 				password += (char) ('A' + random.nextInt(26));
- 				break;
- 			case 3:
- 				password += str.charAt(random.nextInt(str.length()));
- 				break;
- 			}
- 		}
- 		return password;
- 	}
+	private MimeMessagePreparator getMessagePreparator(String to, String subject, String content) {
+		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 
-	
+			public void prepare(MimeMessage mimeMessage) throws Exception {
+				MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+				helper.setFrom("ngcamppp@gmail.com");
+				helper.setTo(to);
+				helper.setSubject(subject);
+				helper.setText(content, true);
+			}
+		};
+		return preparator;
+	}
+
+	// 비밀번호 찾기 임시비밀번호 메일 보내는 메서드
+
+	public void sendPasswor(MemberVO memberVO) {
+		String subject = "NG_CAMP 임시 비밀번호 입니다.";
+		String to = memberVO.getMb_email();
+		String content = "반갑습니다. " + memberVO.getMb_ID() + "님!!!<br>" + "NG_CAMP에서 요청하신 비밀번호 찾기 메일로,<br> "
+				+ "회원님의 임시 비밀번호는 " + memberVO.getMb_password() + " 입니다.";
+
+		MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
+		try {
+			mailSender.send(preparator);
+			System.out.println("메일 보내기 성공 ***************************************************");
+		} catch (MailException ex) {
+			System.err.println(ex.getMessage());
+		}
+	}
+
+	// 임시 비번
+	@Override
+	public String makePassword(int length) {
+		Random random = new Random();
+		String password = "";
+		String str = "~@!#$%^&*+-*";
+		for (int i = 0; i < length; i++) {
+			// case의 개수가 많을수록 나타날 확율이 높아진다.
+			switch (random.nextInt(20)) { // 0(숫자), 1(영어소문자), 2(영어 대문자), 3(특수문자)
+			case 0:
+			case 18:
+			case 19:
+				password += (char) ('0' + random.nextInt(10));
+				break;
+			case 1:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:
+				password += (char) ('a' + random.nextInt(26));
+				break;
+			case 2:
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:
+				password += (char) ('A' + random.nextInt(26));
+				break;
+			case 3:
+				password += str.charAt(random.nextInt(str.length()));
+				break;
+			}
+		}
+		return password;
+	}
+
+	@Override
+	public void sendPassword(MemberVO memberVO) {
+		String subject = "NG_CAMP 임시 비밀번호 입니다.";
+		String to = memberVO.getMb_email();
+		String content = "반갑습니다. " + memberVO.getMb_ID() + "님!!!<br>" + "NG_CAMP에서 요청하신 비밀번호 찾기 메일로,<br> "
+				+ "회원님의 임시 비밀번호는 " + memberVO.getMb_password() + " 입니다.";
+
+		MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
+		try {
+			mailSender.send(preparator);
+			System.out.println("메일 보내기 성공 ***************************************************");
+		} catch (MailException ex) {
+			System.err.println(ex.getMessage());
+		}
+	}
+
 	@Override
 	public MemberVO selectByUserId(MemberVO memberVO) {
 		MemberVO vo = null;
-		if(memberVO!=null) {
+		if (memberVO != null) {
 			vo = memberDAO.selectUserId(memberVO.getMb_ID());
-			if(vo!=null) {
+			if (vo != null) {
 				String dbPassword = vo.getMb_password();
-				if(!bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
-					return null; 
+				if (!bCryptPasswordEncoder.matches(memberVO.getMb_password(), dbPassword)) {
+					return null;
 				}
 			}
 		}
-		return vo; 
+		return vo;
 	}
-	
-	
-	
-	
-	
-
-	// 카카오 엑세스토큰 받아오는 메서드 
-	public String getAccessToken (String authorize_code) {
-		String access_Token = "";
-		String refresh_Token = "";
-		String reqURL = "https://kauth.kakao.com/oauth/token";
-
-		try {
-			URL url = new URL(reqURL);
-            
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			// POST 요청을 위해 기본값이 false인 setDoOutput을 true로
-            
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			// POST 요청에 필요로 요구하는 파라미터 스트림을 통해 전송
-            
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-			StringBuilder sb = new StringBuilder();
-			sb.append("grant_type=authorization_code");
-            
-			sb.append("&client_id=8e9a2c0fe5fd14072d6be59bf53313d6"); //본인이 발급받은 key
-			sb.append("&redirect_uri=http://localhost:8080/kakaoLogin.do"); // 본인이 설정한 주소
-            
-			sb.append("&code=" + authorize_code);
-			bw.write(sb.toString());
-			bw.flush();
-            
-			// 결과 코드가 200이라면 성공
-			int responseCode = conn.getResponseCode();
-			System.out.println("responseCode : " + responseCode);
-            
-			// 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String line = "";
-			String result = "";
-            
-			while ((line = br.readLine()) != null) {
-				result += line;
-			}
-			System.out.println("response body : " + result);
-            
-			// Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-			JsonParser parser = new JsonParser();
-			JsonElement element = parser.parse(result);
-            
-			access_Token = element.getAsJsonObject().get("access_token").getAsString();
-			refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
-            
-			System.out.println("access_token : " + access_Token);
-			System.out.println("refresh_token : " + refresh_Token);
-            
-			br.close();
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return access_Token;
-	}
-
-	// 카캌오 회원정보 가져오는 메서드
 	/*
+	 * // 카카오 엑세스토큰 받아오는 메서드 public String getAccessToken (String authorize_code) {
+	 * String access_Token = ""; String refresh_Token = ""; String reqURL =
+	 * "https://kauth.kakao.com/oauth/token";
+	 * 
+	 * try { URL url = new URL(reqURL);
+	 * 
+	 * HttpURLConnection conn = (HttpURLConnection) url.openConnection(); // POST
+	 * 요청을 위해 기본값이 false인 setDoOutput을 true로
+	 * 
+	 * conn.setRequestMethod("POST"); conn.setDoOutput(true); // POST 요청에 필요로 요구하는
+	 * 파라미터 스트림을 통해 전송
+	 * 
+	 * BufferedWriter bw = new BufferedWriter(new
+	 * OutputStreamWriter(conn.getOutputStream())); StringBuilder sb = new
+	 * StringBuilder(); sb.append("grant_type=authorization_code");
+	 * 
+	 * sb.append("&client_id=8e9a2c0fe5fd14072d6be59bf53313d6"); //본인이 발급받은 key
+	 * sb.append("&redirect_uri=http://localhost:8080/kakaoLogin.do"); // 본인이 설정한 주소
+	 * 
+	 * sb.append("&code=" + authorize_code); bw.write(sb.toString()); bw.flush();
+	 * 
+	 * // 결과 코드가 200이라면 성공 int responseCode = conn.getResponseCode();
+	 * System.out.println("responseCode : " + responseCode);
+	 * 
+	 * // 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기 BufferedReader br = new
+	 * BufferedReader(new InputStreamReader(conn.getInputStream())); String line =
+	 * ""; String result = "";
+	 * 
+	 * while ((line = br.readLine()) != null) { result += line; }
+	 * System.out.println("response body : " + result);
+	 * 
+	 * // Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성 JsonParser parser = new JsonParser();
+	 * JsonElement element = parser.parse(result);
+	 * 
+	 * access_Token = element.getAsJsonObject().get("access_token").getAsString();
+	 * refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
+	 * 
+	 * System.out.println("access_token : " + access_Token);
+	 * System.out.println("refresh_token : " + refresh_Token);
+	 * 
+	 * br.close(); bw.close(); } catch (IOException e) { e.printStackTrace(); }
+	 * return access_Token; }
+	 * 
+	 * // 카캌오 회원정보 가져오는 메서드
+	 * 
 	 * @Override public KakaoVO getUserInfo(String access_Token) {
 	 * 
 	 * // 요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언 HashMap<String, Object>
@@ -404,26 +368,15 @@ public class MemberServiceImpl implements MemberService{
 	 * result; // 정보가 이미 있기 때문에 result를 리턴함. } }
 	 */
 
+
+	//닉네임 변경
 	@Override
-	public void sendPassword(MemberVO memberVO) {
-		String subject = "NG_CAMP 임시 비밀번호 입니다.";
-    	String to = memberVO.getMb_email();
-    	String content = "반갑습니다. " + memberVO.getMb_ID() + "님!!!<br>" + "NG_CAMP에서 요청하신 비밀번호 찾기 메일로,<br> "
-    			+ "회원님의 임시 비밀번호는 "+ memberVO.getMb_password()+ " 입니다.";
-    	
-    	MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
-    	try {
-    		mailSender.send(preparator);
-    		System.out.println("메일 보내기 성공 ***************************************************");
-    	} catch (MailException ex) {
-    		System.err.println(ex.getMessage());
-    	}
-    }
+	public int updateNick(MemberVO memberVO) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("mb_ID", memberVO.getMb_ID());
+		map.put("mb_nick", memberVO.getMb_nick());
+		return memberDAO.updateNick(map);
+	}
+
 
 }
-	/*
-	 * @Override public RoleVO selectUserId(String mb_ID) { return
-	 * roleDAO.selectUserId(mb_ID); }
-	 */
-
-

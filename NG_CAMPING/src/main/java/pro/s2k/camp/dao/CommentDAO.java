@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import pro.s2k.camp.vo.CommentVO;
-import pro.s2k.camp.vo.ReviewVO;
 
 public interface CommentDAO {
 	

@@ -2,8 +2,6 @@ package pro.s2k.camp.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.PrivateKey;
-import java.security.interfaces.RSAKey;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,94 +35,6 @@ public class MemberController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
-
-	@RequestMapping(value = "/memberdelete.do", method = RequestMethod.GET)
-	public String memberdelete() {
-		return "memberdelete";
-	}
-
-	@RequestMapping(value = "/Admin/membermanage.do", method = RequestMethod.GET)
-	public String membermanage() {
-		return "/Admin/membermanage";
-	}
-
-	// 회원 탈퇴 폼
-	@RequestMapping(value = "/memberdelete.do")
-	public String memberdelete(@RequestParam(value = "error", required = false) String error, Model model) {
-		if (error != null) {
-			model.addAttribute("error", "입력하신 정보가 일치하지 않습니다.");
-		}
-		return "memberdelete";
-	}
-
-	@RequestMapping(value = "/memberdeleteOK.do", method = RequestMethod.GET)
-	public String memberdeleteOK() {
-		return "memberdelete";
-	}
-
-	@RequestMapping(value = "/memberdeleteOk.do", method = RequestMethod.POST)
-	public String deleteOkPOST(@ModelAttribute MemberVO memberVO, HttpSession session, String mb_ID,
-			HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
-		MemberVO vo = memberService.selectByUserId(memberVO);
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		if (encoder.matches(mb_ID, memberVO.getMb_password())) {
-			session.setAttribute("mb_password", memberVO.getMb_password());
-			out.println("<script>alert('회원탈퇴 완료.'); location.href=\"redirect:/\";</script>");
-			out.flush();
-			session.removeAttribute("mvo");
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			// 인증정보가 있다면
-			if (authentication != null) {
-				// 로그아웃을 시킨다.
-				new SecurityContextLogoutHandler().logout(request, response, authentication);
-			}
-		} else if (!encoder.matches(mb_ID, memberVO.getMb_password())) {
-			out.println("<script>alert('오류.');");
-		}
-		return "redirect:memberdelete?error";
-	}
-
-	
-	
-	@RequestMapping(value = "/passwordcorrectOk.do", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	@ResponseBody
-	public String pwdcorrect(@ModelAttribute MemberVO memberVO, @RequestParam String newPassword, HttpSession session,
-			HttpServletRequest request, HttpServletResponse response) {
-		int result = 0;
-		log.info(newPassword + "######################################");
-		memberVO.setMb_password(newPassword);
-		result += memberService.updatePassword(memberVO);
-		session.removeAttribute("mvo");
-		System.out.println(result);
-		return result + "";
-	}
-
-	@RequestMapping(value = "/passwordcorrect.do", method = RequestMethod.GET)
-	public String passwordcorrect() {
-		return "passwordcorrect";
-	}
-
-	@RequestMapping(value = "/memberpage.do", method = RequestMethod.POST)
-	public String memberpage() {
-		return "memberpage";
-	}
-
-	@RequestMapping(value = "/memberpageOk.do", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	@ResponseBody
-	public String memberpageOk(@ModelAttribute MemberVO memberVO, @RequestParam String mb_nick, HttpSession session,
-			HttpServletRequest request, HttpServletResponse response) {
-		int result = 0;
-		log.info(mb_nick + "######################################");
-		memberVO.setMb_nick(mb_nick);
-		result += memberService.updatePassword(memberVO);
-		session.removeAttribute("mvo");
-		System.out.println(result);
-		return result + "";
-	}
-
 	@RequestMapping(value = "/insert.do", method = RequestMethod.GET)
 	public String insert() {
 		return "insert";
@@ -141,7 +51,8 @@ public class MemberController {
 		memberVO.setMb_password(bCryptPasswordEncoder.encode(memberVO.getMb_password()));
 		memberService.insert(memberVO);
 		model.addAttribute("memberVO", memberVO);
-		return "insertOk";
+
+		return "redirect:/main.do";
 	}
 
 	// 아이디 체크
@@ -163,7 +74,7 @@ public class MemberController {
 		return count + "";
 	}
 
-	// 닉네임 체크
+	// 닉네임 체
 	@RequestMapping(value = "/nickCheck.do", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String nickCheck(@RequestParam(required = false) String nick) {
@@ -201,55 +112,55 @@ public class MemberController {
 	}
 
 	// 아이디찾기 실패시
-	@RequestMapping(value = "/findUserId.do")
+	@RequestMapping(value = "/userInfo/findUserId.do")
 	public String findUserId(@RequestParam(value = "error", required = false) String error, Model model) {
 		if (error != null) {
 			model.addAttribute("error", "입력하신 정보의 아이디는 존재하지 않습니다.");
 		}
-		return "findUserId";
+		return "/userInfo/findUserId";
 	}
 
 	// 아이디 찾기 를 GET으로 받았을때
-	@RequestMapping(value = "/findUserIdOk.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/userInfo/findUserIdOk.do", method = RequestMethod.GET)
 	public String findUserIdOk() {
-		return "findUserId";
+		return "/userInfo/findUserId";
 	}
 
 	// 아이디 찾기 를 POST로 받았을때
-	@RequestMapping(value = "/findUserIdOk.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/userInfo/findUserIdOk.do", method = RequestMethod.POST)
 	public String findUserIdOkPOST(@ModelAttribute MemberVO memberVO, Model model) {
 		MemberVO vo = memberService.idSearch(memberVO);
 		if (vo == null) {
 			// 일치하는 정보가 없다.
-			return "redirect:findUserId.do?error";
+			return "redirect:/userInfo/findUserId.do?error";
 		} else {
 			// 일치하는 정보가 있다.
 			model.addAttribute("memberVO", vo);
-			return "findUserIdOk";
+			return "/userInfo/findUserIdOk";
 		}
 	}
 
 	// 비밀번호 찾기 실패시
-	@RequestMapping(value = "/findPassword.do")
+	@RequestMapping(value = "/userInfo/findPassword.do")
 	public String findPassword(@RequestParam(value = "error", required = false) String error, Model model) {
 		if (error != null) {
 			model.addAttribute("error", "입력하신 정보는 존재하지 않습니다.");
 		}
-		return "findPassword";
+		return "/userInfo/findPassword";
 	}
 
 	// 비밀번호 찾기 GET으로 받았을때
-	@RequestMapping(value = "/findPasswordOk.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/userInfo/findPasswordOk.do", method = RequestMethod.GET)
 	public String findPasswordOk() {
-		return "findPasswordOk";
+		return "/userInfo/findPasswordOk";
 	}
 
-	@RequestMapping(value = "/findPasswordOk.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/userInfo/findPasswordOk.do", method = RequestMethod.POST)
 	public String findPasswordOkPOST(@ModelAttribute MemberVO memberVO, Model model) {
 		MemberVO vo = memberService.passwordsearch(memberVO);
 		if (vo == null) {
 			// 일치하는 정보가 없다.
-			return "redirect:findPassword.do?error";
+			return "redirect:/userInfo/findPassword.do?error";
 		} else {
 			// 일치하는 정보가 있다.
 			// 임시비밀번호를 만들어서 DB에 저장
@@ -258,7 +169,86 @@ public class MemberController {
 			memberService.updatePassword(memberVO);
 			memberService.sendPassword(memberVO);
 			// 만들어진 임시 비밀번호 메일로 보낸다.
-			return "findPasswordOk";
+			return "/userInfo/findPasswordOk";
 		}
+	}
+
+	@RequestMapping(value = "/memberInfo/memberDelete.do", method = RequestMethod.GET)
+	public String memberdelete() {
+		return "/memberInfo/memberDelete";
+	}
+
+	@RequestMapping(value = "/admin/memberManage.do", method = RequestMethod.GET)
+	public String membermanage() {
+		return "/admin/memberManage";
+	}
+
+	// 회원 탈퇴 폼
+	@RequestMapping(value = "/memberInfo/memberDelete.do")
+	public String memberdelete(@RequestParam(value = "error", required = false) String error,Model model) {
+		if(error!=null) {
+			model.addAttribute("error", "입력하신 정보가 일치하지 않습니다.");
+		}
+		return "/memberInfo/memberDelete";
+	}
+	
+	
+	@RequestMapping(value = "/memberDeleteOk.do")
+	public String userDeleteOk(@ModelAttribute MemberVO memberVO, HttpSession session, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		response.setContentType("text/html; charset=euc-kr");
+		PrintWriter out = response.getWriter();
+		MemberVO vo = memberService.selectByUserId(memberVO);
+		if (vo == null) {
+			out.println("<script>alert('비밀번호를 다시 입력해주세요.'); </script>");
+			out.flush();
+			return "/memberInfo/memberDelete";
+		} else {
+			memberService.userDelete(memberVO);
+			session.removeAttribute("mvo");
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (authentication != null) {
+				new SecurityContextLogoutHandler().logout(request, response, authentication);
+			}
+			out.println("<script>alert('그동안 NG캠핑을 이용해주셔서 감사합니다.'); </script>");
+			out.println("<script>location.href='/main.do';</script>");
+			out.flush();
+			return "/";
+		}
+	}
+
+	@RequestMapping(value = "/memberInfo/passwordCorrectOk.do", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String pwdcorrect(@ModelAttribute MemberVO memberVO, @RequestParam String newPassword, HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		int result = 0;
+		log.info(newPassword + "######################################");
+		memberVO.setMb_password(newPassword);
+		result += memberService.updatePassword(memberVO);
+		session.removeAttribute("mvo");
+		System.out.println(result);
+		return result + "";
+	}
+
+	@RequestMapping(value = "/memberInfo/passwordCorrect.do", method = RequestMethod.GET)
+	public String passwordcorrect() {
+		return "/memberInfo/passwordCorrect";
+	}
+
+	@RequestMapping(value = "/memberInfo/memberPage.do", method = RequestMethod.POST)
+	public String memberPage() {
+		return "/memberInfo/memberPage";
+	}
+
+	@RequestMapping(value = "/memberInfo/memberpageOk.do", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String memberPageOk(@ModelAttribute MemberVO memberVO, @RequestParam String mb_nick, HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		int result = 0;
+		memberVO.setMb_nick(mb_nick);
+		result += memberService.updateNick(memberVO);
+		session.removeAttribute("mvo");
+		System.out.println(result);
+		return result + "";
 	}
 }

@@ -1,5 +1,6 @@
 package pro.s2k.camp.controller;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
@@ -12,27 +13,26 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.view.AbstractView;
 
-// 다운로드를 책임질 클래스
+
+// 파일 다운로드를 책임지는 클래스
 public class FileDownloadView extends AbstractView {
 
 	@Override
-	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// 컨트롤러에서 넘겨분 데이터를 받는다.
-		String ofileName = (String) model.get("ofileName");
-		String sfileName = (String) model.get("sfileName");
+	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		
-		// 저장된 파일 객체
-		@SuppressWarnings("deprecation")
-		File file = new File(request.getRealPath("upload"), sfileName);
+		String ofileName = (String) model.get("ofileName"); // 원본이름
+		String sfileName = (String) model.get("sfileName"); // 저장이름
 		
-		// 다운로드 처리
+		// 저장된 파일 객체 얻기
+		File file = new File(request.getSession().getServletContext().getRealPath("upload"), sfileName);
+		
 		response.setContentType(getContentType());
 		response.setContentLength((int)file.length());
-		String fileName = URLEncoder.encode(ofileName,"UTF-8").replaceAll("\\+", "%20"); // 파일이름에 한글이 있을경우 대비
+		String fileName = URLEncoder.encode(ofileName, "UTF-8").replaceAll("\\+", "%20");
 		
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\";");
         response.setHeader("Content-Transfer-Encoding", "binary");
-       
         OutputStream out = response.getOutputStream();
         FileInputStream fis = null;
         
@@ -47,5 +47,4 @@ public class FileDownloadView extends AbstractView {
         }
         out.flush();
 	}
-
 }

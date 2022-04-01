@@ -1,21 +1,8 @@
 package pro.s2k.camp.vo;
-/*
- * CREATE TABLE `camp_notice` (
-  `mb_nick` varchar(30) NOT NULL,
-  nt_idx int not null auto_increment ,
-  `mb_idx` int(11) NOT null,
-  `nt_title` varchar(100) not NULL,
-  `nt_content` text not NULL,
-  `nt_regDate` timestamp default now(),
-  `nt_modiDate` timestamp default now(),
-  `nt_hit` int(11) default 0,
-  PRIMARY KEY (`nt_idx`),
-  CONSTRAINT `camp_notice_FK` FOREIGN KEY (`mb_idx`) REFERENCES `camp_member` (`mb_idx`) ON UPDATE CASCADE
-);
- */
 
 
 import java.sql.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,4 +21,6 @@ public class NoticeVO {
 	private Date nt_regDate;
 	private Date nt_modiDate;
 	private int nt_hit;
+	private String nt_ip;
+	private List<FileUploadVO> fileList;
 }

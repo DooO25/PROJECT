@@ -79,6 +79,10 @@ font-weight: bold;
 	top: 100%;
 	left: 30%;
 }
+
+
+
+
 </style>
 
 <noscript>
@@ -89,7 +93,7 @@ font-weight: bold;
 <body class="is-preload landing">
 
 	<!-- header -->
-	<%@ include file="header_footer/header.jsp"%>
+	<%@ include file="headerFooter/header.jsp" %>
 
 	<!-- Banner -->
 	<section id="banner">
@@ -501,7 +505,7 @@ font-weight: bold;
 	</section>
 
 	<!-- Footer -->
-	<%@ include file="header_footer/footer.jsp"%>
+<%@ include file="headerFooter/footer.jsp" %>
 
 	<!-- Scripts -->
 	<script

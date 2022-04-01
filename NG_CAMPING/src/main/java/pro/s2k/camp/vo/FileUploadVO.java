@@ -1,5 +1,6 @@
 package pro.s2k.camp.vo;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileUploadVO {
-	private int idx;
-	private int ref;
+	private int up_idx;
+	private int up_ref;
 	private String saveName;
-	private String oriName;
+	private String originalName;
 }

@@ -1,21 +1,5 @@
 package pro.s2k.camp.vo;
-/*
 
-CREATE TABLE `camp_member` (
-  `mb_idx` int(11) NOT NULL AUTO_INCREMENT,
-  `mb_ID` varchar(12) not NULL,
-  `mb_password` varchar(41) not NULL,
-  `mb_name` varchar(15) not NULL,
-  `mb_nick` varchar(30) NOT NULL,
-  `mb_email` varchar(30) not NULL,
-  `mb_tel` varchar(13) not NULL,
-  `mb_birth` date not null,
-  `mb_address1` varchar(200) not NULL,
-  `mb_address2` varchar(300) not NULL,
-  `gr_grade` int(11) NOT NULL,
-  `mb_use` int(11) default 1,
-  PRIMARY KEY (`mb_idx`),
- */
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,5 +25,5 @@ public class MemberVO {
 	private String authkey;
 	private String gr_role;
 	private String gr_idx;
-
+	private int del;
 }

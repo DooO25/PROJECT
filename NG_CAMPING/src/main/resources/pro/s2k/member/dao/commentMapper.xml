@@ -48,6 +48,7 @@
 			(rv_idx,co_ref,co_seq,co_lev,co_content,co_regDate,co_modiDate,co_ip)
 		values
 			(#{rv_idx},#{co_ref},#{co_seq},#{co_lev},#{co_content},now(),now(),#{co_ip})
+	
 	</insert>
 	
 	
@@ -65,7 +66,7 @@
 	<update id="update" parameterType="commentVO">
 		update camp_comment set
 			co_content = #{co_content},
-			rv_modidate = #{rv_modidate},
+			co_modiDate = #{co_modiDate},
 			co_ip = #{co_ip}
 		where
 			co_idx = #{co_idx}

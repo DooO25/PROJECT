@@ -1,0 +1,1 @@
+INSERT INTO MEMBER VALUES (1, 'test', 'test', 'test', 'test', 'test@test.com', 'M', '0100000000', '12345', '알아서뭐하게', '모르겠는데', '0', sysdate, sysdate, '', '', '');

@@ -65,6 +65,9 @@
 		select * from camp_member
 		order by mb_idx desc
 	</select>
+	
+	
+	
 	<!-- 6. 개수세기 -->
 	<select id="selectCount" resultType="int">
 		select count(*) from
@@ -141,4 +144,30 @@
       mb_Nick = #{mb_nick}
       where mb_ID= #{mb_ID}
    </update>
+   
+   <!-- 맴버 검색기능 -->
+	<select id="selectSearchMember" parameterType="hashmap"
+		resultType="MemberVO">
+		select
+		a.mb_idx,a.mb_ID,a.mb_name,a.mb_nick,a.mb_email,a.mb_tel,a.mb_birth,a.mb_zipcode,a.mb_address1,a.mb_address2,
+		(select gr_role from member_role where mb_ID = a.mb_ID) as gr_role
+		from camp_member a
+		where
+
+
+		<if test="searchType == 'all'">
+			mb_ID like concat('%','#{searchtext}','%')
+			or mb_nick like concat ('%','#{searchtext}','%')
+			or mb_name like concat ('%','#{searchtext}','%')
+			or (select gr_role from member_role where mb_ID = a.mb_ID) like concat('%','#{searchtext}','%')
+		</if>
+
+		<if test="searchType == 'ID'">mb_ID like concat('%','#{searchtext}','%') </if>
+		<if test="searchType == 'nick'"> mb_nick like concat ('%','#{searchtext}','%') </if>
+		<if test="searchType == 'name'">mb_name like concat ('%','#{searchtext}','%')</if>
+		<if test="searchType == 'role'">(select gr_role from member_role where mb_ID = a.mb_ID) like concat('%','#{searchtext}','%') </if>
+	</select>
+   
+   
+   
 </mapper>

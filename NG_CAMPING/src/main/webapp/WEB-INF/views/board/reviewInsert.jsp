@@ -379,7 +379,7 @@ b {
        $.ajax({
          data: form_data,
          type: "POST",
-         url: "imageUpload.do",
+         url: "/imageUpload.do",
          cache: false,
          contentType: false,
          enctype: "multipart/form-data",

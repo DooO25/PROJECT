@@ -1,5 +1,7 @@
 package pro.s2k.camp.service;
+
 import pro.s2k.camp.vo.MemberVO;
+import pro.s2k.camp.vo.PagingVO;
 
 public interface MemberService {
 // 1. 로그인
@@ -15,7 +17,7 @@ public interface MemberService {
 // 5-1 회원 탈퇴
 	void userDelete(MemberVO memberVO);
 // 5. 비번 변경
-		int updatePassword(MemberVO memberVO);
+	int updatePassword(MemberVO memberVO);
 // 7. 인증 완료
 	MemberVO updateRole(String mb_ID, String authkey);
 // 8. 아이디 중복확인
@@ -32,10 +34,14 @@ public interface MemberService {
 	MemberVO selectByUserId(MemberVO memberVO);
 // 14. 메일로 임시비밀번호 보내기
 	void sendPassword(MemberVO memberVO);
-	
 // 15. 닉네임 수정
 	int updateNick(MemberVO memberVO);
-
+	
+	PagingVO<MemberVO> selectList();
+	
+	MemberVO selectByIdx(int mb_idx);
+	
+	String naverMemberProfile();
 	
 /*
 // 15. accessToken 얻기	

@@ -47,8 +47,7 @@ function ajaxTOsend(){
 				alert('오류가 발생했습니다. 다시 비밀번호를 수정해주세요.');
 				$("#password").val ='';
 				$("#password1").val ='';	
-				
-				
+
 			}
 			
 		},
@@ -58,8 +57,6 @@ function ajaxTOsend(){
 		
 });
 }
-
-
 $(function() {
 	$("#password1").keyup(function() {
 		var pw = $('#password').val();

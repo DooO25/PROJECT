@@ -22,5 +22,6 @@ public class NoticeVO {
 	private Date nt_modiDate;
 	private int nt_hit;
 	private String nt_ip;
+
 	private List<FileUploadVO> fileList;
 }

@@ -10,6 +10,7 @@ public interface QnAService {
 	PagingVO<QnAVO> selectList(CommonVO commVO);
 	// 내용보기
 	QnAVO selectByIdx(int idx);
+	
 	QnAVO selectByIdxAnswer(int idx);
 	// 원본글 저장
 	void insert(QnAVO qnaVO);
@@ -25,4 +26,7 @@ public interface QnAService {
 	int selectMb_idx(int idx);
 	
 	void updateAnswer(QnAVO qnaVO);
+	
+	PagingVO<QnAVO> selectSearchList(CommonVO commVO);
+	
 }

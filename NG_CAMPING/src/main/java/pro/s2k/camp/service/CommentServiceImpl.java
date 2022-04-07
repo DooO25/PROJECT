@@ -6,11 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import pro.s2k.camp.dao.CommentDAO;
 import pro.s2k.camp.vo.CommentVO;
 import pro.s2k.camp.vo.PagingVO;
 
-
+@Slf4j
 @Service("commentService")
 public class CommentServiceImpl implements CommentService {
 
@@ -23,9 +24,12 @@ public class CommentServiceImpl implements CommentService {
 		try {
 			// 1개글에서 총 개수 구하기
 			int totalCount = commentDAO.selectCount(idx);
+			log.info(totalCount+"총개수");
 			pagingVO = new PagingVO<>(totalCount);
+			log.info(pagingVO+"pagingVO");
 //			 글을 읽어오기
 			List<CommentVO> list = commentDAO.selectList(idx);
+			log.info(list+"list");
 //			// 완성된 리스트를 페이징 객체에 넣는다.
 			pagingVO.setList(list);
 		}catch (Exception e) {
@@ -48,7 +52,6 @@ public class CommentServiceImpl implements CommentService {
 			HashMap<String, Integer> map = new HashMap<>();
 			map.put("rv_idx", commentVO.getRv_idx());
 			map.put("co_seq", commentVO.getCo_seq());
-			commentDAO.updateSeq(map);
 			// ref는 그대로
 			// seq는 +1
 			commentVO.setCo_seq(commentVO.getCo_seq()+1);
@@ -65,8 +68,12 @@ public class CommentServiceImpl implements CommentService {
 			// ref가 같으면서 나보다 seq가 큰값 들을 모두 seq값을 1씩 증가시킨다.
 			HashMap<String, Integer> map = new HashMap<>();
 			map.put("co_ref", commentVO.getCo_ref());
+			log.info(commentVO.getCo_ref()+"%%%%%123123");
 			map.put("co_seq", commentVO.getCo_seq());
+			log.info(commentVO.getCo_seq()+"#####123123");
+			commentDAO.updateSeq(map);
 			// seq는 그대로
+			commentVO.setCo_seq(commentVO.getCo_seq()+1);
 			// lev는 +1
 			commentVO.setCo_lev(commentVO.getCo_lev()+1);
 			

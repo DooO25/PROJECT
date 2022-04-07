@@ -31,6 +31,7 @@
 		var logout = document.logout;
 		logout.submit();
 	}
+	
 </script>
 <style>
 .swiper-container {
@@ -80,8 +81,12 @@ font-weight: bold;
 	left: 30%;
 }
 
-
-
+table {
+	table-layout: fixed;
+}
+#title{
+	white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
+}
 
 </style>
 
@@ -396,33 +401,28 @@ font-weight: bold;
 								<td>
 									<h3 style="text-align: left">공지사항</h3>
 								</td>
-								<td><i class="fa fa-plus fa-1" style="float: right"></i></td>
+								<td>
+									<form action="/board/notice.do" method="post" id="notice">
+										<input type="hidden" name="${_csrf.parameterName }"
+											value="${_csrf.token }"> 
+										<a href="#"><i class="fa fa-plus fa-1" style="float: right" onclick="document.getElementById('notice').submit()"></i></a>
+									</form>
+								</td>
 							</tr>
 							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
+								<c:if test="${nv.totalCount==0 }">
+									<td colspan="2">등록된 글이 없습니다.</td>
+								</c:if>
 							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
+							<c:if test="${not empty nv.list }">
+								<c:forEach var="vo" items="${nv.list }">
+									<tr>
+										<td colspan="2" style="text-align: left" id="title"><i
+											class="fa fa-angle-right" aria-hidden="true" ></i><font
+												color="white">${vo.nt_title }</font></td>
+									</tr>
+								</c:forEach>
+							</c:if>
 						</table>
 						<br>
 					</section>
@@ -430,35 +430,30 @@ font-weight: bold;
 						<table>
 							<tr>
 								<td>
-									<h3 style="text-align: left">공지사항</h3>
+									<h3 style="text-align: left">QnA</h3>
 								</td>
-								<td><i class="fa fa-plus fa-1" style="float: right"></i></td>
+								<td>
+									<form action="/board/QnA.do" method="post" id="QnA">
+										<input type="hidden" name="${_csrf.parameterName }"
+											value="${_csrf.token }"> 
+										<a href="#"><i class="fa fa-plus fa-1" style="float: right" onclick="document.getElementById('QnA').submit()"></i></a>
+									</form>
+								</td>
 							</tr>
 							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
+								<c:if test="${qv.totalCount==0 }">
+									<td colspan="2">등록된 글이 없습니다.</td>
+								</c:if>
 							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
+							<c:if test="${not empty qv.list }">
+								<c:forEach var="vo" items="${qv.list }">
+									<tr>
+										<td colspan="2" style="text-align: left" id="title"><i
+											class="fa fa-angle-right" aria-hidden="true" ></i> <font
+												color="white">${vo.qna_title }</font></td>
+									</tr>
+								</c:forEach>
+							</c:if>
 						</table>
 						<br>
 					</section>
@@ -467,35 +462,30 @@ font-weight: bold;
 						<table>
 							<tr>
 								<td>
-									<h3 style="text-align: left">공지사항</h3>
+									<h3 style="text-align: left">캠핑후기</h3>
 								</td>
-								<td><i class="fa fa-plus fa-1" style="float: right"></i></td>
+								<td>
+									<form action="/board/review.do" method="post" id="review">
+										<input type="hidden" name="${_csrf.parameterName }"
+											value="${_csrf.token }"> 
+										<a href="#"><i class="fa fa-plus fa-1" style="float: right" onclick="document.getElementById('review').submit()"></i></a>
+									</form>
+								</td>
 							</tr>
 							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
+								<c:if test="${rv.totalCount==0 }">
+									<td colspan="2">등록된 글이 없습니다.</td>
+								</c:if>
 							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
-							<tr>
-								<td colspan="2" style="text-align: left"><i
-									class="fa fa-angle-right" aria-hidden="true"></i> <a href=""><font
-										color="white">일반야영장 테마의 캠핑장 갯수입니다.</font></a></td>
-							</tr>
+							<c:if test="${not empty rv.list }">
+								<c:forEach var="vo" items="${rv.list }">
+									<tr>
+										<td colspan="2" style="text-align: left" id="title"><i
+											class="fa fa-angle-right" aria-hidden="true" ></i> <font
+												color="white">${vo.rv_title }</font></td>
+									</tr>
+								</c:forEach>
+							</c:if>
 						</table>
 						<br>
 					</section>

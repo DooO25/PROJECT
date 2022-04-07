@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.security.SecureRandom" %>
+<%@ page import="java.math.BigInteger" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,21 +25,13 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-	crossorigin="anonymous">
+	rel="stylesheet">
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <script type="text/javascript">
-function login(){
-	var ID = $("#ID").val();
-	var pw = $("#password").val();
-	alert(ID);
-	alert(pw);
-}
 
 </script>
 
@@ -91,7 +86,17 @@ textarea {
 </head>
 <body class="is-preload landing">
 <%@ include file="headerFooter/header.jsp"%>
-		
+<%
+          String clientId = "eT2NCIHgedo2uVebssZm";//애플리케이션 클라이언트 아이디값";
+          String redirectURI = URLEncoder.encode("http://localhost:8080/naverCallback.do", "UTF-8");
+          SecureRandom random = new SecureRandom();
+          String state = new BigInteger(130, random).toString();
+          String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+          apiURL += "&client_id=" + clientId;
+          apiURL += "&redirect_uri=" + redirectURI;
+          apiURL += "&state=" + state;
+          session.setAttribute("state", state);
+%>
 		<!-- Banner -->
 		<section id="banner1">
 			<form action="${pageContext.request.contextPath}/login" method="post">
@@ -133,7 +138,7 @@ textarea {
 	
 		<div class="row" style="width: 300px; height: 300px; margin: 0 auto; padding-right:3;" >
 		<div class="col-md-4">
-  		<a href="/naverLogin.do"><span id="naver"><img style="width: 50px; height: 50px;"
+  		<a href="<%=apiURL%>"><span id="naver"><img style="width: 50px; height: 50px;"
 			src="${pageContext.request.contextPath }/resources/images/naverLogin.png"
 			alt="" /></span></a>
 		</div>

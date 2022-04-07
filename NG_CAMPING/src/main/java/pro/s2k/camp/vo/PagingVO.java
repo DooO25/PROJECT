@@ -24,8 +24,26 @@ public class PagingVO<T> {
 	private int endNo;			// 끝 글번호 --- 오라클에서만 사용
 	private int startPage;		// 시작 페이지 번호
 	private int endPage;		// 끝 페이지 번호 
+ 
+	private String searchType; 
+	private String searchText; 
 	
-	
+	public String getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+
 	public PagingVO(int currentPage, int pageSize, int blockSize, int totalCount) {
 		this.currentPage = currentPage;
 		this.pageSize = pageSize;
@@ -49,7 +67,7 @@ public class PagingVO<T> {
 		if(totalCount>0) {
 			// 전체페이지 = (전체개수-1)/페이지당 글수 + 1
 			totalPage = (totalCount-1)/pageSize + 1;
-			// 현재 페이지가 전체 페이지수 보다 크면 않된다.
+			// 현재 페이지가 전체 페이지수 보다 크면 안된다.
 			if(currentPage>totalPage) currentPage = 1;
 			
 			// 시작번호 = (현재페이지-1)*페이지사이즈
@@ -115,6 +133,8 @@ public class PagingVO<T> {
 		return startPage;
 	}
 
+
+
 	public int getEndPage() {
 		return endPage;
 	}
@@ -142,7 +162,7 @@ public class PagingVO<T> {
 	      // <%-- 이전 : 시작 페이지가 1보다 크다면 이전이 있다 --%>
 	      if(startPage>1) {
 	         message += "<li class='page-item'>";
-	         message += "<a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (startPage-1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Previous'>";
+	         message += "<a class='page-link' style='cursor: pointer;' onclick='SendPost(\"?\",{\"p\":\""+ (startPage-1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Previous'>";
 	         message += "<span aria-hidden='true'>&laquo;</span>";
 	         message += "</a>";
 	         message += "</li>";
@@ -152,13 +172,13 @@ public class PagingVO<T> {
 	         if(i==currentPage) {
 	            message += "<li class='page-item active' aria-current='page'><span class='page-link'>" + i + "</span></li>";
 	         }else {
-	            message += "<li class='page-item'><a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (i) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\",\"csr})'>" + i + "</a></li>";
+	            message += "<li class='page-item'><a class='page-link' style='cursor: pointer;' onclick='SendPost(\"?\",{\"p\":\""+ (i) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})'>" + i + "</a></li>";
 	         }
 	      }
 	      // <%-- 다음 : 마지막 페이지가 전체페이지보다 적다면 다음이 있다 --%>
 	      if(endPage<totalPage) {
 	         message += "<li class='page-item'>";
-	         message += "<a class='page-link' href='#' onclick='SendPost(\"?\",{\"p\":\""+ (endPage+1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Next'>";
+	         message += "<a class='page-link' style='cursor: pointer;' onclick='SendPost(\"?\",{\"p\":\""+ (endPage+1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Next'>";
 	         message += "<span aria-hidden='true'>&raquo;</span>";
 	         message += "</a>";
 	         message += "</li>";
@@ -167,15 +187,52 @@ public class PagingVO<T> {
 	      message += "</nav>";
 	      return message;
 	   }
+	 
+	   public String getPageList2() {
+		   String message = "<nav>";
+		   message += "<ul class='pagination pagination-sm justify-content-center'>";
+		   // <%-- 이전 : 시작 페이지가 1보다 크다면 이전이 있다 --%>
+		   if(startPage>1) {
+			   message += "<li class='page-item'>";
+			   message += "<a class='page-link' style='cursor: pointer;' onclick='SendPost(\"?\",{\"p\":\""+ (startPage-1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Previous'>";
+			   message += "<span aria-hidden='true'>&laquo;</span>";
+			   message += "</a>";
+			   message += "</li>";
+		   }
+		   //  <%-- 페이지 : 시작페이지 번호부터 끝페이지 번호까지 페이지 번호 출력 --%>
+		   for(int i=startPage;i<=endPage;i++) {
+			   if(i==currentPage) {
+				   message += "<li class='page-item active' aria-current='page'><span class='page-link'>" + i + "</span></li>";
+			   }else {
+				   message += "<li class='page-item'><a class='page-link' style='cursor: pointer;' onclick='SendPost(\"?\",{\"p\":\""+ (i) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\",\"searchType\":\""+searchType+"\",\"searchText\":\""+searchText+"\"})'>" + i + "</a></li>";
+			   }
+		   }
+		   // <%-- 다음 : 마지막 페이지가 전체페이지보다 적다면 다음이 있다 --%>
+		   if(endPage<totalPage) {
+			   message += "<li class='page-item'>";
+			   message += "<a class='page-link' style='cursor: pointer;' onclick='SendPost(\"?\",{\"p\":\""+ (endPage+1) +"\",\"s\":\""+pageSize+"\",\"b\":\""+blockSize+"\"})' aria-label='Next'>";
+			   message += "<span aria-hidden='true'>&raquo;</span>";
+			   message += "</a>";
+			   message += "</li>";
+		   }
+		   message += "</ul>";
+		   message += "</nav>";
+		   return message;
+	   }
+
+
+
+
 	
 	//------------------------------------------------------------------------------------
-	@Override
-	public String toString() {
-		return "PagingVO [list=" + list + ", currentPage=" + currentPage + ", pageSize=" + pageSize + ", blockSize="
-				+ blockSize + ", totalCount=" + totalCount + ", totalPage=" + totalPage + ", startNo=" + startNo
-				+ ", endNo=" + endNo + ", startPage=" + startPage + ", endPage=" + endPage + "]";
-	}
-	
-	
+
+	   @Override
+	   public String toString() {
+		   return "PagingVO [list=" + list + ", currentPage=" + currentPage + ", pageSize=" + pageSize + ", blockSize="
+				   + blockSize + ", totalCount=" + totalCount + ", totalPage=" + totalPage + ", startNo=" + startNo
+				   + ", endNo=" + endNo + ", startPage=" + startPage + ", endPage=" + endPage + ", searchType="
+				   + searchType + ", searchText=" + searchText + "]";
+	   }
+	  
 
 }

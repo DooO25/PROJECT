@@ -97,6 +97,7 @@ table th {
 
 table {
 	text-align: center;
+	table-layout: fixed;
 }
 
 .th-1 {
@@ -104,12 +105,12 @@ table {
 }
 
 .th-2 {
-	width: 80px;
-}
-
-.th-3 {
 	width: 150px;
 }
+
+/* .th-3 {
+	width: 150px;
+} */
 
 .th-4 {
 	width: 90px;
@@ -126,6 +127,12 @@ table {
 #writebutton {
 	padding-bottom: 2%;
 }
+
+#title{
+	white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
+}
+
+
 </style>
 
 <noscript>
@@ -166,21 +173,26 @@ table {
 				style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">QnA</p>
 		</div>
 		<div style="padding-right: 10%; padding-bottom: 3%;">
-			<div class="col-sm-1" style="float: right;">
-				<input type="button" value="검색" onclick="search();">
-			</div>
-
-			<div class="col-sm-2" style="float: right;">
-				<input type="text" />
-			</div>
-
-			<div class="col-sm-1.8" style="float: right;">
-				<select name="search" id="search" style="float: left;">
-					<option value="" selected>전체</option>
-					<option value="">제목</option>
-					<option value="">내용</option>
-				</select>
-			</div>
+			
+			<form action="/selectSearchQnA.do" method="post">
+				<sec:csrfInput/>
+				<div class="col-sm-1" style="float: right;">
+					<input type="submit" value="검색" >
+				</div>
+	
+				<div class="col-sm-2" style="float: right;">
+					<input type="text" name="searchText" value="${searchText }"/>
+				</div>
+	
+				<div class="col-sm-1.8" style="float: right;">
+					<select name="searchType" id="searchType" style="float: left;">
+						<option value="all" selected>전체</option>
+						<option value="title" ${searchType eq 'title' ? 'selected' : '' }>제목</option>
+						<option value="content" ${searchType eq 'content' ? 'selected' : '' }>내용</option>
+						<option value="nick" ${searchType eq 'nick' ? 'selected' : '' }>닉네임</option>
+					</select>
+				</div>
+			</form>
 		</div>
 		<section
 			style="padding-right: 10%; padding-left: 10%; padding-bottom:3%; margin: 0 auto;">
@@ -190,7 +202,7 @@ table {
 					<tr>
 						<th class="th-1" scope="col">글번호</th>
 						<th class="th-2" scope="col">제목</th>
-						<th class="th-3" scope="col">내용</th>
+					<!-- 	<th class="th-3" scope="col">내용</th> -->
 						<th class="th-4" scope="col">닉네임</th>
 						<th class="th-5" scope="col">작성일</th>
 						<th class="th-6" scope="col">관리자</th>
@@ -210,7 +222,7 @@ table {
 										<c:set var="no" value="${no-1}"/>
 									</td>
 									
-									<td style="padding-bottom: 60px;">
+									<td style="padding-bottom: 60px;" id="title">
 
 										<form action='<c:url value='${pageContext.request.contextPath }/board/QnAView.do'/>' method="post" id="rView${vs.index }">
 				                    	     <sec:csrfInput/>
@@ -222,11 +234,32 @@ table {
 					     
 				                        
 				                        </form>
-				                        <a href="#"   onclick="document.getElementById('rView${vs.index}').submit()"><c:out value="${vo.qna_title }"></c:out></a>
+				                        <jsp:useBean id="today" scope="request" class="java.util.Date"></jsp:useBean>				
+										<fmt:formatDate value="${today }" pattern="yyyyMMdd" var="day"/> 
+										<fmt:formatDate value="${vo.qna_regDate }" pattern="yyyyMMdd" var="reg"/> 
+										<c:if test="${day==reg }">
+											  <span style="color:red;">New</span>
+										</c:if>
+										<c:set var="content" value="${vo.qna_content }"/>
+											<c:set var="title" value="${vo.qna_title }"/>
+										<c:choose>
+											<c:when test="${fn:length(title) >= 20 }">
+												<a href="#" onclick="document.getElementById('rView${vs.index}').submit()"><c:out value="${fn:substring(title,0,20) }" />...</a>
+												<c:if test="${fn:contains(content,'img')}">
+				                        			<img style="width: 25px; height: 25px; vertical-align: middle;"	src="${pageContext.request.contextPath }/resources/images/image.png" alt="" />
+			                        			</c:if>
+											</c:when>
+											<c:otherwise>
+												<a href="#" onclick="document.getElementById('rView${vs.index}').submit()"><c:out value="${title}" /></a>
+												<c:if test="${fn:contains(content,'img')}">
+				                        			<img style="width: 25px; height: 25px; vertical-align: middle;"	src="${pageContext.request.contextPath }/resources/images/image.png" alt="" />
+			                        			</c:if>
+											</c:otherwise>
+										</c:choose>
 									</td>
-									<td style="padding-top: 50px;">
+									<%-- <td style="padding-top: 50px;" id="content">
 										${vo.qna_content }
-									</td>
+									</td> --%>
 									<td style="vertical-align: middle;">
 										${vo.mb_nick }
 										</td>
@@ -250,9 +283,16 @@ table {
 						</c:if>
 					</c:if>
 					</table>
+						<c:if test="${pv.searchType==null }">
 							<div style="border: none;text-align: center;">
 								${pv.pageList}
 							</div>
+						</c:if>
+						<c:if test="${pv.searchType!=null }">
+							<div style="border: none;text-align: center;">
+								${pv.pageList2}
+							</div>
+						</c:if>
 
 					
 

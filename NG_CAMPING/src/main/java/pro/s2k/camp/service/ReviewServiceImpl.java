@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import pro.s2k.camp.dao.CommentDAO;
 import pro.s2k.camp.dao.ReviewDAO;
 import pro.s2k.camp.vo.CommentVO;
@@ -13,7 +14,7 @@ import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.PagingVO;
 import pro.s2k.camp.vo.ReviewVO;
 
-
+@Slf4j
 @Service("reviewService")
 public class ReviewServiceImpl implements ReviewService{
 	
@@ -32,6 +33,7 @@ public class ReviewServiceImpl implements ReviewService{
 			int totalCount = reviewDAO.selectCount();
 			// 페이지 계산
 			pagingVO = new PagingVO<>(commVO.getCurrentPage(), commVO.getPageSize(), commVO.getBlockSize(), totalCount);
+			log.info(pagingVO.getStartNo()+"히히히");
 			// 글을 읽어오기
 			HashMap<String, Integer> map = new HashMap<String, Integer>();
 			map.put("startNo", pagingVO.getStartNo());
@@ -98,9 +100,35 @@ public class ReviewServiceImpl implements ReviewService{
 				reviewDAO.updateDel(reviewVO.getRv_idx()); // 삭제 표시
 			}
 		}
-	} // end if
-} // end method
+	} 
 
+	// 검색 기능
+	@Override
+	public PagingVO<ReviewVO> selectSearchList(CommonVO commVO) {
+		PagingVO<ReviewVO> pagingVO = null;
+		try {
+			// 전체 개수 구하기
+			int totalCount = reviewDAO.selectSearchCount(commVO);
+			// 페이지 계산
+			pagingVO = new PagingVO<>(commVO.getCurrentPage(), commVO.getPageSize(), commVO.getBlockSize(), totalCount);
+			// 글을 읽어오기
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("startNo", pagingVO.getStartNo());
+			map.put("pageSize", pagingVO.getPageSize());
+			map.put("searchText",commVO.getSearchText());
+			map.put("searchType",commVO.getSearchType());
+			List<ReviewVO> list = reviewDAO.selectSearchList(map);
+
+			// 완성된 리스트를 페이징 객체에 넣는다.
+			pagingVO.setList(list);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pagingVO;
+	}
+
+	
+} 
 
 
 

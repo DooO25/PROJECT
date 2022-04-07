@@ -1,7 +1,17 @@
 package pro.s2k.camp.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.mail.internet.MimeMessage;
 
@@ -13,10 +23,22 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import lombok.extern.slf4j.Slf4j;
 import pro.s2k.camp.dao.MemberDAO;
 import pro.s2k.camp.dao.RoleDAO;
 import pro.s2k.camp.vo.MemberVO;
+import pro.s2k.camp.vo.PagingVO;
 
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+
+
+@Slf4j
 @Service("memberService")
 public class MemberServiceImpl implements MemberService {
 
@@ -44,6 +66,27 @@ public class MemberServiceImpl implements MemberService {
 	public MemberVO logout(MemberVO memberVO) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	public PagingVO<MemberVO> selectList() {
+		PagingVO<MemberVO> vo = null;
+		try {
+			int totalCount = memberDAO.selectCount();
+			vo = new PagingVO<>(totalCount);
+			List<MemberVO> list = memberDAO.selectList();
+			if(list!=null && list.size()>0) {
+				vo.setList(list);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return vo;
+	}
+	
+	public MemberVO selectByIdx(int idx) {
+		MemberVO memberVO = memberDAO.selectByIdx(idx);
+		return memberVO;
 	}
 
 	@Override
@@ -114,7 +157,6 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberVO updateRole(String mb_ID, String authkey) {
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("gr_role", "ROLE_USER");
 		map.put("mb_ID", mb_ID);
 		map.put("authkey", authkey);
 		memberDAO.updateRole(map);
@@ -192,20 +234,6 @@ public class MemberServiceImpl implements MemberService {
 
 	// 비밀번호 찾기 임시비밀번호 메일 보내는 메서드
 
-	public void sendPasswor(MemberVO memberVO) {
-		String subject = "NG_CAMP 임시 비밀번호 입니다.";
-		String to = memberVO.getMb_email();
-		String content = "반갑습니다. " + memberVO.getMb_ID() + "님!!!<br>" + "NG_CAMP에서 요청하신 비밀번호 찾기 메일로,<br> "
-				+ "회원님의 임시 비밀번호는 " + memberVO.getMb_password() + " 입니다.";
-
-		MimeMessagePreparator preparator = getMessagePreparator(to, subject, content);
-		try {
-			mailSender.send(preparator);
-			System.out.println("메일 보내기 성공 ***************************************************");
-		} catch (MailException ex) {
-			System.err.println(ex.getMessage());
-		}
-	}
 
 	// 임시 비번
 	@Override
@@ -248,7 +276,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return password;
 	}
-
+	
 	@Override
 	public void sendPassword(MemberVO memberVO) {
 		String subject = "NG_CAMP 임시 비밀번호 입니다.";
@@ -367,8 +395,6 @@ public class MemberServiceImpl implements MemberService {
 	 * 컨트롤러에 정보를 보내는 코드임. // result를 리턴으로 보내면 null이 리턴되므로 위 코드를 사용. } else { return
 	 * result; // 정보가 이미 있기 때문에 result를 리턴함. } }
 	 */
-
-
 	//닉네임 변경
 	@Override
 	public int updateNick(MemberVO memberVO) {
@@ -378,5 +404,76 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.updateNick(map);
 	}
 
+// 네이버-------------------------------------------------------------------------------------------------------------------------------------------------------
+	@Override
+	public String naverMemberProfile() {
+		String token = "AAAAN-bBh9O7n5gBgKblzl_zWmzisuBSZvEsmCVNBbnSXJZ_H9VesvCuD8Z4U1_SfTCqPV3JEvBEZJgKZnv2O90YB0o"; // 네이버 로그인 접근 토큰;
+        String header = "Bearer " + token; // Bearer 다음에 공백 추가
 
+        String apiURL = "https://openapi.naver.com/v1/nid/me";
+
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Authorization", header);
+        String responseBody = get(apiURL,requestHeaders);
+        String split[] = responseBody.split(",");
+        
+        JsonElement json = JsonParser.parseString(responseBody);
+        log.info(Arrays.toString(split)+"#####");
+        log.info(json+"@@@@@@");
+        System.out.println(responseBody);
+        
+        
+        return responseBody;
+	}
+	
+	private static String get(String apiUrl, Map<String, String> requestHeaders){
+        HttpURLConnection con = connect(apiUrl);
+        try {
+            con.setRequestMethod("GET");
+            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
+                con.setRequestProperty(header.getKey(), header.getValue());
+            }
+
+
+            int responseCode = con.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+                return readBody(con.getInputStream());
+            } else { // 에러 발생
+                return readBody(con.getErrorStream());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("API 요청과 응답 실패", e);
+        } finally {
+            con.disconnect();
+        }
+    }
+	
+	private static HttpURLConnection connect(String apiUrl){
+        try {
+            URL url = new URL(apiUrl);
+            return (HttpURLConnection)url.openConnection();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("API URL이 잘못되었습니다. : " + apiUrl, e);
+        } catch (IOException e) {
+            throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
+        }
+    }
+
+    private static String readBody(InputStream body){
+        InputStreamReader streamReader = new InputStreamReader(body);
+
+        try (BufferedReader lineReader = new BufferedReader(streamReader)) {
+            StringBuilder responseBody = new StringBuilder();
+
+            String line;
+            while ((line = lineReader.readLine()) != null) {
+                responseBody.append(line);
+            }
+
+            return responseBody.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("API 응답을 읽는데 실패했습니다.", e);
+        }
+    }
 }
+// 네이버-------------------------------------------------------------------------------------------------------------------------------------------------------

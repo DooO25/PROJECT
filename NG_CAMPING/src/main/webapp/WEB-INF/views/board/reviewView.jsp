@@ -78,23 +78,16 @@
 			return false;
 		}
 	} 
-	/* const url = new URL(window.location.href);
-	 const urlParams = url.searchParams;
-	 alert(urlParams.get('idx'));
-	 alert("${rv.rv_idx}");
-	 document.getelementbyid('rv_idx').value = urlParams.get('idx');  */
-
 	function sendInsertParam() {
 		$.ajax({
-			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
-			url : "replyInsertOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
+			type : "POST", 
+			url : "replyInsertOk.do", 
 			data : $('#rView2').serialize(),
 			dataType : "text",
 
-			success : function(idx) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+			success : function(idx) { 
 				var jsonStr = JSON.parse(idx);
 				console.log(jsonStr);
-				/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
 				document.sendData.p.value = jsonStr.p;
 				document.sendData.s.value = jsonStr.s;
 				document.sendData.b.value = jsonStr.b;
@@ -102,37 +95,28 @@
 
 				document.sendData.submit();
 			},
-			error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
 			}
 		});
 	}
 	
 	 function sendReplyParam(index) {
-			/* var value = $("#rereplyContent"+index).val();
-			if (!value || value.trim().length == 0) {
-				alert('답변을 반드시 입력해야 합니다.');
-				$("#rereplyContent"+index).val("");
-				$("#rereplyContent"+index).focus();
-				return false;
-			} */
-	 
 		 $.ajax({
-			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
-			url : "rereply.do", // 컨트롤러에서 대기중인 URL 주소이다.
+			type : "POST", 
+			url : "rereply.do",
 			data : $('#rView3'+index).serialize(),
 			dataType : "text",
 
-			success : function(res) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+			success : function(res) { 
 				var jsonStr = JSON.parse(res);
 				console.log(jsonStr);
-				/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
 				document.sendData.p.value = jsonStr.p;
 				document.sendData.s.value = jsonStr.s;
 				document.sendData.b.value = jsonStr.b;
 				document.sendData.rv_idx.value = jsonStr.rv_idx;
 				document.sendData.submit();
 			},
-			error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
 			}
 		});
 	}
@@ -149,37 +133,35 @@
 				
 		 
 			 $.ajax({
-				type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
-				url : "replyUpdateOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
+				type : "POST", 
+				url : "replyUpdateOk.do", 
 				data : $('#updateRe'+index).serialize(),
 				dataType : "text",
 	
-				success : function(res) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+				success : function(res) { 
 					var jsonStr = JSON.parse(res);
 					console.log(jsonStr);
-					/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
 					document.sendData.p.value = jsonStr.p;
 					document.sendData.s.value = jsonStr.s;
 					document.sendData.b.value = jsonStr.b;
 					document.sendData.rv_idx.value = jsonStr.rv_idx;
 					document.sendData.submit();
 				},
-				error : function(XMLHttpRequest, textStatus, errorThrown) { // 비동기 통신이 실패할경우 error 콜백으로 들어옵니다.
+				error : function(XMLHttpRequest, textStatus, errorThrown) { 
 				}
 			});
 		}
 	}
 	 function deleteParam(index) {
 		 $.ajax({
-			type : "POST", // Post 방식으로 찾아야겠네 이거 ㅇㅇ 일단 영상은 있는데...
-			url : "replyDeleteOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
+			type : "POST", 
+			url : "replyDeleteOk.do", 
 			data : $('#deleteRe'+index).serialize(),
 			dataType : "text",
 
-			success : function(res) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
+			success : function(res) { 
 				var jsonStr = JSON.parse(res);
 				console.log(jsonStr);
-				/* location.href='/reviewView.do?p='+jsonStr.p+'&s='+jsonStr.s+'&b='+jsonStr.b+'&rv_dix='+jsonStr.rv_idx; */
 				document.sendData.p.value = jsonStr.p;
 				document.sendData.s.value = jsonStr.s;
 				document.sendData.b.value = jsonStr.b;
@@ -324,11 +306,11 @@ table th {
 			</c:otherwise>
 		</c:choose>
 		</form>
-		<c:if test="${rv.del==0}">
+		<c:if test="${rv.del==1}">
 			<div onclick="return false;"
 				style="background-color: gray; height:80px; color: red; padding-left: 2%; margin-bottom: 5px;">삭제된 후기입니다. </div>
 		</c:if>
-		<c:if test="${rv.del==1}">
+		<c:if test="${rv.del==0}">
 			<br>
 			<table class="table" style="border: 1px solid white;">
 				<thead class="thead-dark">

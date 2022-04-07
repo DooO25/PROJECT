@@ -18,6 +18,7 @@ import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.FileUploadVO;
 import pro.s2k.camp.vo.NoticeVO;
 import pro.s2k.camp.vo.PagingVO;
+import pro.s2k.camp.vo.ReviewVO;
 
 @Service("noticeService")
 public class NoticeServiceImpl implements NoticeService{
@@ -38,6 +39,7 @@ public class NoticeServiceImpl implements NoticeService{
 			// 페이지 계산
 			pagingVO = new PagingVO<>(commonVO.getCurrentPage(), commonVO.getPageSize(), commonVO.getBlockSize(), totalCount);
 			// 글을 읽어오기
+			log.info(pagingVO.getStartNo()+"히히히");
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("startNo", pagingVO.getStartNo() );
 			map.put("pageSize", pagingVO.getPageSize());
@@ -83,6 +85,7 @@ public class NoticeServiceImpl implements NoticeService{
 			int ref = noticeDAO.selectSeq();
 			// 2. 첨부 파일의 정보도 저장해 주어야 한다.
 			List<FileUploadVO> list = noticeVO.getFileList();
+			log.info(list+"?");
 			if(list!=null && list.size()>0) {
 				for(FileUploadVO fileUploadVO : list) {
 					fileUploadVO.setUp_ref(ref); // 원본글번호
@@ -149,4 +152,29 @@ public class NoticeServiceImpl implements NoticeService{
 			}
 		}
 	}
+
+	@Override
+	public PagingVO<NoticeVO> selectSearchList(CommonVO commVO) {
+		PagingVO<NoticeVO> pagingVO = null;
+		try {
+			// 전체 개수 구하기
+			int totalCount = noticeDAO.selectSearchCount(commVO);
+			// 페이지 계산
+			pagingVO = new PagingVO<>(commVO.getCurrentPage(), commVO.getPageSize(), commVO.getBlockSize(), totalCount);
+			// 글을 읽어오기
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("startNo", pagingVO.getStartNo());
+			map.put("pageSize", pagingVO.getPageSize());
+			map.put("searchText",commVO.getSearchText());
+			map.put("searchType",commVO.getSearchType());
+			List<NoticeVO> list = noticeDAO.selectSearchList(map);
+
+			// 완성된 리스트를 페이징 객체에 넣는다.
+			pagingVO.setList(list);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pagingVO;
+	}
+
 }

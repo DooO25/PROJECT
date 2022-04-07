@@ -3,6 +3,7 @@ package pro.s2k.camp.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.QnAVO;
 
 public interface QnADAO {
@@ -21,7 +22,7 @@ public interface QnADAO {
 	int selectMb_idx(int idx);
 	void updateAnswer(QnAVO qnaVO);
 	
-	
-	
+	List<QnAVO> selectSearchList(HashMap<String, Object> map);
+	int selectSearchCount(CommonVO commVO);
 	
 }

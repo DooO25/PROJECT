@@ -98,8 +98,7 @@
 				document.sendData.s.value = jsonStr.s;
 				document.sendData.b.value = jsonStr.b;
 				document.sendData.qna_idx.value = jsonStr.qna_idx;
-				document.sendData.role.value = jsonStr.role;
-				document.sendData.mb_idx.value = jsonStr.mb_idx;
+
 
 				document.sendData.submit();
 			},
@@ -109,12 +108,15 @@
 	}
 	 
 	function sendUpdateParam() {
+		 var csrf_token = "${_csrf.token}";
 		$.ajax({
 			type : "POST", 
 			url : "answerUpdateOk.do", // 컨트롤러에서 대기중인 URL 주소이다.
-			data : $('#answerUpdate').serialize(),
+			data : $('#answerUpdate2').serialize(),
 			dataType : "text",
-
+			 beforeSend: function(xhr){
+	             xhr.setRequestHeader("X-CSRF-TOKEN", csrf_token);
+	          },
 			success : function(idx) { // 비동기통신의 성공일경우 success콜백으로 들어옵니다. 'res'는 응답받은 데이터이다.
 				var jsonStr = JSON.parse(idx);
 				console.log(jsonStr);
@@ -123,8 +125,7 @@
 				document.sendData.s.value = jsonStr.s;
 				document.sendData.b.value = jsonStr.b;
 				document.sendData.qna_idx.value = jsonStr.qna_idx;
-				document.sendData.role.value = jsonStr.role;
-				document.sendData.mb_idx.value = jsonStr.mb_idx;
+
 
 				document.sendData.submit();
 			},
@@ -136,7 +137,7 @@
 
 		
 
-			
+/* 			
 	$(function() {
 			$("#answerUpdate").css('display','none');
 		});
@@ -144,22 +145,20 @@
 			$("#updateBtn").click(function() {
 					 if ($("#answerUpdate").css('display') == 'none') {
 						$("#answerUpdate").css('display', 'inline');
-					
-			
 				} else {
 					$("#answerUpdate").css('display', 'none');
-				
-				} 
-				/* if ($(this).parent().next().css('display') == 'inline') {
-					$(this).parent().next().css('display','none');
-					$(this).parent().next().slideUp(500);
-				}else{
-					$(this).parent().next().css('display','inline');
-					$(this).parent().next().slideDown(500)
-				} */
-			});
+				}  */
+/* 			});
 	}
-
+	 */
+	function update() {
+		var move = document.getElementById("answerUpdate");
+		if(move.style.display=='none'){
+			move.style.display = 'inline';
+		}else{
+			move.style.display = 'none';
+		}
+	}
 	</script>
 
 
@@ -387,31 +386,33 @@ table th {
 		</c:if>
 		<c:if test="${qv2.qna_read == 3 }">
 		<div style="text-align: center; padding-bottom: 3%">
-				<input type="submit"  id="updateBtn"
+				<input type="button"  id="updateBtn"
 					class="btn btn-outline-secondary btn-sm" style="margin: auto;"  onclick="update();"
 					value="수정하기">
 		</div>
-			<form id="answerUpdate" action="${pageContext.request.contextPath}/board/answerUpdateOk.do"
-				 method="post" id="answerUpdate">
-				<sec:csrfInput />
-				<input type="hidden" name="mb_idx" value="${mvo.mb_idx }" />
-				<input type="hidden" name="qna_idx" value="${qv.qna_idx }" />
-					<input type="hidden" name="qna_title" value="답변" />
-					<input type="hidden" name="role" value="${mvo.gr_role }" />
-				<section
-					style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
-		          <textarea id="content" name="qna_content" style="height:250px;color:black; background-color: white;" required="required">안녕하십니까, ${mvo.mb_nick } 입니다.</textarea>
-				</section>
-				<div style="text-align: center; padding-bottom: 3%">
-					<input type="button" 
-						class="btn btn-outline-secondary btn-sm" style="margin: auto;"  onclick="sendUpdateParam();"
-						value="수정">
-				</div>
-			</form>
+			<div style="display: none;" id="answerUpdate">
+				<form action="${pageContext.request.contextPath}/board/answerUpdateOk.do"
+					 method="post" id="answerUpdate2">
+					<sec:csrfInput />
+					<input type="hidden" name="mb_idx" value="${mvo.mb_idx }" />
+					<input type="hidden" name="qna_idx" value="${qv.qna_idx }" />
+						<input type="hidden" name="qna_title" value="답변" />
+						<input type="hidden" name="role" value="${mvo.gr_role }" />
+					<section
+						style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
+			          <textarea id="content" name="qna_content" style="height:250px;color:black; background-color: white;" required="required">안녕하십니까, ${mvo.mb_nick } 입니다.</textarea>
+					</section>
+					<div style="text-align: center; padding-bottom: 3%">
+						<input type="button" 
+							class="btn btn-outline-secondary btn-sm" style="margin: auto;"  onclick="sendUpdateParam();"
+							value="수정">
+					</div>
+				</form>
+			</div>
 		</c:if>
 	</c:if>
 	<%-- 실제적으로 갈 jsp --%>
-	<form action="${pageContext.request.contextPath}/board/QnA.do"
+	<form action="${pageContext.request.contextPath}/board/QnAView.do"
 		method="post" id="sendData" name="sendData">
 		<sec:csrfInput />
 		<input type="hidden" name="p" value="${cv.currentPage }" /> <input

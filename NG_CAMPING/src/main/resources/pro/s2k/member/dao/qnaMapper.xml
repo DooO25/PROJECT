@@ -97,5 +97,37 @@
 			qna_ref = #{qna_idx}
 		where
 	</update>
+	
+	<select id="selectSearchList" parameterType="hashmap" resultType="QnAVO">
+		select a.qna_idx,a.qna_title,a.qna_content,a.qna_modiDate,
+		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick 
+		from camp_QnA a 
+		where
+			qna_ref = 0
+		and
+		<if test = "searchType == 'all'">
+		(qna_title like concat('%',#{searchText},'%') 
+		 or qna_content like concat ('%',#{searchText},'%'))
+		</if>
+		<if test = "searchType == 'title'">qna_title like concat('%',#{searchText},'%') </if>
+		<if test = "searchType == 'content'"> qna_content like concat ('%',#{searchText},'%') </if>
+		<if test = "searchType == 'nick'"> (select mb_nick from camp_member where mb_idx = a.mb_idx) like concat('%',#{searchText},'%')</if>
+		order by 
+			qna_idx desc limit #{startNo}, #{pageSize}
+	</select>
+	
+	<select id="selectSearchCount"  parameterType="commonVO" resultType="int">
+		select count(qna_idx) from camp_QnA a
+		where	
+			qna_ref = 0
+		and
+		<if test = "searchType == 'all'">
+		(qna_title like concat('%',#{searchText},'%') 
+		 or qna_content like concat ('%',#{searchText},'%'))
+		</if>
+		<if test = "searchType == 'title'">qna_title like concat('%',#{searchText},'%') </if>
+		<if test = "searchType == 'content'"> qna_content like concat ('%',#{searchText},'%') </if>
+		<if test = "searchType == 'nick'"> (select mb_nick from camp_member where mb_idx = a.mb_idx) like concat('%',#{searchText},'%')</if>
+	</select>
 
 </mapper>

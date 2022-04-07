@@ -20,4 +20,7 @@ public interface ReviewService {
 	void delete(ReviewVO reviewVO);
 
 	int selectMb_idx(int idx);
+
+	PagingVO<ReviewVO> selectSearchList(CommonVO commVO);
+
 }

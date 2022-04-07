@@ -10,6 +10,7 @@ import pro.s2k.camp.dao.QnADAO;
 import pro.s2k.camp.vo.CommonVO;
 import pro.s2k.camp.vo.PagingVO;
 import pro.s2k.camp.vo.QnAVO;
+import pro.s2k.camp.vo.ReviewVO;
 
 @Service("QnAService")
 public class QnAServiceImpl implements QnAService{
@@ -93,5 +94,30 @@ public class QnAServiceImpl implements QnAService{
 		}
 		
 	}
+
+	@Override
+	public PagingVO<QnAVO> selectSearchList(CommonVO commVO) {
+		PagingVO<QnAVO> pagingVO = null;
+		try {
+			// 전체 개수 구하기
+			int totalCount = qnaDAO.selectSearchCount(commVO);
+			// 페이지 계산
+			pagingVO = new PagingVO<>(commVO.getCurrentPage(), commVO.getPageSize(), commVO.getBlockSize(), totalCount);
+			// 글을 읽어오기
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("startNo", pagingVO.getStartNo());
+			map.put("pageSize", pagingVO.getPageSize());
+			map.put("searchText",commVO.getSearchText());
+			map.put("searchType",commVO.getSearchType());
+			List<QnAVO> list = qnaDAO.selectSearchList(map);
+
+			// 완성된 리스트를 페이징 객체에 넣는다.
+			pagingVO.setList(list);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pagingVO;
+	}
+
 
 }

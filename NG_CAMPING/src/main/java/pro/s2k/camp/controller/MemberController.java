@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import pro.s2k.camp.service.MemberService;
 import pro.s2k.camp.vo.MemberVO;
 
+
 @Slf4j
 @Controller
 public class MemberController {
@@ -34,6 +35,24 @@ public class MemberController {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@RequestMapping(value = "/naverCallback.do", produces = "application/json; charset=UTF8")
+	public String naverCallback(Model model) {
+		String naverInfo = memberService.naverMemberProfile();
+		model.addAttribute("ni", naverInfo);
+		return "naverCallback";
+	}
+	
+	@RequestMapping(value = "/naverInsert.do", produces = "application/json; charset=UTF8")
+	public String naverInsert(Model model) {
+		String naverInfo = memberService.naverMemberProfile();
+		model.addAttribute("ni", naverInfo);
+		return "naverInsert";
+	}
+	
+	
+	
+	
 
 	@RequestMapping(value = "/insert.do", method = RequestMethod.GET)
 	public String insert() {
@@ -74,7 +93,7 @@ public class MemberController {
 		return count + "";
 	}
 
-	// 닉네임 체
+	// 닉네임 체크
 	@RequestMapping(value = "/nickCheck.do", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String nickCheck(@RequestParam(required = false) String nick) {

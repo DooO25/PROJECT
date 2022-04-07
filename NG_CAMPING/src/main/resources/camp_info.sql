@@ -62,9 +62,12 @@ CREATE TABLE `camp_member` (
   `mb_zipcode` int not null,
   `mb_address1` varchar(200) not NULL,
   `mb_address2` varchar(300) not NULL,
-  `mb_use` int(11) default 0,
-  `authkey` varchar(200) not null
+  `mb_use` int(11) default 1,
+  `authkey` varchar(200) not NULL,
+  del int DEFAULT 0
 );
+ALTER TABLE camp_member ADD del int DEFAULT 0;
+
 
 CREATE TABLE `member_role` (
   `gr_idx` int(11) NOT null AUTO_INCREMENT primary key,
@@ -76,18 +79,17 @@ RENAME TABLE campdb.camp_role TO campdb.member_role;
 drop table camp_notice;
 
 CREATE TABLE `camp_notice` (
-  `mb_nick` varchar(30) NOT NULL,
-  nt_idx int not null auto_increment ,
-  `mb_idx` int(11) NOT null,
-  `nt_title` varchar(100) not NULL,
-  `nt_content` text not NULL,
-  `nt_regDate` timestamp default now(),
-  `nt_modiDate` timestamp default now(),
-  `nt_hit` int(11) default 0,
-  PRIMARY KEY (`nt_idx`),
-  CONSTRAINT `camp_notice_FK` FOREIGN KEY (`mb_idx`) REFERENCES `camp_member` (`mb_idx`) ON UPDATE CASCADE
+  `mb_idx` int(11) NOT NULL,
+  `nt_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `nt_title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nt_content` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nt_regDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `nt_modiDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `nt_hit` int(11) DEFAULT 0,
+  `nt_ip` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mb_nick` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`nt_idx`)
 );
-
 
 drop table camp_question;
 

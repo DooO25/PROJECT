@@ -278,7 +278,7 @@ b {
 				</div>
 				<c:if test="${role eq 'ROLE_ADMIN' }">
 					<div style="padding-top: 1%; float: right;">
-						<input value="목록" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" formaction="/board/notice.do"> 
+						<input value="목록" class="btn btn-dark btn-sm" type="button" style="margin-right: 2px;" onclick="location.href='/board/notice.do'"> 
 						<input type="submit" value="전송" class="btn btn-primary btn-sm" formaction="/board/noticeInsertOk.do">
 					</div>
 				</c:if>

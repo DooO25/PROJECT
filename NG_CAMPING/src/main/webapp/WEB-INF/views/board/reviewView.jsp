@@ -122,7 +122,6 @@
 	}
 	
 	 function updateParam(index) {
-		 
 		 var value = $("#rereplyContent2"+index).val();
 			if (value==null || value.trim().length == 0) {
 				alert('답변을 반드시 입력해야 합니다.');
@@ -356,13 +355,13 @@ table th {
 				<c:if test="${vo.co_lev < 10}">
 					<div style="margin-left:${vo.co_lev*50}px;">
 						<!-- 삭제표시가 되어 있으면 삭제표시된 글이라고 표시한다. -->
-						<c:if test="${vo.del2==0 }">
+						<c:if test="${vo.del2==1 }">
 							<div onclick="return false;"
 								style="background-color: gray; color: red; padding-left: 2%; margin-bottom: 5px;">삭제된 댓글입니다. </div>
 						</c:if>
 						<!-- 삭제표시가 되어 있지 않으면 보여준다. -->
 	
-						<c:if test="${vo.del2==1 }">
+						<c:if test="${vo.del2==0 }">
 	
 							<c:out value="${vo.mb_nick }" />&nbsp;&nbsp;&nbsp;&nbsp; 
 							<fmt:formatDate value="${vo.co_regDate }"
@@ -427,6 +426,7 @@ table th {
 								<input type="hidden" name="co_ref" value="${vo.co_ref }"/>
 								<input type="hidden" name="co_seq" value="${vo.co_seq }"/>
 								<input type="hidden" name="co_lev" value="${vo.co_lev }"/>
+								<input type="hidden" name="mb_idx" value="${mvo.mb_idx }"/>
 								<textarea name="co_content" id="rereplyContent" required></textarea> 
 								<div style="text-align: right;"  >
 									<input class="btn-outline-success btn-sm" type="button"  value="대댓글" onclick="sendReplyParam('${vs.index }');"/>
@@ -452,10 +452,11 @@ table th {
 	<form action="${pageContext.request.contextPath}/board//replyInsertOk.do"
 		 method="post" id="rView2">
 		<sec:csrfInput />
-		<input type="hidden" name="p" value="${cv.currentPage }" /> <input
-			type="hidden" name="s" value="${cv.pageSize }" /> <input
-			type="hidden" name="b" value="${cv.blockSize }" /> <input
-			type="hidden" name="rv_idx" value="${rv.rv_idx }" />
+		<input type="hidden" name="p" value="${cv.currentPage }" /> 
+		<input type="hidden" name="s" value="${cv.pageSize }" /> 
+		<input type="hidden" name="b" value="${cv.blockSize }" /> 
+		<input type="hidden" name="rv_idx" value="${rv.rv_idx }" />
+		<input type="hidden" name="mb_idx" value="${mvo.mb_idx }" />
 		<section
 			style="padding-right: 10%; padding-left: 10%; margin: 0 auto; padding-bottom: 2%">
 			<textarea id="replyContent" name="co_content"

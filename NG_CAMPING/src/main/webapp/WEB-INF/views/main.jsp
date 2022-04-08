@@ -96,7 +96,6 @@ table {
 </noscript>
 </head>
 <body class="is-preload landing">
-
 	<!-- header -->
 	<%@ include file="headerFooter/header.jsp" %>
 

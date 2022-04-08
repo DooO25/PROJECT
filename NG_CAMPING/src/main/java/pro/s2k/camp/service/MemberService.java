@@ -41,7 +41,7 @@ public interface MemberService {
 	
 	MemberVO selectByIdx(int mb_idx);
 	
-	String naverMemberProfile();
+	String naverMemberProfile(String nT);
 	
 /*
 // 15. accessToken 얻기	

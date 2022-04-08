@@ -1,18 +1,28 @@
 package pro.s2k.camp.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,7 +31,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 import lombok.extern.slf4j.Slf4j;
+import pro.s2k.camp.dao.MemberDAO;
 import pro.s2k.camp.service.MemberService;
 import pro.s2k.camp.vo.MemberVO;
 
@@ -32,23 +44,107 @@ public class MemberController {
 
 	@Autowired
 	private MemberService memberService;
-
+	
+	@Autowired
+	private MemberDAO memberDAO;
+	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	@RequestMapping(value = "/naverCallback.do", produces = "application/json; charset=UTF8")
-	public String naverCallback(Model model) {
-		String naverInfo = memberService.naverMemberProfile();
-		model.addAttribute("ni", naverInfo);
-		return "naverCallback";
+	public String naverCallback(@RequestParam String _csrf, HttpServletRequest request, HttpSession session, Model model) throws UnsupportedEncodingException {
+		
+			
+			String clientId = "eT2NCIHgedo2uVebssZm";//애플리케이션 클라이언트 아이디값";
+		    String clientSecret = "dBx60NTCAZ";//애플리케이션 클라이언트 시크릿값";
+		    String code = request.getParameter("code");
+		    String state = request.getParameter("state");
+		    String redirectURI = URLEncoder.encode("http://localhost:8080/naverCallback.do", "UTF-8");
+		    String apiURL;
+		    apiURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&";
+		    apiURL += "client_id=" + clientId;
+		    apiURL += "&client_secret=" + clientSecret;
+		    apiURL += "&redirect_uri=" + redirectURI;
+		    apiURL += "&code=" + code;
+		    apiURL += "&state=" + state;
+		    String access_token = "";
+		    String refresh_token = "";
+		    StringBuffer res = new StringBuffer();
+		    try {
+		      URL url = new URL(apiURL);
+		      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		      con.setRequestMethod("GET");
+		      int responseCode = con.getResponseCode();
+		      BufferedReader br;
+		      System.out.print("responseCode="+responseCode);
+		      if(responseCode==200) { // 정상 호출
+		        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		      } else {  // 에러 발생
+		        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+		      }
+		      String inputLine;
+		      
+		      while ((inputLine = br.readLine()) != null) {
+		        res.append(inputLine);
+		      }
+		      br.close();
+		      if(responseCode==200) {
+		      
+		      }
+		    } catch (Exception e) {
+		      System.out.println(e);
+		}
+
+		// 뷰에서 액세스토큰 세션으로 받아서 json파싱
+		JSONParser jsonParser = new JSONParser();
+		String token = res.toString();
+		Object afterToken = null;
+		try {
+			afterToken=jsonParser.parse(token);
+		}catch (ParseException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonToken = (JSONObject) afterToken;
+		
+		// 토큰값 받아서 회원 명세 받아 찍기(회원가입용)
+		String nT = (String) jsonToken.get("access_token");
+		String responseBody = memberService.naverMemberProfile(nT);
+		Object obj = null;
+		try {
+			obj=jsonParser.parse(responseBody);
+		}catch (ParseException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObj = (JSONObject) obj;
+		JSONObject response = (JSONObject) jsonObj.get("response");
+		String socialID = (String) response.get("id");		
+ 		String socialName = (String) response.get("name");		
+		String socialEmail = (String) response.get("email");		
+		String socialTel = (String) response.get("mobile");		
+		String socialBirth = (String) response.get("birthyear") + "-" +  response.get("birthday");
+		
+		model.addAttribute("socialName", socialName);
+		model.addAttribute("socialEmail", socialEmail);
+		model.addAttribute("socialTel", socialTel);
+		model.addAttribute("socialBirth", socialBirth);
+		// 같은 이용자인지 확인용
+		model.addAttribute("socialID", socialID);
+		model.addAttribute("socialNumber", 1);
+		if(socialID.equals(memberDAO.selectSocialID(socialID))) {
+			log.info(_csrf+"##########");
+			return "/login?_csrf=" + session.getAttribute("csrf");
+		}else {
+			return "socialInsert";
+		}
+	 
 	}
 	
-	@RequestMapping(value = "/naverInsert.do", produces = "application/json; charset=UTF8")
-	public String naverInsert(Model model) {
-		String naverInfo = memberService.naverMemberProfile();
-		model.addAttribute("ni", naverInfo);
-		return "naverInsert";
-	}
+//	@RequestMapping(value = "/naverInsert.do", produces = "application/json; charset=UTF8")
+//	public String naverInsert(Model model) {
+//		String naverInfo = memberService.naverMemberProfile();
+//		model.addAttribute("ni", naverInfo);
+//		return "naverInsert";
+//	}
 	
 	
 	

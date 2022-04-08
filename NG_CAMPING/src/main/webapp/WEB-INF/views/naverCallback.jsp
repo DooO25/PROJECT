@@ -26,7 +26,6 @@
     apiURL += "&state=" + state;
     String access_token = "";
     String refresh_token = "";
-    System.out.println("apiURL="+apiURL);
     try {
       URL url = new URL(apiURL);
       HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -34,29 +33,30 @@
       int responseCode = con.getResponseCode();
       BufferedReader br;
       System.out.print("responseCode="+responseCode);
+	  StringBuffer res = new StringBuffer();
       if(responseCode==200) { // 정상 호출
         br = new BufferedReader(new InputStreamReader(con.getInputStream()));
       } else {  // 에러 발생
         br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
       }
       String inputLine;
-      StringBuffer res = new StringBuffer();
+      
       while ((inputLine = br.readLine()) != null) {
         res.append(inputLine);
       }
       br.close();
       if(responseCode==200) {
         out.println(res.toString());
+        session.setAttribute("res",res.toString());
       }
     } catch (Exception e) {
       System.out.println(e);
 }
-    
   %>
   </body>
-<!--  <script type="text/javascript">
-  $(document).ready(function(){
-	  location.href='/naverInsert.do';
-	});
-  </script> -->
+ <script type="text/javascript">
+/*   $(document).ready(function(){
+  });  
+	alert("${sessionScope.res}"); */
+  </script> 
 </html> 

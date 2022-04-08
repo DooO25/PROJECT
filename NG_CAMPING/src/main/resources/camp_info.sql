@@ -151,9 +151,9 @@ CREATE TABLE `camp_review` (
 ALTER table camp_review ADD rv_password int not null ;
  drop table camp_comment ;
 CREATE TABLE `camp_comment` (
---  `mb_idx` int(11) NOT NULL,
+ `mb_idx` int(11) NOT NULL,
  `rv_idx` int NOT NULL,  
-co_idx int NOT NULL auto_increment,
+  co_idx int NOT NULL auto_increment,
   co_ref int DEFAULT 0,
   co_seq int DEFAULT 0, 
   co_lev int DEFAULT 0,
@@ -161,8 +161,9 @@ co_idx int NOT NULL auto_increment,
   `co_regDate` timestamp default now(),
   `co_modiDate` timestamp default now(),
   co_ip varchar(20) NOT NULL,
-  del2 int DEFAULT 1,
+  del2 int DEFAULT 0,
   PRIMARY KEY (`co_idx`),
+  CONSTRAINT `camp_comment_FK2` FOREIGN KEY (`mb_idx`) REFERENCES `camp_member` (`mb_idx`) ON UPDATE CASCADE,
   CONSTRAINT `camp_comment_FK` FOREIGN KEY (`rv_idx`) REFERENCES `camp_review` (`rv_idx`) ON UPDATE CASCADE
  );
 

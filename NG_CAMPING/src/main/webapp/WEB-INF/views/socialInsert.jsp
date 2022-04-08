@@ -96,20 +96,6 @@
 		var thisDate = new Date();
 		var thisYear = thisDate.getFullYear();
 
-		var value = $("#birthYear").val();
-		if (!num.test(value)) {
-			alert('년도는 숫자만 입력해주세요. 공백불가');
-			$("#birthYear").focus();
-			return false;
-		} else if (value <= '1900') {
-			alert('1900년도 이상으로 입력해주세요.');
-			$("#birthYear").focus();
-			return false;
-		} else if (thisYear - value <= 18) {
-			alert('18세 이상만 회원가입이 가능합니다.');
-			$("#birthYear").focus();
-			return false;
-		}
 
 		var value = $("#password").val();
 		if (!regPass.test(value)) {
@@ -124,16 +110,6 @@
 			$("#email").focus();
 			return false;
 		}
-		
-
-		var value = $("#hp").val();
-		if (!tel.test(value)) {
-			alert('전화번호는 -제외한 11글자만 입력해주세요.');
-			$("#hp").focus();
-			return false;
-		}
-
-		
 
 		var value = $("#username").val();
 		if (!han.test(value)) {
@@ -157,25 +133,6 @@
 			return false; // 
 		}
 
-		var value = $("#month").val();
-		if (value === '') {
-			alert('태어난 월을 선택해주세요.');
-			$("#month").val("");
-			$("#month").focus();
-			return false;
-		}
-
-		var value = $("#day").val();
-		if (value === '') {
-			alert('태어난 날짜를 선택해주세요.');
-			$("#day").val("");
-			$("#day").focus();
-			return false;
-		}
-
-		var year = $('#birthYear').val() + $('#month').val() + $('#day').val();
-
-		$('#mb_birth').val(year);
 
 	}
 
@@ -416,8 +373,10 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 									<label for="ID" class="col-sm-3 col-form-label"> 아이디</label>
 									<div class="col-sm-5">
 										<input type="text" class="form-control" id="ID" name="mb_ID"
-											placeholder="아이디입력" required maxlength="12" value="${ni.id }">
+											placeholder="아이디입력" required maxlength="12" value="">
 									</div>
+										<input type="hidden" name="socialID" value="${socialID }"/>
+										<input type="hidden" name="socialNumber" value="${socialNumber }"/>
 									<div class="col-sm-3">
 										<input type="button" id="idcheck" value="중복확인"
 											onclick="FnIdcheck();" />
@@ -448,8 +407,8 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 									<label for="username" class="col-sm-3 col-form-label">
 										이름</label>
 									<div class="col-sm-5">
-										<input type="text" class="form-control" id="username"
-											name="mb_name" placeholder="이름 입력" required maxlength="4" value="${ni.name }">
+										<input type="text"  id="username"
+											name="mb_name" placeholder="이름 입력" required maxlength="4" value="${socialName }" readonly="readonly">
 									</div>
 								</div>
 
@@ -458,7 +417,7 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 									<label for="nick" class="col-sm-3 col-form-label"> 닉네임</label>
 									<div class="col-sm-5">
 										<input type="text" class="form-control" id="nick"
-											name="mb_nick" placeholder="닉네임입력" required maxlength="10" value="${ni.nickname }">
+											name="mb_nick" placeholder="닉네임입력" required maxlength="10" value="">
 									</div>
 									<div class="col-sm-3">
 										<input type="button" id="nickcheck" value="중복확인"
@@ -472,7 +431,7 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 									<label for="email" class="col-sm-3 col-form-label"> 이메일</label>
 									<div class="col-sm-5">
 										<input type="text" class="form-control" id="email"
-											name="mb_email" placeholder="example@ex.com" required value="${ni.email }">
+											name="mb_email" placeholder="example@ex.com" required value="${socialEmail }">
 									</div>
 								</div>
 
@@ -480,72 +439,19 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 									<label for="hp" class="col-sm-3 col-form-label">전화번호</label>
 									<div class="col-sm-5">
 										<input type="text" id="hp" name="mb_tel" placeholder="-미포함"
-											value="${ni.mobile }" required maxlength="11">
+											value="${socialTel }" required maxlength="11">
 									</div>
 								</div>
 
 								<div class="mb-4 row">
-									<input type="hidden" id="mb_birth" name="mb_birth" value="">
 									<label for="birth" class="col-sm-3 col-form-label">
 										생년월일</label>
-									<div class="col-sm-3">
-										<input type="text" id="birthYear" name="mb_year"
-											placeholder="" value="${ni.birthyear }" required maxlength="4">
+									<div class="col-sm-5">
+										<input type="text" id="birthYear" name="mb_birth"
+											placeholder="" value="${socialBirth }" required maxlength="10" readonly="readonly">
 									</div>
-									<div class="col-sm-3">
-										<select name="mb_month" id="month">
-											<option value="">-- 선택 --</option>
-											<option value="01">1</option>
-											<option value="02">2</option>
-											<option value="03">3</option>
-											<option value="04">4</option>
-											<option value="05">5</option>
-											<option value="06">6</option>
-											<option value="07">7</option>
-											<option value="08">8</option>
-											<option value="09">9</option>
-											<option value="10">10</option>
-											<option value="11">11</option>
-											<option value="12">12</option>
-										</select>
-									</div>
-
-									<div class="col-sm-3">
-										<select name="mb_day" id="day">
-											<option value="">-- 선택 --</option>
-											<option value="01">1</option>
-											<option value="02">2</option>
-											<option value="03">3</option>
-											<option value="04">4</option>
-											<option value="05">5</option>
-											<option value="06">6</option>
-											<option value="07">7</option>
-											<option value="08">8</option>
-											<option value="09">9</option>
-											<option value="10">10</option>
-											<option value="11">11</option>
-											<option value="12">12</option>
-											<option value="13">13</option>
-											<option value="14">14</option>
-											<option value="15">15</option>
-											<option value="16">16</option>
-											<option value="17">17</option>
-											<option value="18">18</option>
-											<option value="19">19</option>
-											<option value="20">20</option>
-											<option value="21">21</option>
-											<option value="22">22</option>
-											<option value="23">23</option>
-											<option value="24">24</option>
-											<option value="25">25</option>
-											<option value="26">26</option>
-											<option value="27">27</option>
-											<option value="28">28</option>
-											<option value="29">29</option>
-											<option value="30">30</option>
-											<option value="31">31</option>
-										</select>
-									</div>
+									
+								
 								</div>
 
 								<div class="col mb-3">

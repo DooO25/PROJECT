@@ -7,7 +7,7 @@
 	<!-- 1. 저장하기 -->
 	<insert id="insert" parameterType="MemberVO">
 		insert into camp_member
-		(mb_ID,mb_password,mb_name,mb_nick,mb_email,mb_tel,mb_birth,mb_zipcode,mb_address1,mb_address2,authkey)
+		(mb_ID,mb_password,mb_name,mb_nick,mb_email,mb_tel,mb_birth,mb_zipcode,mb_address1,mb_address2,authkey,socialID,socialNumber)
 		<!-- insert into camp_member로 그냥 해놓으면 전체적인 값을 집어넣어줘야함 위에 같이 이렇게 명시해서 넣으면 
 			필요한 값만 넣음. -->
 		values
@@ -23,7 +23,9 @@
 		#{mb_zipcode},
 		#{mb_address1},
 		#{mb_address2},
-		#{authkey}  <!-- 임시 authKey 나중에 바꿔야함. -->
+		#{authkey},  <!-- 임시 authKey 나중에 바꿔야함. -->
+		#{socialID},
+		#{socialNumber}
 
 		)
 	</insert>
@@ -168,6 +170,9 @@
 		<if test="searchType == 'role'">(select gr_role from member_role where mb_ID = a.mb_ID) like concat('%','#{searchtext}','%') </if>
 	</select>
    
+   <select id="selectSocialID" parameterType="string" resultType="string">
+   		select socialID from camp_member where socialID = #{socialID}
+   </select>
    
    
 </mapper>

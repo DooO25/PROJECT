@@ -45,7 +45,7 @@
         <security:access-denied-handler error-page="/403"/>
         <!-- 사용자가 만든 로그인 폼을 사용하기 위해서는 이부분을 수정해 준다. -->
         <security:form-login  
-        login-page="/login.do"
+        login-page="/login.do" 
         username-parameter="mb_ID"
         password-parameter="mb_password"
         default-target-url="/"

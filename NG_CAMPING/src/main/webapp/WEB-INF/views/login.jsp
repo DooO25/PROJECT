@@ -80,12 +80,17 @@ textarea {
 		href="${pageContext.request.contextPath }/resources/assets/css/noscript.css" />
 </noscript>
 
-
+<script type="text/javascript">
+var csrf = '<c:out value='${_csrf.token}'/>';
+ sessionStorage.setItem("csrf",csrf);
+</script>
 
 
 </head>
 <body class="is-preload landing">
 <%@ include file="headerFooter/header.jsp"%>
+
+
 <%
           String clientId = "eT2NCIHgedo2uVebssZm";//애플리케이션 클라이언트 아이디값";
           String redirectURI = URLEncoder.encode("http://localhost:8080/naverCallback.do", "UTF-8");
@@ -99,7 +104,7 @@ textarea {
 %>
 		<!-- Banner -->
 		<section id="banner1">
-			<form action="${pageContext.request.contextPath}/login" method="post">
+			<form action="${pageContext.request.contextPath}/login" method="post" >
 				<%-- 로그인 실패시 에러메세지 출력 --%>
 				<c:if test="${not empty error }">
 					<div style="color: red;">${error }</div>
@@ -117,6 +122,7 @@ textarea {
 					
 					<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
 					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				 
 				 
 					<div class="col-md-4">
 						<input type="submit" value="로그인" style="height: 95px; float: left;"/>
@@ -136,24 +142,27 @@ textarea {
 	
 	
 	
-		<div class="row" style="width: 300px; height: 300px; margin: 0 auto; padding-right:3;" >
-		<div class="col-md-4">
-  		<a href="<%=apiURL%>"><span id="naver"><img style="width: 50px; height: 50px;"
-			src="${pageContext.request.contextPath }/resources/images/naverLogin.png"
-			alt="" /></span></a>
-		</div>
-		<div class="col-md-4">
-		<a href="/kakaoLogin.do"><span class="col-md-4" id="kakao"><img style="width: 50px; height: 50px;"
-			src="${pageContext.request.contextPath }/resources/images/kakaoLogin.png"
-			alt="" /></span></a>
-		</div>
-		<div class="col-md-4">
-		<a href="googleLogin.do"><span class="col-md-4" id="google"><img style="width: 50px; height: 50px;"
-			src="${pageContext.request.contextPath }/resources/images/googleLogin.png"
-			alt="" /></span></a>
-			</div>
-			</div>
 		</div> 
+		</form>
+		<form action="<%=apiURL %>" method="post" id="gogo">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="row" style="width: 300px; height: 300px; margin: 0 auto; padding-right:3;" >
+				<div class="col-md-4">
+			  		<a style="cursor: pointer;" onclick="document.getElementById('gogo').submit()"><span id="naver"><img style="width: 50px; height: 50px;"
+						src="${pageContext.request.contextPath }/resources/images/naverLogin.png"
+						alt="" /></span></a>
+					</div>
+					<div class="col-md-4">
+					<a href="/kakaoLogin.do"><span class="col-md-4" id="kakao"><img style="width: 50px; height: 50px;"
+						src="${pageContext.request.contextPath }/resources/images/kakaoLogin.png"
+						alt="" /></span></a>
+					</div>
+					<div class="col-md-4">
+					<a href="googleLogin.do"><span class="col-md-4" id="google"><img style="width: 50px; height: 50px;"
+						src="${pageContext.request.contextPath }/resources/images/googleLogin.png"
+						alt="" /></span></a>
+				</div>
+			</div>
 		</form>
 		</section>
 		

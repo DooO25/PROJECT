@@ -7,8 +7,7 @@
 	<select id="selectList" parameterType="hashmap" resultType="commentVO">
 		select
 			 a.co_idx,a.co_ref,a.rv_idx, a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate, a.co_ip, a.del2,
-				(select mb_nick from camp_member where mb_idx
-				 = (select b.mb_idx from camp_review b where b.rv_idx = a.rv_idx)) as mb_nick
+				(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
 		from
 			camp_comment a
 		where rv_idx = #{rv_idx}
@@ -18,7 +17,7 @@
 	<select id="selectByIdx" parameterType="int" resultType="commentVO">
 		select
 			 a.co_idx,a.co_ref,a.rv_idx,a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate, a.co_ip, a.del2,
-				(select mb_nick from camp_member where mb_idx = (select b.mb_idx from camp_review b where b.rv_idx = a.rv_idx)) as mb_nick
+				(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
 		from
 			camp_comment a
 		where co_idx = #{co_idx}
@@ -38,16 +37,16 @@
 	<!-- 저장하기 -->
  	<insert id="insert" parameterType="commentVO">
 		insert into camp_comment
-			(rv_idx,co_ref,co_content,co_regDate,co_modiDate,co_ip)
+			(mb_idx,rv_idx,co_ref,co_content,co_regDate,co_modiDate,co_ip)
 		values
-			(#{rv_idx},#{co_idx},#{co_content},now(),now(),#{co_ip})
+			(#{mb_idx},#{rv_idx},#{co_idx},#{co_content},now(),now(),#{co_ip})
 	</insert>
 	<!-- 저장하기(댓글) -->
 	<insert id="reply" parameterType="commentVO">
 		insert into camp_comment
-			(rv_idx,co_ref,co_seq,co_lev,co_content,co_regDate,co_modiDate,co_ip)
+			(mb_idx,rv_idx,co_ref,co_seq,co_lev,co_content,co_regDate,co_modiDate,co_ip)
 		values
-			(#{rv_idx},#{co_ref},#{co_seq},#{co_lev},#{co_content},now(),now(),#{co_ip})
+			(#{mb_idx},#{rv_idx},#{co_ref},#{co_seq},#{co_lev},#{co_content},now(),now(),#{co_ip})
 	
 	</insert>
 	

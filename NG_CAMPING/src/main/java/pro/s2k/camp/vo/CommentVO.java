@@ -25,6 +25,7 @@ import lombok.Data;
 @Data
 
 public class CommentVO {
+	private int mb_idx;
 	private int rv_idx;
 	private int co_idx;
 	private int co_ref;

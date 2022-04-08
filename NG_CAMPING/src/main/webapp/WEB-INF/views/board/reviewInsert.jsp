@@ -295,7 +295,7 @@ b {
       <br >
              <section
          style="padding-right: 10%; padding-left: 10%; margin: 0 auto;">
-         <form  method="post" enctype="multipart/form-data"  onsubmit="return formCheck();">
+         <form  method="post" enctype="multipart/form-data"  >
                <sec:csrfInput/>  
                <input type="hidden" name="s"  value="${cv.pageSize }"/>
                <input type="hidden" name="b"  value="${cv.blockSize }"/>
@@ -305,15 +305,15 @@ b {
                <div class="row">
                      <div class="col-sm-7">
                             <label for="ID"  style="font-size: 20px;font-weight: bold;"> 제목</label>
-                           <input type="text" id="title" name="rv_title" style="background-color: white; color: black;"><br>
+                           <input type="text" id="title" name="rv_title" style="background-color: white; color: black;" required="required"><br>
                      </div>
                   </div>
-          <textarea id="content" name="rv_content" class="summernote"></textarea>
+          <textarea id="content" name="rv_content" class="summernote" required="required"></textarea>
 
            <c:if test="${role ne 'ROLE_GUEST' }">
            <div style="padding-top: 1%; float: right;">
-             <input type="submit" value="목록" class="btn btn-dark btn-sm" style="margin-right: 2px;" formaction="/board/review.do" >
-            <input type="submit" value="전송" class="btn btn-primary btn-sm" formaction="/board/reviewInsertOk.do">
+             <input type="button" value="목록" class="btn btn-dark btn-sm" style="margin-right: 2px;" onclick="location.href='/board/review.do'" >
+            <input type="submit" value="전송" class="btn btn-primary btn-sm" formaction="/board/reviewInsertOk.do" >
         
          </div>
            </c:if> 

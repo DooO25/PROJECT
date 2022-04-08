@@ -40,5 +40,7 @@ public interface MemberDAO {
 		// 15. 닉네임 변경하기
 		int updateNick(HashMap<String, String> map);
 		
+		String selectSocialID(String socialID);
+		
 	
 }

@@ -35,6 +35,8 @@ import pro.s2k.camp.vo.PagingVO;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 
 
@@ -406,8 +408,8 @@ public class MemberServiceImpl implements MemberService {
 
 // 네이버-------------------------------------------------------------------------------------------------------------------------------------------------------
 	@Override
-	public String naverMemberProfile() {
-		String token = "AAAAN-bBh9O7n5gBgKblzl_zWmzisuBSZvEsmCVNBbnSXJZ_H9VesvCuD8Z4U1_SfTCqPV3JEvBEZJgKZnv2O90YB0o"; // 네이버 로그인 접근 토큰;
+	public String naverMemberProfile(String nT) {
+		String token = nT; // 네이버 로그인 접근 토큰;
         String header = "Bearer " + token; // Bearer 다음에 공백 추가
 
         String apiURL = "https://openapi.naver.com/v1/nid/me";
@@ -415,14 +417,6 @@ public class MemberServiceImpl implements MemberService {
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", header);
         String responseBody = get(apiURL,requestHeaders);
-        String split[] = responseBody.split(",");
-        
-        JsonElement json = JsonParser.parseString(responseBody);
-        log.info(Arrays.toString(split)+"#####");
-        log.info(json+"@@@@@@");
-        System.out.println(responseBody);
-        
-        
         return responseBody;
 	}
 	

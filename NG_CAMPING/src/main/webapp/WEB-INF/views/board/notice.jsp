@@ -61,6 +61,16 @@
 		location.href = "/board/noticeInsert.do";
 	}
 	
+	function change(val) {
+		if (val.value == 'fst') {
+			document.getElementById("selectfst").style.display = 'inline';
+			document.getElementById("selectsnd").style.display = 'none';
+		} else if (val.value == 'snd') {
+			document.getElementById("selectfst").style.display = 'none';
+			document.getElementById("selectsnd").style.display = 'inline';
+		}
+	}
+	
 </script>
 
 <style type="text/css">
@@ -162,16 +172,24 @@ table {
 		</div>
 		<div style="padding-top: 70px; padding-left: 10%">
 			<div class="col-sm-2">
-				<select name="chart" id="chart" style="float: left;">
-					<option value="">캠핑장</option>
-					<option value="" selected>캠핑톡</option>
+				<select name="chart" id="chart" style="float: left;"
+					onchange="change(this)">
+					<option value="fst" >캠핑장</option>
+					<option value="snd" selected>캠핑톡</option>
 				</select>
-
 			</div>
-			<div class="col-sm-2" style="float: left;">
+			<div id="selectfst" class="col-sm-2" style="float: left; display: none;">
 				<select name="list" id="list" onchange="window.open(value,'_self');">
-					<option value="/board/notice.do" selected>공지사항</option>
-					<option value="/board/review.do">캠핑후기</option>
+					<option selected disabled>-선택-</option>
+					<option value="../camp/campsite.do" >캠핑장 찾기</option>
+				</select>
+			</div>
+			<div id="selectsnd" class="col-sm-2"
+				style="float: left; ">
+				<select name="list" id="list" onchange="window.open(value,'_self');">
+					<option selected disabled>-선택-</option>
+					<option value="/board/review.do" >캠핑후기</option>
+					<option value="/board/notice.do" >공지사항</option>
 					<option value="/board/QnA.do">QnA</option>
 				</select>
 			</div>
@@ -229,7 +247,7 @@ table {
 									${no }
 									<c:set var="no" value="${no-1}"/>
 								</td>
-								<td style="padding-bottom: 60px;" id="title"> 
+								<td style="padding-bottom: 40px;" id="title"> 
 								<form action='<c:url value='${pageContext.request.contextPath }/board/noticeView.do'/>' method="post" id="nView${num.index }">
 									<sec:csrfInput/>
 									<input type="hidden" name="p" value="${pv.currentPage }"/>
@@ -240,8 +258,8 @@ table {
 								</form>
 								<jsp:useBean id="today" scope="request" class="java.util.Date"></jsp:useBean>				
 								<fmt:formatDate value="${today }" pattern="yyyyMMdd" var="day"/> 
-								<fmt:formatDate value="${vo.nt_regDate }" pattern="yyyyMMdd" var="reg"/> 
-								<c:if test="${day==reg }">
+								<fmt:formatDate value="${vo.nt_modiDate }" pattern="yyyyMMdd" var="modi"/> 
+								<c:if test="${day==modi }">
 									  <span style="color:red;">New</span>
 								</c:if>
 									<c:set var="content" value="${vo.nt_content }"/>
@@ -261,14 +279,11 @@ table {
 											</c:otherwise>
 										</c:choose>
 								</td>
-							<%-- 	<td style="padding-top: 50px;" id="content">
-									${vo.nt_content }
-								</td> --%>
 								<td style="vertical-align: middle;">
 									${vo.mb_nick }
 								</td>
 								<td style="vertical-align: middle;"> 
-									<fmt:formatDate value="${vo.nt_regDate }" pattern="yy-MM-dd"/>
+									<fmt:formatDate value="${vo.nt_modiDate }" pattern="yy-MM-dd"/>
 								</td>					
 								<td style="vertical-align: middle;">
 									${vo.nt_hit }
@@ -284,17 +299,21 @@ table {
 					</c:if>
 				</c:if>
 			</table>
-			<c:if test="${pv.searchType==null }">
-				<div style="border: none;text-align: center;">
-					${pv.pageList}
-				</div>
+			<c:if test="${pv.totalCount==0 }">
+           		<div style="border: none; text-align: center;"></div>
+      		</c:if>
+         	<c:if test="${pv.totalCount!=0 }">
+				<c:if test="${pv.searchType==null }">
+					<div style="border: none;text-align: center;">
+						${pv.pageList}
+					</div>
+				</c:if>
+				<c:if test="${pv.searchType!=null }">
+					<div style="border: none;text-align: center;">
+						${pv.pageList2}
+					</div>
+				</c:if>
 			</c:if>
-			<c:if test="${pv.searchType!=null }">
-				<div style="border: none;text-align: center;">
-					${pv.pageList2}
-				</div>
-			</c:if>
-	
 			<c:set value="${sessionScope.mvo.gr_role}" var="role" />
          <c:if test="${role eq 'ROLE_ADMIN' }">
             <button type="button" class="btn btn-outline-secondary"

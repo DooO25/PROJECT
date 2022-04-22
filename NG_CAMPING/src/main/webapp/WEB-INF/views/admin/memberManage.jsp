@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,9 +28,23 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
 <script type="text/javascript">
+
+
+
+
 	function logoutSubmit() {
 		var logout = document.logout;
 		logout.submit();
+	}
+	function selectInfo(index){
+		var infoIdx = document.getElementById('mb_idx');
+		infoIdx.value = document.getElementById('idx'+index).innerHTML;
+		if(infoIdx != null){
+			infoSubmit();							
+		}
+	}
+	function infoSubmit(){
+		document.getElementById('infoForm').submit();
 	}
 </script>
 <style>
@@ -70,114 +85,122 @@
 		<div class="col-sm-8">
 			<img src="">
 		</div>
-		<div style="padding-top: 70px; padding-left: 10%">
-			<div class="col-sm-2">
-				<select name="chart" id="chart" style="float: left;" onchange="window.open(value,'_self');">
-					<option value="" selected>회원관리</option>
-					<option value="/Admin/noticemanage.do">캠핑톡 관리</option>
-					<option value="">로그 관리</option>
-				</select>
-
-			</div>
-			<div class="col-sm-2" style="float: left;">
-				<select name="list" id="list" onchange="window.open(value,'_self');">
-					<option value="" selected>회원관리</option>
-
-				</select>
-			</div>
-		</div>
 		<br> <br>
 		<div>
-	
-	
 			<p style="font-size: 50px; padding-left: 12%; padding-top: 5%; font-weight: bold;">회원관리</p>
-			
+			</div>
+			<form action="/selectSearchMember.do" method="post">
+				<sec:csrfInput/>
 			<div style="padding-right: 8%; padding-bottom: 3%;">
 			<div class="col-sm-1" style="float: right;">
-				<input type="button" value="검색" onclick="search();">
+				<input type="submit" value="검색" >
 			</div>
 
 			<div class="col-sm-2" style="float: right;">
-				<input type="text" >
+				<input type="text" name="searchText" value="${searchtext }"/> 
 			</div>
 
 			<div class="col-sm-1.8" style="float: right;">
-				<select name="search" id="search" style="float: left;">
-					<option value="">아이디</option>
-					<option value="">이름</option>
-					<option value="">닉네임</option>
-					<option value="">권한</option>
+				<select name="searchType" id="searchType" style="float: left;">
+					<option value="all" selected>전체</option>
+					<option value="id" ${searchType eq 'id' ? 'selected' : '' }>아이디</option>
+					<option value="name" ${searchType eq 'name' ? 'selected' : '' }>이름</option>
+					<option value="nick" ${searchType eq 'nick' ? 'selected' : '' }>닉네임</option>
+					<option value="role" ${searchType eq 'role' ? 'selected' : '' }>권한</option>
 				</select>
 			</div>
 		</div>
-			<br>
-			
-			<div style="padding-left: 12%;">
-				<table style="width: 90%; font-size: 17px;" >
-				<tr>
-				<th> No </th>
-				<th> 아이디 </th>
-				<th> 이름 </th>
-				<th> 닉네임 </th>
-				<th> 이메일 </th>
-				<th> 전화번호 </th>
-				<th> 생일 </th>
-				<th> 주소 </th>
-				<th> 권한 </th>
-				</tr>
-				<tr>
-				<td>1</td>
-				<td>아이디</td>
-				<td>이름</td>
-				<td>닉네임</td>
-				<td>이메일</td>
-				<td>전화번호</td>
-				<td>생일</td>
-				<td>주소</td>
-				<td>권한</td>
-				</tr>
-				</table>
-			</div>
-			<br>
-			<div style="padding-left: 12%;"> 
-			<table class="table table-bordered" style="width: 90%; color: white; font-size: 17px;">
-			<tr>
-			<th colspan="5" style="text-align: left; padding-left: 2%; font-size: 20px; font-weight: bold;" >정보보기</th>
-			</tr>
-			<tr>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">아이디 </td>
-			<td style="width: 300px;"></td>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36;">비밀번호</td>
-			<td style="width: 300px;"> <button class="btn btn-secondary">임시번호 발급</button></td>
-			</tr>
-			<tr>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">이름 </td>
-			<td style="width: 300px; background-color:#1C1D26;"></td>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">닉네임 </td>
-			<td style="width: 300px; background-color:#1C1D26;"></td>
-			</tr>
-			<tr>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">이메일 </td>
-			<td style="width: 300px; background-color:#1C1D26;"></td>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">전화번호 </td>
-			<td style="width: 300px; background-color:#1C1D26;"></td>
-			</tr>
-			<tr>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">생일 </td>
-			<td style="width: 300px; background-color:#1C1D26;"></td>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">권한 </td>
-			<td style="width: 300px; background-color:#1C1D26;"></td>
-			</tr>
-			<tr>
-			<td style="width: 100px; text-align: center; background-color:#2D2E36; ">주소 </td>
-			<td style="width: 300px; background-color:#1C1D26;" colspan="1"></td>
-			</tr>
-			
-			</table>
-			<br>
-			</div>	
+		</form>
+		<div style="padding-left: 160px;">
+		전체 : ${pv.totalCount} 개 
 		</div>
-
+		<div style="padding-left: 12%;">
+			<form id="infoForm" action="/admin/memberManageInfo.do">
+			<div style="width:90%; height:200px; overflow:auto">
+				<table style="width: 100%; font-size: 17px;" id="infoTable">
+					<tr>
+						<c:if test="${pv.totalCount==0 }">
+							<td colspan="6">등록된 사용자가 없습니다.</td>
+						</c:if>
+					</tr>
+					<tr>
+						<th> No </th>
+						<th> 아이디 </th>
+						<th> 이름 </th>
+						<th> 닉네임 </th>
+						<th> 권한 </th>
+					</tr>
+					<c:if test="${pv.totalCount > 0 }">
+						<c:if test="${not empty pv.list }">
+							<c:forEach var="vo" items="${pv.list }" varStatus="num">
+								<tr style="cursor:pointer;" id="info${num.index }" onclick="selectInfo('${num.index}')">
+									<td id="idx${num.index }">${vo.mb_idx }</td>
+									<td>${vo.mb_ID }</td>
+									<td>${vo.mb_name }</td>
+									<td>${vo.mb_nick }</td>
+									<td>${vo.gr_role }</td>
+								</tr>
+							</c:forEach>
+						</c:if>
+					</c:if>
+				</table>
+				</div>
+				
+				<input type="hidden" id="mb_idx" name="mb_idx">
+			</form>
+		</div>
+		<br>
+		<form method="post">
+			<sec:csrfInput/>
+			<div style="padding-left: 12%;">
+				<table class="table table-bordered" style="width: 90%; color: white; font-size: 17px;">
+					<tr>
+						<th colspan="5" style="text-align: left; padding-left: 2%; font-size: 20px; font-weight: bold;" >정보보기</th>
+					</tr>
+					<tr>
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">아이디</td>
+						<td style="width: 300px; background-color:#1C1D26;">
+							<c:out value="${mv.mb_ID }"/>
+							<input type="hidden" name="mb_ID" value="${mv.mb_ID }">
+						</td>
+						
+						<td style="width: 100px; text-align: center; background-color:#2D2E36;">비밀번호</td>
+						<td style="width: 300px; background-color:#1C1D26;"> 
+							<button class="btn btn-secondary" formaction="/resetPasswordOk.do">임시번호 발급</button>
+						
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">이름</td>
+						<td style="width: 300px; background-color:#1C1D26;"><c:out value="${mv.mb_name }"/></td>
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">닉네임</td>
+						<td style="width: 300px; background-color:#1C1D26;"><c:out value="${mv.mb_nick }"/></td>
+					</tr>
+					<tr>
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">이메일</td>
+						<td style="width: 300px; background-color:#1C1D26;">
+							<c:out value="${mv.mb_email }"/>
+							<input type="hidden" name="mb_email" value="${mv.mb_email }">
+						</td>
+						
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">전화번호</td>
+						<td style="width: 300px; background-color:#1C1D26;"><c:out value="${mv.mb_tel }"/></td>
+					</tr>
+					<tr>
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">생일</td>
+						<td style="width: 300px; background-color:#1C1D26;"><c:out value="${mv.mb_birth }"/></td>
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">권한</td>
+						<td style="width: 300px; background-color:#1C1D26;"><c:out value="${mv.gr_role }"/></td>
+					</tr>
+					<tr>
+						<td style="width: 100px; text-align: center; background-color:#2D2E36; ">주소</td>
+						<td style="width: 300px; background-color:#1C1D26;" colspan="1"><c:out value="${mv.mb_address1 }"/><br><c:out value="${mv.mb_address2 }"/></td>
+					</tr>
+				</table>
+				<br>
+			</div>
+		</form>
+	</div>
 
 <!-- Footer -->
 	<%@ include file="../headerFooter/footer.jsp"%>

@@ -198,4 +198,4 @@ CREATE TABLE `sns_kakao` (
 			mr.mb_ID='rkdendh' and a.authkey='b516e506-649a-4ff7-99e7-112088b65491';
 
 alter table camp_member add column sns_email varchar (200);
-alter table camp_comment  auto_increment =1;
+alter table camp_info  auto_increment =1;

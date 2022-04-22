@@ -3,131 +3,148 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pro.s2k.camp.dao.QnADAO">
-	<!-- 전체 가져오기 -->
-	<select  id="selectList" parameterType="hashmap" resultType="QnAVO">
-		select 
-			a.qna_idx, a.qna_title, a.qna_content, a.qna_regDate, a.qna_modiDate, a.qna_ip, a.qna_read,
-			(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+	<!-- QnA리스트 가져오기 -->
+	<select id="selectList" parameterType="hashmap"
+		resultType="QnAVO">
+		select
+		a.qna_idx, a.qna_title, a.qna_content, a.qna_regDate, a.qna_modiDate, a.qna_ip,
+		a.qna_read,
+		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
 		from
-			camp_qna a
+		camp_qna a
 		where qna_ref = 0
 		order by
-			qna_idx desc limit #{startNo}, #{pageSize}
+		qna_idx desc limit #{startNo}, #{pageSize}
 	</select>
-	<!-- 가져오기 판단 -->
-	<select id="selectMb_idx" parameterType="int" resultType="int" >
+	
+	<!-- 본인글인지 판단 여부 -->
+	<select id="selectMb_idx" parameterType="int" resultType="int">
 		select mb_idx from camp_qna where qna_idx=#{qna_idx}
 	</select>
 
-	<!--  1개 가져오기 -->
+	<!-- 글 1개 상세 가져오기 -->
 	<select id="selectByIdx" parameterType="int" resultType="QnAVO">
-		select a.qna_idx, a.qna_title,a.qna_ref, a.qna_content, a.qna_modiDate, a.qna_ip, a.qna_read,
-		 (select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+		select
+		a.qna_idx, a.qna_title,a.qna_ref, a.qna_content, a.qna_modiDate,
+		a.qna_ip, a.qna_read,
+		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
 		from
-			camp_qna a
+		camp_qna a
 		where qna_idx=#{qna_idx}
 	</select>
-	
-	<!--  답변 1개 가져오기 -->
-	<select id="selectByIdxAnswer" parameterType="int" resultType="QnAVO">
-		select a.qna_idx, a.qna_title,a.qna_ref, a.qna_content, a.qna_modiDate, a.qna_ip, a.qna_read,
-		 (select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+
+	<!-- 답변 1개 가져오기 -->
+	<select id="selectByIdxAnswer" parameterType="int"
+		resultType="QnAVO">
+		select a.qna_idx, a.qna_title,a.qna_ref, a.qna_content,
+		a.qna_modiDate, a.qna_ip, a.qna_read,
+		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
 		from
-			camp_qna a
+		camp_qna a
 		where qna_ref = #{qna_idx}
 	</select>
-	
-	<!-- 전체 질문 개수 구하기 -->
+
+	<!-- 전체 질문 개수 구하기 (참조글이 0이면 질문글)  -->
 	<select id="selectCount" resultType="int">
-		select count(*) from camp_qna where qna_ref = 0 
+		select count(*) from camp_qna where qna_ref = 0
 	</select>
-	<!-- 원본글 저장 -->
+	
+	<!-- 질문 글 저장 -->
 	<insert id="insert" parameterType="QnAVO">
 		insert into camp_qna
-			(mb_idx, qna_title, qna_content, qna_regDate, qna_modiDate, qna_ip)
+		(mb_idx, qna_title, qna_content, qna_regDate, qna_modiDate, qna_ip)
 		values
-			(#{mb_idx}, #{qna_title}, #{qna_content}, now(), now(), #{qna_ip})
-	</insert>	
+		(#{mb_idx}, #{qna_title}, #{qna_content}, now(), now(), #{qna_ip})
+	</insert>
+	
 	<!-- 답변 저장 -->
 	<insert id="answer" parameterType="QnAVO">
 		insert into camp_qna
-			(qna_ref, mb_idx, qna_title, qna_content, qna_regDate, qna_modiDate, qna_ip, qna_read)
+		(qna_ref, mb_idx, qna_title, qna_content, qna_regDate, qna_modiDate, qna_ip,
+		qna_read)
 		values
-			(#{qna_idx},#{mb_idx}, #{qna_title}, #{qna_content}, now(), now(), #{qna_ip}, 3)
-	</insert>	
+		(#{qna_idx},#{mb_idx}, #{qna_title}, #{qna_content}, now(), now(), #{qna_ip}, 3)
+	</insert>
 
-	
-	<!-- 수정하기 -->
+	<!-- 질문 수정하기 -->
 	<update id="update" parameterType="QnAVO">
 		update camp_qna set
-			qna_title = #{qna_title},
-			qna_content = #{qna_content},
-			qna_modiDate = #{qna_modiDate},
-			qna_ip = #{qna_ip}
+		qna_title = #{qna_title},
+		qna_content = #{qna_content},
+		qna_modiDate = #{qna_modiDate},
+		qna_ip = #{qna_ip}
 		where
-			qna_idx = #{qna_idx}
+		qna_idx = #{qna_idx}
 	</update>
-	
+
 	<!-- 답변 수정하기 -->
 	<update id="updateAnswer" parameterType="QnAVO">
 		update camp_qna set
-			qna_content = #{qna_content},
-			qna_modiDate = #{qna_modiDate},
-			qna_ip = #{qna_ip}
+		qna_content = #{qna_content},
+		qna_modiDate = #{qna_modiDate},
+		qna_ip = #{qna_ip}
 		where
-			qna_ref = #{qna_idx}
+		qna_ref = #{qna_idx}
 	</update>
+	
 	<!-- 삭제하기 -->
 	<delete id="delete" parameterType="int">
-		delete from camp_qna where qna_idx=#{qna_idx}
+		delete from camp_qna where
+		qna_idx=#{qna_idx}
 	</delete>
-	
-	<!-- 관리자가 행동하면 +1 -->
+
+	<!-- 관리자가 행동하면 +1 (관리자가 글을읽었는지, 답변을 달았는지 판단)-->
 	<update id="updateRead" parameterType="int">
 		update camp_qna set
-			qna_read = qna_read +1
+		qna_read = qna_read +1
 		where 
 		<![CDATA[ qna_idx = #{qna_idx} and qna_read  <  3 ]]>
 	</update>
-	
-	
+
 	<!-- 원본글 = 참조글 -->
 	<update id="updateRef">
 		update camp_qna set
-			qna_ref = #{qna_idx}
+		qna_ref = #{qna_idx}
 		where
 	</update>
-	
-	<select id="selectSearchList" parameterType="hashmap" resultType="QnAVO">
+
+	<!-- QnA 검색 기능 -->
+	<select id="selectSearchList" parameterType="hashmap"
+		resultType="QnAVO">
 		select a.qna_idx,a.qna_title,a.qna_content,a.qna_modiDate,
-		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick 
-		from camp_QnA a 
+		(select
+		mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+		from camp_QnA a
 		where
-			qna_ref = 0
+		qna_ref = 0
 		and
-		<if test = "searchType == 'all'">
-		(qna_title like concat('%',#{searchText},'%') 
-		 or qna_content like concat ('%',#{searchText},'%'))
+		<if test="searchType == 'all'">
+			(qna_title like concat('%',#{searchText},'%')
+			or qna_content like concat ('%',#{searchText},'%'))
 		</if>
-		<if test = "searchType == 'title'">qna_title like concat('%',#{searchText},'%') </if>
-		<if test = "searchType == 'content'"> qna_content like concat ('%',#{searchText},'%') </if>
-		<if test = "searchType == 'nick'"> (select mb_nick from camp_member where mb_idx = a.mb_idx) like concat('%',#{searchText},'%')</if>
-		order by 
-			qna_idx desc limit #{startNo}, #{pageSize}
+		<if test="searchType == 'title'">qna_title like concat('%',#{searchText},'%') </if>
+		<if test="searchType == 'content'"> qna_content like concat ('%',#{searchText},'%') </if>
+		<if test="searchType == 'nick'"> (select mb_nick from camp_member where mb_idx = a.mb_idx)
+			like concat('%',#{searchText},'%')</if>
+		order by
+		qna_idx desc limit #{startNo}, #{pageSize}
 	</select>
 	
-	<select id="selectSearchCount"  parameterType="commonVO" resultType="int">
+	<!-- QnA 검색 개수 구하기  -->
+	<select id="selectSearchCount" parameterType="commonVO"
+		resultType="int">
 		select count(qna_idx) from camp_QnA a
-		where	
-			qna_ref = 0
+		where
+		qna_ref = 0
 		and
-		<if test = "searchType == 'all'">
-		(qna_title like concat('%',#{searchText},'%') 
-		 or qna_content like concat ('%',#{searchText},'%'))
+		<if test="searchType == 'all'">
+			(qna_title like concat('%',#{searchText},'%')
+			or qna_content like concat ('%',#{searchText},'%'))
 		</if>
-		<if test = "searchType == 'title'">qna_title like concat('%',#{searchText},'%') </if>
-		<if test = "searchType == 'content'"> qna_content like concat ('%',#{searchText},'%') </if>
-		<if test = "searchType == 'nick'"> (select mb_nick from camp_member where mb_idx = a.mb_idx) like concat('%',#{searchText},'%')</if>
+		<if test="searchType == 'title'">qna_title like concat('%',#{searchText},'%') </if>
+		<if test="searchType == 'content'"> qna_content like concat ('%',#{searchText},'%') </if>
+		<if test="searchType == 'nick'"> (select mb_nick from camp_member where mb_idx = a.mb_idx)
+			like concat('%',#{searchText},'%')</if>
 	</select>
 
 </mapper>

@@ -3,95 +3,113 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pro.s2k.camp.dao.CommentDAO">
-	<!-- rv_idx에 따른 모두얻기 -->
-	<select id="selectList" parameterType="hashmap" resultType="commentVO">
+	<!-- 리뷰 원본글에 따른 모두얻기 -->
+	<select id="selectList" parameterType="hashmap"
+		resultType="commentVO">
 		select
-			 a.co_idx,a.co_ref,a.rv_idx, a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate, a.co_ip, a.del2,
-				(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+		a.co_idx,a.co_ref,a.rv_idx, a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate,
+		a.co_ip, a.del2,
+		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
 		from
-			camp_comment a
+		camp_comment a
 		where rv_idx = #{rv_idx}
-		order by co_ref  , co_seq 
+		order by co_ref , co_seq
 	</select>
-	<!-- co_idx에 따른 1개얻기 -->
-	<select id="selectByIdx" parameterType="int" resultType="commentVO">
+	<!-- 댓글에 따른 상세얻기 -->
+	<select id="selectByIdx" parameterType="int"
+		resultType="commentVO">
 		select
-			 a.co_idx,a.co_ref,a.rv_idx,a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate, a.co_ip, a.del2,
-				(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+		a.co_idx,a.co_ref,a.rv_idx,a.co_seq, a.co_lev, a.co_content, a.co_regDate, a.co_modiDate, a.co_ip, a.del2,
+		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
 		from
-			camp_comment a
+		camp_comment a
 		where co_idx = #{co_idx}
-			order by co_idx desc
+		order by co_idx desc
 	</select>
-	<!-- ref = idx -->
+	
+	<!-- 첫번재 댓글 번호 co_ref값으로 변경 -->
 	<update id="refEqalIdx">
 		update camp_comment set co_ref=co_idx where co_seq = 0
 	</update>
-	
-	
-	<!-- 글1개에서 댓글 개수 구하기 -->
+
+	<!-- 리뷰 원본글에 달린 댓글 개수 구하기 -->
 	<select id="selectCount" parameterType="int" resultType="int">
 		select count(co_idx) from camp_comment where rv_idx=#{rv_idx}
 	</select>
-	
-	<!-- 저장하기 -->
- 	<insert id="insert" parameterType="commentVO">
+
+	<!-- 댓글 저장하기 -->
+	<insert id="insert" parameterType="commentVO">
 		insert into camp_comment
-			(mb_idx,rv_idx,co_ref,co_content,co_regDate,co_modiDate,co_ip)
+		(mb_idx,rv_idx,co_ref,co_content,co_regDate,co_modiDate,co_ip)
 		values
-			(#{mb_idx},#{rv_idx},#{co_idx},#{co_content},now(),now(),#{co_ip})
+		(#{mb_idx},#{rv_idx},#{co_idx},#{co_content},now(),now(),#{co_ip})
 	</insert>
-	<!-- 저장하기(댓글) -->
+	
+	<!-- 대댓글 저장하기 -->
 	<insert id="reply" parameterType="commentVO">
 		insert into camp_comment
-			(mb_idx,rv_idx,co_ref,co_seq,co_lev,co_content,co_regDate,co_modiDate,co_ip)
+		(mb_idx,rv_idx,co_ref,co_seq,co_lev,co_content,co_regDate,co_modiDate,co_ip)
 		values
-			(#{mb_idx},#{rv_idx},#{co_ref},#{co_seq},#{co_lev},#{co_content},now(),now(),#{co_ip})
-	
+		(#{mb_idx},#{rv_idx},#{co_ref},#{co_seq},#{co_lev},#{co_content},now(),now(),#{co_ip})
+
 	</insert>
-	
-	
-	<!-- 나보다 seq가 크거나 같은값을 모두 1증가시킴 대댓글 -->
+
+	<!-- 나보다 seq가 큰값들 모두 1증가시킴 대댓글에서 사용 -->
 	<update id="updateSeq" parameterType="hashmap">
-		update camp_comment set co_seq = co_seq + 1 where co_ref = #{co_ref} and co_seq >= #{co_seq} and co_idx!=#{co_ref}
+		update camp_comment set
+		co_seq = co_seq +1 where co_ref = #{co_ref} and co_seq > #{co_seq}
 	</update>
-	
-	<!-- 나와 ref가 같으면서 seq가 크거나 같은것 뽑기 -->
-	<select id="selectSeqList" parameterType="hashmap" resultType="commentVO">
-		select * from camp_comment where co_ref=#{co_ref} and co_seq >= #{co_seq} order by co_seq
+
+	<!-- 나와 co_ref값이 같으면서 co_seq가 크거나 같은것 뽑기 삭제시 사용 -->
+	<select id="selectSeqList" parameterType="hashmap"
+		resultType="commentVO">
+		select * from camp_comment where co_ref=#{co_ref} andco_seq >= #{co_seq} order by co_seq
 	</select>
-	
-		<!-- 5. 수정하기 -->
+
+	<!-- 댓글 수정하기 -->
 	<update id="update" parameterType="commentVO">
 		update camp_comment set
-			co_content = #{co_content},
-			co_modiDate = #{co_modiDate},
-			co_ip = #{co_ip}
+		co_content = #{co_content},
+		co_modiDate = #{co_modiDate},
+		co_ip = #{co_ip}
 		where
-			co_idx = #{co_idx}
+		co_idx = #{co_idx}
 	</update>
 	
-	 
-	 <!-- 삭제 -->
-	 <!-- 삭제하기 -->
-	 <delete id="delete1" parameterType="int">
-		delete from camp_comment where co_idx=#{co_idx} and del2 = 0
-	</delete>	
+	<!-- 같은 co_ref중 제일 큰 co_seq값 얻기 -->
+	<select id="selectMaxSeq" parameterType="int" resultType="int">
+		select max(co_seq) from camp_comment where co_ref=#{co_ref}
+	</select>
+
+	<!-- 같은 co_ref, co_seq에서 레벨값 구하기 -->
+	<select id="selectLev" parameterType="hashmap" resultType="int">
+		select max(co_lev) from camp_comment where co_ref=#{co_ref} and co_seq=#{co_seq}
+	</select>
+
+	<!-- 같은 co_ref, co_seq에서 레벨개수 구하기 -->
+	<select id="selectComment" parameterType="hashmap"
+		resultType="integer">
+		select distinct(co_lev) from camp_comment where co_seq = #{co_seq} and co_ref = #{co_ref}
+	</select>
+
+	<!-- 삭제 -->
+	<!-- 삭제하기 -->
+	<delete id="delete1" parameterType="int">
+		delete from camp_comment
+		where co_idx=#{co_idx} and del2 = 1
+	</delete>
 	<delete id="delete2" parameterType="int">
-		delete from camp_comment where co_ref=#{co_ref}
+		delete from camp_comment
+		where co_ref=#{co_ref}
 	</delete>
 	<!-- 삭제표시로 변경하기 -->
 	<update id="updateDel" parameterType="int">
-		update camp_comment set del2 = 0 where co_idx = #{co_idx}	
+		update camp_comment set
+		del2 = 1 where co_idx = #{co_idx}
 	</update>
-	<!-- 삭제표시값이 'Y' 모든 데이터 가져오기 -->	
+	<!-- 삭제표시값이 '1' 모든 데이터 가져오기 -->
 	<select id="selectDelList" resultType="commentVO">
-		select * from camp_comment where del2 = 0 and co_ref=#{co_ref} order by co_idx desc
+		select * from camp_comment
+		where del2 = 1 and co_ref=#{co_ref} order by co_idx desc
 	</select>
-	
-	  	<!-- 현재 저장한 idx값 알아내기 -->
- 	<select id="selectSeq" resultType="int">
- 		select max(co_idx) from camp_comment
- 	</select>
-
 </mapper>

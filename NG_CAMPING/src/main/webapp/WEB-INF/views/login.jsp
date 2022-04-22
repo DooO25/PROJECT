@@ -31,9 +31,7 @@
 	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/swiper.min.css">
-<script type="text/javascript">
 
-</script>
 
 <style type="text/css">
 
@@ -80,27 +78,38 @@ textarea {
 		href="${pageContext.request.contextPath }/resources/assets/css/noscript.css" />
 </noscript>
 
-<script type="text/javascript">
-var csrf = '<c:out value='${_csrf.token}'/>';
- sessionStorage.setItem("csrf",csrf);
-</script>
-
-
 </head>
 <body class="is-preload landing">
 <%@ include file="headerFooter/header.jsp"%>
 
-
 <%
-          String clientId = "eT2NCIHgedo2uVebssZm";//애플리케이션 클라이언트 아이디값";
-          String redirectURI = URLEncoder.encode("http://localhost:8080/naverCallback.do", "UTF-8");
-          SecureRandom random = new SecureRandom();
-          String state = new BigInteger(130, random).toString();
-          String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
-          apiURL += "&client_id=" + clientId;
-          apiURL += "&redirect_uri=" + redirectURI;
-          apiURL += "&state=" + state;
-          session.setAttribute("state", state);
+       // 소셜 로그인
+ 	   String redirectURI = URLEncoder.encode("http://localhost:8080/", "UTF-8");
+	   //--------------------------------------------------------------------------------------------------
+	   // 네이버 
+       String naverRedirectURI = redirectURI+"naverCallback.do";
+       SecureRandom random = new SecureRandom();
+       String state = new BigInteger(130, random).toString();
+       String naverURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+       naverURL += "&client_id=" + "eT2NCIHgedo2uVebssZm";
+       naverURL += "&redirect_uri=" + naverRedirectURI;
+       naverURL += "&state=" + state;
+       session.setAttribute("state", state);
+       
+       //--------------------------------------------------------------------------------------------------
+       // 카카오 
+       String kakaoRedirectURI = redirectURI+"kakaoCallback.do";
+       String kakaoURL = "https://kauth.kakao.com/oauth/authorize?response_type=code";
+       kakaoURL += "&client_id=ef83fa2c4e841e935b1971d525cb0e1b";
+       kakaoURL += "&redirect_uri=" + kakaoRedirectURI;
+       
+       //--------------------------------------------------------------------------------------------------
+       // 구글
+       String googleRedirectURI = redirectURI+"googleCallback.do";
+       String googleURL = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code";
+       googleURL += "&client_id=669969361769-cud6nrlaur9thknq75b3hp91tp0i5hcg.apps.googleusercontent.com";
+       googleURL += "&redirect_uri=" + googleRedirectURI;
+       googleURL += "&scope=email%20profile";
 %>
 		<!-- Banner -->
 		<section id="banner1">
@@ -115,62 +124,45 @@ var csrf = '<c:out value='${_csrf.token}'/>';
 				</c:if>
 			<div class="row">
 				<div style="text-align: left; padding-left: 30%;">아이디/비번 로그인</div>
-					<div class="col-md-8" style="padding-left: 30% ">
-						<input type="text" class="form-control" id="ID" name="mb_ID"placeholder="아이디입력" required>
-						<input type="password" class="form-control" id="password" name="mb_password"placeholder="비밀번호입력" required>
-					</div>
-					
-					<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
-					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-				 
-				 
-					<div class="col-md-4">
-						<input type="submit" value="로그인" style="height: 95px; float: left;"/>
-					</div>
-				<!-- 
-					<div class="col-md-4">
-						<input type="button" value="로그인" style="height: 95px; float: left;" onclick="login()"/>
-					</div>
-				 -->
-				
+				<div class="col-md-8" style="padding-left: 30% ">
+					<input type="text" class="form-control" id="ID" name="mb_ID"placeholder="아이디입력" required >
+					<input type="password" class="form-control" id="password" name="mb_password"placeholder="비밀번호입력" required>
+				</div>
+				<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="col-md-4">
+					<input type="submit" value="로그인" style="height: 95px; float: left;"/>
+				</div>
 				<div style="font:white;  font-size: 10px; text-align:left; padding-left: 65%;">
 					<a href="/userInfo/findUserId.do">아이디찾기</a>
 					&nbsp; | &nbsp;
 					<a href="/userInfo/findPassword.do">비밀번호 찾기 </a>
 					&nbsp; | &nbsp;
-					<a href="/insert.do">회원가입 </a></div>
-	
-	
-	
-		</div> 
-		</form>
-		<form action="<%=apiURL %>" method="post" id="gogo">
-			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-			<div class="row" style="width: 300px; height: 300px; margin: 0 auto; padding-right:3;" >
-				<div class="col-md-4">
-			  		<a style="cursor: pointer;" onclick="document.getElementById('gogo').submit()"><span id="naver"><img style="width: 50px; height: 50px;"
-						src="${pageContext.request.contextPath }/resources/images/naverLogin.png"
-						alt="" /></span></a>
-					</div>
-					<div class="col-md-4">
-					<a href="/kakaoLogin.do"><span class="col-md-4" id="kakao"><img style="width: 50px; height: 50px;"
-						src="${pageContext.request.contextPath }/resources/images/kakaoLogin.png"
-						alt="" /></span></a>
-					</div>
-					<div class="col-md-4">
-					<a href="googleLogin.do"><span class="col-md-4" id="google"><img style="width: 50px; height: 50px;"
-						src="${pageContext.request.contextPath }/resources/images/googleLogin.png"
-						alt="" /></span></a>
+					<a href="/insert.do">회원가입 </a>
 				</div>
-			</div>
-		</form>
+			</div> 
+				<%--소셜 로그인 파트 --%>
+				<div class="row" style="width: 300px; height: 300px; margin: 0 auto; padding-right:3;" >
+					<div class="col-md-4">
+				  		<a onclick="naverLogin();" id="naverLogin"> <span id="naver"><img style="width: 50px; height: 50px;"
+							src="${pageContext.request.contextPath }/resources/images/naverLogin.png"
+							alt="" /></span></a>
+					</div>
+					<div class="col-md-4">
+						<a onclick="kakaoLogin();" id="kakaoLogin"> <span class="col-md-4" id="kakao"><img style="width: 50px; height: 50px;"
+							src="${pageContext.request.contextPath }/resources/images/kakaoLogin.png"
+							alt="" /></span></a>
+					</div>
+					<div class="col-md-4">
+						<a onclick="googleLogin();" id="googleLogin"><span class="col-md-4" id="google"><img style="width: 50px; height: 50px;"
+							src="${pageContext.request.contextPath }/resources/images/googleLogin.png"
+							alt="" /></span></a>
+					</div>
+				</div>
+			</form>
 		</section>
-		
-
 		<!-- Footer -->
 		<%@ include file="headerFooter/footer.jsp"%>
-
-
 	<!-- Scripts -->
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/jquery.min.js"></script>
@@ -188,9 +180,19 @@ var csrf = '<c:out value='${_csrf.token}'/>';
 		src="${pageContext.request.contextPath }/resources/assets/js/util.js"></script>
 	<script
 		src="${pageContext.request.contextPath }/resources/assets/js/main.js"></script>
-		
-	<!-- 네이버 로그인API  -->
-	<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript">
+		function naverLogin() {
+			location.href="<%=naverURL%>";
+			document.getElementById('naverLogin').submit();
+		}
+		function kakaoLogin() {
+			location.href="<%=kakaoURL%>";
+			document.getElementById('kakaoLogin').submit();
+		}
+		function googleLogin() {
+			location.href="<%=googleURL%>";
+			document.getElementById('googleLogin').submit();
+		}
+	</script>
 </body>
 </html>

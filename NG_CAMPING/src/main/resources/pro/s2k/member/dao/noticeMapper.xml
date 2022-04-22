@@ -3,86 +3,97 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pro.s2k.camp.dao.NoticeDAO">
- 	<!-- id: 메서드명 , parameterType : 인수, resultType : 리턴값 -->
- 	<!-- 1. 개수얻기 -->
- 	<select id="selectCount" resultType="int">
- 		select count(*) from camp_notice 	
- 	</select>
- 	<!-- 2. 1개 얻기 -->
- 	<select id="selectByIdx" parameterType="int" resultType="noticeVO">
- 		select * from camp_notice where nt_idx=#{nt_idx }
- 	</select>
- 	<!-- 3. 1페이지 얻기 -->
- 	<select id="selectList" parameterType="hashmap" resultType="noticeVO">
- 		select a.nt_idx, a.nt_title, a.nt_content, a.nt_regDate, a.nt_hit,  
-			(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick 
-		from 
-			camp_notice a order by nt_idx desc limit #{startNo}, #{pageSize}
- 	</select>
- 	
- 	<!-- 4. 저장하기 -->
- 	<insert id="insert" parameterType="noticeVO">
- 		insert into	camp_notice 
- 			(mb_idx, mb_nick, nt_title, nt_content, nt_regDate, nt_ip) 
- 		values 
- 			(#{mb_idx}, #{mb_nick} , #{nt_title}, #{nt_content}, now(), #{nt_ip})
- 	</insert>
- 	<!-- 5. 수정하기 -->
- 	<update id="update" parameterType="noticeVO">
- 		update 
- 			camp_notice 
- 		set
- 			nt_title = #{nt_title},
-			nt_content = #{nt_content},
-			nt_regDate = now(),
-			nt_ip = #{nt_ip}
- 		where
- 			nt_idx = #{nt_idx}
- 	</update>
- 	
- 	<!-- 6. 삭제하기 -->
- 	<delete id="delete" parameterType="int">
- 		delete from camp_notice where nt_idx = #{nt_idx }
- 	</delete>
- 	
- 	<!-- 7. 현재 저장한 idx값 알아내기 -->
- 	<select id="selectSeq" resultType="int">
- 		select max(nt_idx) from camp_notice
- 	</select>
- 	
-	<update id="incrementHits" parameterType="int">
-		update camp_notice set nt_hit = nt_hit+1 where nt_idx = #{nt_idx}
-	</update>
-	
-	<select id="selectNick" resultType="string">
-		select a.mb_nick from camp_member a, camp_notice b  where a.mb_idx = b.mb_idx
+	<!-- id: 메서드명 , parameterType : 인수, resultType : 리턴값 -->
+	<!-- 1. 개수얻기 -->
+	<select id="selectCount" resultType="int">
+		select count(*) from camp_notice
 	</select>
-	
-	
-	<select id="selectSearchList" parameterType="hashmap" resultType="noticeVO">
-		select a.nt_idx,a.nt_title,a.nt_content,a.nt_regDate,a.nt_hit,
+	<!-- 2. 1개 얻기 -->
+	<select id="selectByIdx" parameterType="int"
+		resultType="noticeVO">
+		select * from camp_notice where nt_idx=#{nt_idx }
+	</select>
+	<!-- 3. 1페이지 얻기 -->
+	<select id="selectList" parameterType="hashmap"
+		resultType="noticeVO">
+		select a.nt_idx, a.nt_title, a.nt_content, a.nt_regDate,a.nt_modiDate,
+		a.nt_hit,
 		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
-		from camp_notice a 
+		from
+		camp_notice a order by nt_idx desc limit #{startNo}, #{pageSize}
+	</select>
+
+	<!-- 4. 저장하기 -->
+	<insert id="insert" parameterType="noticeVO">
+		insert into camp_notice
+		(mb_idx, mb_nick, nt_title, nt_content, nt_regDate, nt_modiDate, nt_ip)
+		values
+		(#{mb_idx}, #{mb_nick} , #{nt_title}, #{nt_content}, now(), now(), #{nt_ip})
+	</insert>
+	
+	<!-- 5. 수정하기 -->
+	<update id="update" parameterType="noticeVO">
+		update
+		camp_notice
+		set
+		nt_title = #{nt_title},
+		nt_content = #{nt_content},
+		nt_modiDate = now(),
+		nt_ip = #{nt_ip}
 		where
-		<if test = "searchType == 'all'">
-		a.nt_title like concat('%',#{searchText},'%') 
-		 or a.nt_content like concat ('%',#{searchText},'%')
-		</if>
-		<if test = "searchType == 'title'">a.nt_title like concat('%',#{searchText},'%') </if>
-		<if test = "searchType == 'content'">a.nt_content like concat ('%',#{searchText},'%') </if>
-		order by 
-			nt_idx desc limit #{startNo}, #{pageSize}
+		nt_idx = #{nt_idx}
+	</update>
+
+	<!-- 6. 삭제하기 -->
+	<delete id="delete" parameterType="int">
+		delete from camp_notice where nt_idx = #{nt_idx }
+	</delete>
+
+	<!-- 7. 현재 저장한 idx값 알아내기 -->
+	<select id="selectSeq" resultType="int">
+		select max(nt_idx) from camp_notice
 	</select>
-	
-	<select id="selectSearchCount"  parameterType="commonVO" resultType="int">
+
+	<!-- 8. 조회수 증가 -->
+	<update id="incrementHits" parameterType="int">
+		update camp_notice set
+		nt_hit = nt_hit+1 where nt_idx = #{nt_idx}
+	</update>
+
+	<!-- 9. 닉네임만 가져오기 -->
+	<select id="selectNick" resultType="string">
+		select a.mb_nick from
+		camp_member a, camp_notice b where a.mb_idx = b.mb_idx
+	</select>
+
+	<!-- 공지사항 검색 기능 -->
+	<select id="selectSearchList" parameterType="hashmap"
+		resultType="noticeVO">
+		select a.nt_idx,a.nt_title,a.nt_content,a.nt_modiDate,a.nt_hit,
+		(select mb_nick from camp_member where mb_idx = a.mb_idx) as mb_nick
+		from camp_notice a
+		where
+		<if test="searchType == 'all'">
+			a.nt_title like concat('%',#{searchText},'%')
+			or a.nt_content like concat ('%',#{searchText},'%')
+		</if>
+		<if test="searchType == 'title'">a.nt_title like concat('%',#{searchText},'%') </if>
+		<if test="searchType == 'content'">a.nt_content like concat ('%',#{searchText},'%') </if>
+		order by
+		nt_idx desc limit #{startNo}, #{pageSize}
+	</select>
+
+	<!-- 공지사항 검색 개수세기 -->
+	<select id="selectSearchCount" parameterType="commonVO"
+		resultType="int">
 		select count(nt_idx) from camp_notice
-		where	
-		<if test = "searchType == 'all'">
-		nt_title like concat('%',#{searchText},'%') 
-		 or nt_content like concat ('%',#{searchText},'%')
+		where
+		<if test="searchType == 'all'">
+			nt_title like concat('%',#{searchText},'%')
+			or nt_content like concat ('%',#{searchText},'%')
 		</if>
-		<if test = "searchType == 'title'">nt_title like concat('%',#{searchText},'%') </if>
-		<if test = "searchType == 'content'"> nt_content like concat ('%',#{searchText},'%') </if>
+		<if test="searchType == 'title'">nt_title like concat('%',#{searchText},'%') </if>
+		<if test="searchType == 'content'"> nt_content like concat ('%',#{searchText},'%') </if>
 	</select>
-	
+
 </mapper>

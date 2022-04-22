@@ -12,8 +12,7 @@ public interface ReviewService {
 	ReviewVO selectByIdx(int idx);
 	// 원본글 저장
 	void insert(ReviewVO reviewVO);
-//	// 답변저장
-//	void reply(ReviewVO reviewVO);
+
 	// 수정
 	void update(ReviewVO reviewVO);
 	// 삭제

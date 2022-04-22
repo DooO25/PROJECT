@@ -74,6 +74,15 @@
 			}
 		});
 }
+	function change(val) {
+		if (val.value == 'fst') {
+			document.getElementById("selectfst").style.display = 'inline';
+			document.getElementById("selectsnd").style.display = 'none';
+		} else if (val.value == 'snd') {
+			document.getElementById("selectfst").style.display = 'none';
+			document.getElementById("selectsnd").style.display = 'inline';
+		}
+	}
 </script>
 
 
@@ -277,21 +286,29 @@ b {
          <img src="">
       </div>
       <div style="padding-top: 70px; padding-left: 10%">
-         <div class="col-sm-2">
-            <select name="chart" id="chart" style="float: left;">
-               <option value="">캠핑장</option>
-               <option value="" selected>캠핑톡</option>
-            </select>
-
-         </div>
-         <div class="col-sm-2" style="float: left;">
-            <select name="list" id="list" onchange="window.open(value,'_self');">
-               <option value="/board/notice.do" >공지사항</option>
-               <option value="/baord/QnA.do" selected>QnA</option>
-               <option value="/board/review.do" >캠핑후기</option>
-            </select>
-         </div>
-      </div>
+			<div class="col-sm-2">
+				<select name="chart" id="chart" style="float: left;"
+					onchange="change(this)">
+					<option value="fst" >캠핑장</option>
+					<option value="snd" selected>캠핑톡</option>
+				</select>
+			</div>
+			<div id="selectfst" class="col-sm-2" style="float: left; display: none;">
+				<select name="list" id="list" onchange="window.open(value,'_self');">
+					<option selected disabled>-선택-</option>
+					<option value="../camp/campsite.do" >캠핑장 찾기</option>
+				</select>
+			</div>
+			<div id="selectsnd" class="col-sm-2"
+				style="float: left; ">
+				<select name="list" id="list" onchange="window.open(value,'_self');">
+					<option selected disabled>-선택-</option>
+					<option value="/board/review.do" >캠핑후기</option>
+					<option value="/board/notice.do" >공지사항</option>
+					<option value="/board/QnA.do" >QnA</option>
+				</select>
+			</div>
+		</div>
       <br> <br>
       <div>
          <p

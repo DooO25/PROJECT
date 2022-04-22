@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <link rel="shortcut icon" type="image/x-icon"
 	href="${pageContext.request.contextPath }/resources/assets/css/images/logo.png" />
-<title>캠핑은 NG캠핑!</title>
+<title>비밀번호 찾기</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -21,7 +21,9 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
+	rel="stylesheet"
+	integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+	crossorigin="anonymous">
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath }/resources/assets/css/main.css" />
@@ -30,6 +32,9 @@
 <script type="text/javascript">
 
 </script>
+
+
+
 
 <style type="text/css">
 
@@ -75,78 +80,29 @@ textarea {
 
 </head>
 <body class="is-preload landing">
-	<div id="page-wrapper">
 
 		<!-- Header -->
-		<header id="header">
-			<h1 id="logo">
-				<a href="/main.do"><img
-					src="${pageContext.request.contextPath }/resources/assets/css/images/logo.png"
-					alt="" /> </a>
-			</h1>
-			<nav id="nav">
-				<ul>
-					<li><a href="/main.do">Home</a></li>
-					<li><a href="#">캠핑장</a>
-						<ul>
-							<li><a href="#">일반 야영장</a></li>
-							<li><a href="#">자동차 야영장</a></li>
-							<li><a href="#">카라반</a></li>
-							<li><a href="#">글램핑</a></li>
-						</ul></li>
-
-					<li><a href="#">캠핑톡</a>
-						<ul>
-							<li><a href="#">공지사항</a></li>
-							<li><a href="#">캠핑후기</a></li>
-							<li><a href="#">QnA</a></li>
-						</ul></li>
-					<li><a href="/insert.do">회원가입</a></li>
-					<li><a href="/login.do">로그인</a></li>
-				</ul>
-			</nav>
-		</header>
+	<%@ include file="../headerFooter/header.jsp"%>
+	
 		<!-- Banner -->
 		<section id="banner1">		
 			<div class="row">
 					<div class="col-md-8" style="padding-left: 30%;">
-					<form action="${pageContext.request.contextPath}/login.do" method="post">
-						<br />
-						<div style="text-align: center;">임시번호가 이메일로 전송되었습니다.<br> 확인 후 로그인해주세요. </div>
+						<div style="text-align: center;">선택하신 회원의 임시비밀번호를 <br>설정하여 메일로 전송했습니다.<br> </div>
 					
 					<!-- 시큐리트에서 사용자가 지정한 폼을 사용하려면 반드시 아래의 코드를 첨부해줘야 한다.-->
-					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<%-- 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> --%>
 				 
-					<div class="col-md-4" style="padding-left: 100px;">
-						<input type="submit" value="로그인 가기" style="height: 95px;"/>
+					<div class="col-md-4" style="padding-left: 28%;">
+						<a href="/admin/memberManage.do" ><input type="button" value="돌아가기" style="height: 95px;"/></a>
 					</div>
-					</form>
 				</div>
 			</div>
 		</section>
 		
 
 		<!-- Footer -->
-		<footer id="footer">
-			<ul class="icons">
-				<li><a href="https://twitter.com/?lang=ko"
-					class="icon brands alt fa-twitter" target="_blank"><span
-						class="label">Twitter</span></a></li>
-				<li><a href="https://www.facebook.com/"
-					class="icon brands alt fa-facebook-f" target="_blank"><span
-						class="label">Facebook</span></a></li>
-				<li><a href="https://www.instagram.com/"
-					class="icon brands alt fa-instagram" target="_blank"><span
-						class="label">Instagram</span></a></li>
-				<li><a href="mailto:Email@email.com"
-					class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
-			</ul>
-			<ul class="copyright">
-				<li>&copy; COPYRIGHT(C) 2022. Green Academy in Sungnam.</li>
-				<li>Made by 김가람, 강두오, 서해성</li>
-			</ul>
-		</footer>
-	</div>
+	<%@ include file="../headerFooter/footer.jsp"%>
 
 
 	<!-- Scripts -->

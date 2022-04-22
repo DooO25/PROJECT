@@ -50,7 +50,15 @@ function loginSubmit() { // 비회원이 글쓰기를 눌렀을때
 function reviewInsert() { //관리자, 회원이 글쓰기를 눌렀을때
 	location.href = "/board/reviewInsert.do";
 }
-
+function change(val) {
+	if (val.value == 'fst') {
+		document.getElementById("selectfst").style.display = 'inline';
+		document.getElementById("selectsnd").style.display = 'none';
+	} else if (val.value == 'snd') {
+		document.getElementById("selectfst").style.display = 'none';
+		document.getElementById("selectsnd").style.display = 'inline';
+	}
+}
 </script>
 
 
@@ -154,17 +162,25 @@ table {
 		</div>
 		<div style="padding-top: 70px; padding-left: 10%">
 			<div class="col-sm-2">
-				<select name="chart" id="chart" style="float: left;">
-					<option value="">캠핑장</option>
-					<option value="" selected>캠핑톡</option>
+				<select name="chart" id="chart" style="float: left;"
+					onchange="change(this)">
+					<option value="fst" >캠핑장</option>
+					<option value="snd" selected>캠핑톡</option>
 				</select>
-
 			</div>
-			<div class="col-sm-2" style="float: left;">
+			<div id="selectfst" class="col-sm-2" style="float: left; display: none;">
 				<select name="list" id="list" onchange="window.open(value,'_self');">
-					<option value="/board/review.do" selected>캠핑후기</option>
-					<option value="/board/notice.do">공지사항</option>
-					<option value="/board/QnA.do">QnA</option>
+					<option selected disabled>-선택-</option>
+					<option value="../camp/campsite.do">캠핑장 찾기</option>
+				</select>
+			</div>
+			<div id="selectsnd" class="col-sm-2"
+				style="float: left; ">
+				<select name="list" id="list" onchange="window.open(value,'_self');">
+					<option selected disabled>-선택-</option>
+					<option value="/board/review.do" >캠핑후기</option>
+					<option value="/board/notice.do" >공지사항</option>
+					<option value="/board/QnA.do" >QnA</option>
 				</select>
 			</div>
 		</div>
@@ -211,7 +227,7 @@ table {
 					</tr>
 					<tr>
 						<c:if test="${pv.totalCount==0 }">
-							<td colspan="6">등록된 글이 없습니다.</td>
+							<td colspan="5">등록된 글이 없습니다.</td>
 						</c:if>
 					</tr>
 					<c:if test="${pv.totalCount>0 }">
@@ -225,7 +241,7 @@ table {
 										<c:set var="no" value="${no-1}"/>
 									</td>
 									
-									<td style="padding-bottom: 60px; text-align: left; " id="title">
+									<td style="padding-bottom: 40px; text-align: left; " id="title">
 											<form action='<c:url value='${pageContext.request.contextPath }/board/reviewView.do'/>' method="post" id="rView${vs.index }">
 					                    	     <sec:csrfInput/>
 						                           <input type="hidden" name="p" value="${pv.currentPage }"/>
@@ -238,8 +254,8 @@ table {
 					                        </form>
 				                        <jsp:useBean id="today" scope="request" class="java.util.Date"></jsp:useBean>				
 										<fmt:formatDate value="${today }" pattern="yyyyMMdd" var="day"/> 
-										<fmt:formatDate value="${vo.rv_regDate }" pattern="yyyyMMdd" var="reg"/> 
-										<c:if test="${day==reg }">
+										<fmt:formatDate value="${vo.rv_modiDate }" pattern="yyyyMMdd" var="modi"/> 
+										<c:if test="${day==modi }">
 											  <span style="color:red;">New</span>
 										</c:if>
 											<c:set var="content" value="${vo.rv_content }"/>
@@ -259,31 +275,12 @@ table {
 											</c:otherwise>
 										</c:choose>
 									</td>
-										<%-- <td style="padding-top: 50px;" id="content" >
-													${vo.rv_content }
-													<!-- 여기에 글의 내용을 출력한다. -->
-													<c:set var="content" value="${vo.rv_content }"/>
-													이미지파일 확장자명 날리기
-													<c:set var="content" value="${fn:replace(content, '.png', '')}"/>
-													이미지파일 확장자명 날리기
-													<c:set var="content" value="${fn:replace(content, '.jpg', '')}"/>
-													이미지파일 확장자명 날리기
-													<c:set var="content" value="${fn:replace(content, '.img', '')}"/>
-													\n을 <br>로 변경
-													<c:set var="content" value="${fn:replace(content, newLine, br ) }"/>
-											<c:choose>
-												<c:when test="${fn:contains(content,'img')}">
-													이미지파일! ${content } 
-												</c:when>
-												<c:otherwise>${content }</c:otherwise>
-											</c:choose>
-										</td> --%>
 									<td style="vertical-align: middle;">
 										${vo.mb_nick }
 										</td>
 									
 									<td style="vertical-align: middle;"> 
-										<fmt:formatDate value="${vo.rv_regDate }" pattern="yy-MM-dd"/>
+										<fmt:formatDate value="${vo.rv_modiDate }" pattern="yy-MM-dd"/>
 									</td>					
 									<td style="vertical-align: middle;">
 										${vo.rv_hit }
@@ -294,6 +291,10 @@ table {
 						</c:if>
 						</c:if>
 					</table>
+					<c:if test="${pv.totalCount==0 }">
+			        	<div style="border: none; text-align: center;"></div>
+			        </c:if>
+			        <c:if test="${pv.totalCount!=0 }">
 						<c:if test="${pv.searchType==null }">
 							<div style="border: none;text-align: center;">
 								${pv.pageList}
@@ -304,7 +305,7 @@ table {
 								${pv.pageList2}
 							</div>
 						</c:if>
-
+					</c:if>
 
 				<c:set value="${sessionScope.mvo.gr_role}" var="role" />
 			<c:choose>

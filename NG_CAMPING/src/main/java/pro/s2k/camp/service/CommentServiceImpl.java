@@ -38,7 +38,6 @@ public class CommentServiceImpl implements CommentService {
 		return pagingVO;
 	}
 	
-	
 	@Override
 	public CommentVO selectByIdx(int idx) {
 		CommentVO commentVO = commentDAO.selectByIdx(idx);
@@ -48,16 +47,6 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void insert(CommentVO commentVO) {
 		if(commentVO!=null) {
-			// ref가 같으면서 나보다 seq가 큰값들을 모두 seq 값을 1씩 증가한다.
-			HashMap<String, Integer> map = new HashMap<>();
-			map.put("rv_idx", commentVO.getRv_idx());
-			map.put("co_seq", commentVO.getCo_seq());
-			// ref는 그대로
-			// seq는 +1
-			commentVO.setCo_seq(commentVO.getCo_seq()+1);
-			// lev는 +1
-			commentVO.setCo_lev(commentVO.getCo_lev()+1);
-			// 댓글 저장
 			commentDAO.insert(commentVO);
 			commentDAO.refEqalIdx();
 		}
@@ -68,24 +57,30 @@ public class CommentServiceImpl implements CommentService {
 			// ref가 같으면서 나보다 seq가 큰값 들을 모두 seq값을 1씩 증가시킨다.
 			HashMap<String, Integer> map = new HashMap<>();
 			map.put("co_ref", commentVO.getCo_ref());
-			log.info(commentVO.getCo_ref()+"%%%%%123123");
 			map.put("co_seq", commentVO.getCo_seq());
-			log.info(commentVO.getCo_seq()+"#####123123");
-			commentDAO.updateSeq(map);
-			// seq는 그대로
-			commentVO.setCo_seq(commentVO.getCo_seq()+1);
+			HashMap<String, Integer> map2 = new HashMap<>();
+			map2.put("co_ref", commentVO.getCo_ref());
+			map2.put("co_seq", commentVO.getCo_seq()+1);
+			
+			if(commentVO.getCo_seq()!=0) {
+				if(!(commentDAO.selectComment(map) < (commentDAO.selectComment(map2)!=null ? commentDAO.selectComment(map2):0))) {
+					commentVO.setCo_seq(commentVO.getCo_seq()+1);
+					commentDAO.updateSeq(map);
+				}else {
+					commentVO.setCo_seq(commentVO.getCo_seq()+2);
+					commentDAO.updateSeq(map2);
+				}
+			}else {
+				commentVO.setCo_seq(commentDAO.selectMaxSeq(commentVO.getCo_ref())+1);
+			}
 			// lev는 +1
 			commentVO.setCo_lev(commentVO.getCo_lev()+1);
-			
 			// 댓글 저장
 			commentDAO.reply(commentVO);
 		}
 	}
-	
-	
-	
 	@Override
-	public void update(CommentVO commentVO, String[] delFiles, String realPath) {
+	public void update(CommentVO commentVO) {
 		if(commentVO!=null) {
 			// DB에서 해당 글번호의 글 읽어온다.
 			CommentVO dbVO = commentDAO.selectByIdx(commentVO.getCo_idx());
@@ -96,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public void delete(CommentVO commentVO, String uploadPath) {
+	public void delete(CommentVO commentVO) {
 		if(commentVO!=null) {		
 			CommentVO dbVO = commentDAO.selectByIdx(commentVO.getCo_idx());
 			if(dbVO!=null) {
@@ -148,22 +143,10 @@ public class CommentServiceImpl implements CommentService {
 		} // end if
 	} // end method
 
-
 	@Override
 	public int selectCoCount(int idx) {
 		int coCount = commentDAO.selectCount(idx);
 		return coCount;
-	}
-
-	@Override
-	public void update(CommentVO commentVO) {
-		if(commentVO!=null) {
-			// DB에서 해당 글번호의 글 읽어온다.
-			CommentVO dbVO = commentDAO.selectByIdx(commentVO.getCo_idx());
-			if(dbVO!=null) {
-				commentDAO.update(commentVO);
-			}
-		}
 	}
 }
 

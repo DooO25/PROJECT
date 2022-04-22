@@ -132,6 +132,39 @@
 			alert('닉네임 중복확인을 해주세요.');
 			return false; // 
 		}
+		var value = $("#birthYear").val();
+	    if (!num.test(value)) {
+	       alert('년도는 숫자만 입력해주세요. 공백불가');
+	       $("#birthYear").focus();
+	       return false;
+	    } else if (value <= '1900') {
+	       alert('1900년도 이상으로 입력해주세요.');
+	       $("#birthYear").focus();
+	       return false;
+	    } else if (thisYear - value <= 18) {
+	       alert('18세 이상만 회원가입이 가능합니다.');
+	       $("#birthYear").focus();
+	       return false;
+	    }
+	    var value = $("#month").val();
+	    if (value === '') {
+	       alert('태어난 월을 선택해주세요.');
+	       $("#month").val("");
+	       $("#month").focus();
+	       return false;
+	    }
+
+	    var value = $("#day").val();
+	    if (value === '') {
+	       alert('태어난 날짜를 선택해주세요.');
+	       $("#day").val("");
+	       $("#day").focus();
+	       return false;
+	    }
+
+	    var year = $('#birthYear').val() + $('#month').val() + $('#day').val();
+
+	    $('#mb_birth').val(year);
 
 
 	}
@@ -203,6 +236,9 @@
 		} else {
 			alert("닉네임은 2글자이상 10자 이하만 입력되며 공백 및 특수문자가 불가능합니다.");
 		}
+	
+	
+    
 	}
 </script>
 
@@ -240,48 +276,6 @@ textarea {
 </head>
 <body class="is-preload landing">
 	<%@ include file="headerFooter/header.jsp"%>
-	 <%
-    String clientId = "eT2NCIHgedo2uVebssZm";//애플리케이션 클라이언트 아이디값";
-    String clientSecret = "dBx60NTCAZ";//애플리케이션 클라이언트 시크릿값";
-    String code = request.getParameter("code");
-    String state = request.getParameter("state");
-    String redirectURI = URLEncoder.encode("http://localhost:8080/naverCallback.do", "UTF-8");
-    String apiURL;
-    apiURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&";
-    apiURL += "client_id=" + clientId;
-    apiURL += "&client_secret=" + clientSecret;
-    apiURL += "&redirect_uri=" + redirectURI;
-    apiURL += "&code=" + code;
-    apiURL += "&state=" + state;
-    String access_token = "";
-    String refresh_token = "";
-    System.out.println("apiURL="+apiURL);
-    try {
-      URL url = new URL(apiURL);
-      HttpURLConnection con = (HttpURLConnection)url.openConnection();
-      con.setRequestMethod("POST");
-      int responseCode = con.getResponseCode();
-      BufferedReader br;
-      System.out.print("responseCode="+responseCode);
-      if(responseCode==200) { // 정상 호출
-        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-      } else {  // 에러 발생
-        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-      }
-      String inputLine;
-      StringBuffer res = new StringBuffer();
-      while ((inputLine = br.readLine()) != null) {
-        res.append(inputLine);
-      }
-      br.close();
-      if(responseCode==200) {
-        out.println(res.toString());
-      }
-    } catch (Exception e) {
-      System.out.println(e);
-}
-    
-  %>
 	
 		<!-- Banner -->
 
@@ -375,8 +369,8 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 										<input type="text" class="form-control" id="ID" name="mb_ID"
 											placeholder="아이디입력" required maxlength="12" value="">
 									</div>
-										<input type="hidden" name="socialID" value="${socialID }"/>
-										<input type="hidden" name="socialNumber" value="${socialNumber }"/>
+										<input type="hidden" name="socialID" value="${memberVO.socialID }"/>
+										<input type="hidden" name="socialNumber" value="${memberVO.socialNumber }"/>
 									<div class="col-sm-3">
 										<input type="button" id="idcheck" value="중복확인"
 											onclick="FnIdcheck();" />
@@ -406,10 +400,20 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 								<div class="mb-4 row">
 									<label for="username" class="col-sm-3 col-form-label">
 										이름</label>
-									<div class="col-sm-5">
-										<input type="text"  id="username"
-											name="mb_name" placeholder="이름 입력" required maxlength="4" value="${socialName }" readonly="readonly">
-									</div>
+									<c:choose>
+										<c:when test="${memberVO.mb_birth ne null }">
+											<div class="col-sm-5">
+												<input type="text"  id="username"
+													name="mb_name" placeholder="이름 입력" required maxlength="4" value="${memberVO.mb_name }" readonly="readonly">
+											</div>
+										</c:when>
+										<c:otherwise>
+											<div class="col-sm-5">
+												<input type="text"  id="username"
+													name="mb_name" placeholder="이름 입력" required maxlength="4" value="">
+											</div>
+										</c:otherwise>
+									</c:choose>
 								</div>
 
 
@@ -430,8 +434,8 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 								<div class="mb-4 row">
 									<label for="email" class="col-sm-3 col-form-label"> 이메일</label>
 									<div class="col-sm-5">
-										<input type="text" class="form-control" id="email"
-											name="mb_email" placeholder="example@ex.com" required value="${socialEmail }">
+										<input type="text" id="email"
+											name="mb_email" placeholder="example@ex.com" required value="${memberVO.mb_email }" readonly="readonly">
 									</div>
 								</div>
 
@@ -439,16 +443,83 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 									<label for="hp" class="col-sm-3 col-form-label">전화번호</label>
 									<div class="col-sm-5">
 										<input type="text" id="hp" name="mb_tel" placeholder="-미포함"
-											value="${socialTel }" required maxlength="11">
+											value="${memberVO.mb_tel }" required maxlength="11">
 									</div>
 								</div>
 
 								<div class="mb-4 row">
 									<label for="birth" class="col-sm-3 col-form-label">
 										생년월일</label>
-									<div class="col-sm-5">
-										<input type="text" id="birthYear" name="mb_birth"
-											placeholder="" value="${socialBirth }" required maxlength="10" readonly="readonly">
+										<c:choose>
+											<c:when test="${memberVO.mb_birth ne null }">
+												<div class="col-sm-5">
+												   <input type="hidden" id="mb_birth" name="mb_birth" value="">
+														<input type="text" id="birthYear" name="mb_birth"
+															placeholder="" value="${memberVO.mb_birth }" required maxlength="10" readonly="readonly">
+												</div>
+											</c:when>
+									<c:when test="${memberVO.mb_birth eq null}">
+                                    <input type="hidden" id="mb_birth" name="mb_birth" value="">
+                                    
+                                    <div class="col-sm-3">
+                                       <input type="text" id="birthYear" name="mb_year"
+                                          placeholder="" value="" required maxlength="4">
+                                    </div>
+                                    <div class="col-sm-3">
+                                       <select name="mb_month" id="month">
+                                          <option value="">-- 선택 --</option>
+                                          <option value="01">1</option>
+                                          <option value="02">2</option>
+                                          <option value="03">3</option>
+                                          <option value="04">4</option>
+                                          <option value="05">5</option>
+                                          <option value="06">6</option>
+                                          <option value="07">7</option>
+                                          <option value="08">8</option>
+                                          <option value="09">9</option>
+                                          <option value="10">10</option>
+                                          <option value="11">11</option>
+                                          <option value="12">12</option>
+                                       </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                       <select name="mb_day" id="day">
+                                          <option value="">-- 선택 --</option>
+                                          <option value="01">1</option>
+                                          <option value="02">2</option>
+                                          <option value="03">3</option>
+                                          <option value="04">4</option>
+                                          <option value="05">5</option>
+                                          <option value="06">6</option>
+                                          <option value="07">7</option>
+                                          <option value="08">8</option>
+                                          <option value="09">9</option>
+                                          <option value="10">10</option>
+                                          <option value="11">11</option>
+                                          <option value="12">12</option>
+                                          <option value="13">13</option>
+                                          <option value="14">14</option>
+                                          <option value="15">15</option>
+                                          <option value="16">16</option>
+                                          <option value="17">17</option>
+                                          <option value="18">18</option>
+                                          <option value="19">19</option>
+                                          <option value="20">20</option>
+                                          <option value="21">21</option>
+                                          <option value="22">22</option>
+                                          <option value="23">23</option>
+                                          <option value="24">24</option>
+                                          <option value="25">25</option>
+                                          <option value="26">26</option>
+                                          <option value="27">27</option>
+                                          <option value="28">28</option>
+                                          <option value="29">29</option>
+                                          <option value="30">30</option>
+                                          <option value="31">31</option>
+                                       </select>
+                                    </div>
+                                 </c:when>
+										</c:choose>
 									</div>
 									
 								
@@ -485,13 +556,10 @@ NG캠핑은 원칙적으로 이용자의 개인정보를 회원 탈퇴 시 지�
 											class="btn btn-outline-success" for="cancelBtn">돌아가기</label>
 									</div>
 								</div>
-
-
-							</div>
-						</form>
+							</form>
+						</div>
 					</div>
 				</div>
-			</div>
 		</section>
 
 

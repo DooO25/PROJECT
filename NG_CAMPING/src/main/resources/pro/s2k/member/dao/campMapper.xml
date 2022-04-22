@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pro.s2k.camp.dao.CampDAO">
+	<!-- 전체 불러오기 -->
+	<select id="selectCampSitel" parameterType="hashmap"
+		resultType="campInfoVO">
+		select
+		idx,
+		lineIntro,
+		posblFcltyCl,
+		themaEnvrnCl,
+		firstImageUrl,
+		doNm,
+		sbrsEtc,
+		sigunguNm,
+		zipcode,
+		lctCl,
+		sbrsCl,
+		addr1,
+		addr2,
+		facltNm,
+		homepage,
+		resveUrl,
+		induty,
+		mapX,
+		mapY,
+		homepage,
+		animalCmgCl,
+		<!-- 거리순으로 리스트하기위해 사용 -->
+		(abs(#{lon}-mapX)+abs(#{lat}-mapY)) as distance
+		from camp_info
+		order by distance
+		<!-- 페이징vo와 연결된 개수 -->
+		limit #{startNo}, #{pageSize}
+	</select>
+	<!-- 전체 개수구하기 -->
+	<select id="selectCountSite" resultType="int">
+		select count(*) from camp_info
+	</select>
+
+	<!-- 메인에 사용할 랜덤으로 화면에 띄우기 -->
+	<select id="selectRandom" parameterType="hashmap"
+		resultType="campInfoVO">
+		select
+		idx,
+		firstImageUrl,
+		facltNm,
+		homepage
+		from camp_info
+		<!-- https가 들어간 사진들만 조건 -->
+		where firstImageUrl like concat('https%')
+		order by
+		rand()
+		limit #{startNo}, #{pageSize}
+	</select>
+	<!-- 사진 있는것만 개수 뽑기 -->
+	<select id="selectCountRandom" resultType="int">
+		select count(*) from camp_info where firstImageUrl like concat('https%')
+	</select>
+
+	<!-- 캠핑장 이름으로 조회 -->
+	<select id="selectCamplInfo" parameterType="string"
+		resultType="campInfoVO">
+		select
+		idx,
+		lineIntro,
+		posblFcltyCl,
+		themaEnvrnCl,
+		firstImageUrl,
+		doNm,
+		sbrsEtc,
+		sigunguNm,
+		zipcode,
+		lctCl,
+		sbrsCl,
+		addr1,
+		addr2,
+		facltNm,
+		homepage,
+		resveUrl,
+		induty,
+		mapX,
+		mapY,
+		homepage,
+		animalCmgCl
+		from camp_info where facltNm = #{facltNm}
+	</select>
+
+	<!-- 캠핑장 검색 -->
+	<select id="selectSearchList" parameterType="hashmap"
+		resultType="campInfoVO">
+		select
+		idx,
+		lineIntro,
+		posblFcltyCl,
+		themaEnvrnCl,
+		firstImageUrl,
+		doNm,
+		sigunguNm,
+		zipcode,
+		lctCl,
+		addr1,
+		addr2,
+		facltNm,
+		homepage,
+		resveUrl,
+		induty,
+		mapX,
+		mapY,
+		homepage,
+		animalCmgCl,
+		(abs(#{lon}-mapX)+abs(#{lat}-mapY)) as distance
+		from camp_info
+		where facltNm like concat('%',#{searchText},'%')
+		<if test="searchType != '-선택-'">and doNm like concat('%',#{searchType},'%')</if>
+		<if test="searchType2 != '-선택-'">and addr1 like concat('%',#{searchType2},'%')</if>
+		<if test="animalCheck == '가능'">and animalCmgCl like concat(#{animalCheck},'%')</if>
+		order by
+		distance
+		limit #{startNo}, #{pageSize}
+	</select>
+	<!-- 캠핑장 검색별 개수 구하기-->
+	<select id="selectSearchCount" parameterType="hashmap"
+		resultType="int">
+		select
+		count(*)
+		from camp_info
+		where facltNm like concat('%',#{searchText},'%')
+		<if test="searchType != '-선택-'">and doNm like concat('%',#{searchType},'%')</if>
+		<if test="searchType2 != '-선택-'">and addr1 like concat('%',#{searchType2},'%')</if>
+		<if test="animalCheck == '가능'">and animalCmgCl like concat(#{animalCheck},'%')
+		</if>
+	</select>
+
+
+	<!-- 메인페이지 개수찍기 -->
+	<select id="selectCountTotal" resultType="int">
+		select count(*) from
+		camp_info
+	</select>
+	<select id="selectCountCampsitel" resultType="int">
+		select count(*)
+		from camp_info where induty like '%일반야영장%'
+	</select>
+	<select id="selectCountCar" resultType="int">
+		select count(*) from
+		camp_info where induty like '%자동차야영장%'
+	</select>
+	<select id="selectCountGlamping" resultType="int">
+		select count(*) from
+		camp_info where induty like '%카라반%' or induty like '%글램핑%'
+	</select>
+</mapper>

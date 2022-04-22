@@ -20,9 +20,10 @@ public class FileDownloadView extends AbstractView {
 	@Override
 	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		
-		String ofileName = (String) model.get("ofileName"); // 원본이름
-		String sfileName = (String) model.get("sfileName"); // 저장이름
+		// 원본이름
+		String ofileName = (String) model.get("ofileName"); 
+		// 저장이름
+		String sfileName = (String) model.get("sfileName"); 
 		
 		// 저장된 파일 객체 얻기
 		File file = new File(request.getSession().getServletContext().getRealPath("upload"), sfileName);

@@ -28,19 +28,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class ReviewVO {
-	private int mb_idx;
-	private int rv_idx;
-	private String rv_title;
-	private String rv_content;
-	private Date rv_regDate;
-	private Date rv_modiDate;
-	private String rv_ip;
-	private int rv_hit;
-	private int del;
-	
-	private String mb_nick;
-
-
+public class ReviewVO {						// 캠핑 후기 객체
+	private int mb_idx;						// 유저 고유 번호
+	private int rv_idx;						// 후기 고유 번호
+	private String rv_title;				// 후기 제목
+	private String rv_content;				// 후기 내용
+	private Date rv_regDate;				// 후기 작성일
+	private Date rv_modiDate;				// 후기 수정일
+	private String rv_ip;					// 후기 작성자 ip
+	private int rv_hit;						// 후기 조회수
+	private int del;						// 후기 삭제 여부 (1이면 삭제 default 0)
+	private String mb_nick;					// 유저 닉네임
+	private int coCount;                    // 댓댓글 개수 세기
 }

@@ -146,7 +146,7 @@ b {
 										method="POST" id="rView">
 										<sec:csrfInput />
 										<a href="#"
-											onclick="document.getElementById('rView').submit()">마이페이지</a>
+											onclick="document.getElementById('token').submit()">마이페이지</a>
 									</form>
 								</li>
 							</c:when>
@@ -177,12 +177,12 @@ b {
 								<li style="vertical-align: top;">
 									<form
 										action='${pageContext.request.contextPath }/UserInfo/memberpageCorrect.do'
-										method="POST" id="rView">
+										method="POST" id="token">
 										<sec:csrfInput />
 
 
 										<a href="#"
-											onclick="document.getElementById('rView').submit()">마이페이지</a>
+											onclick="document.getElementById('token').submit()">마이페이지</a>
 									</form>
 								</li>
 							</c:when>

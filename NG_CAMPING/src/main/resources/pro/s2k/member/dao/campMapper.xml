@@ -137,8 +137,7 @@
 
 	<!-- 메인페이지 개수찍기 -->
 	<select id="selectCountTotal" resultType="int">
-		select count(*) from
-		camp_info
+		select count(*) from camp_info
 	</select>
 	<select id="selectCountCampsitel" resultType="int">
 		select count(*)

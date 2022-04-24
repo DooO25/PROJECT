@@ -369,7 +369,7 @@ b {
       
       </section>
       <br />
-	<%-- 실제적으로 갈 jsp --%>
+	<%-- 실제적으로 갈 폼 --%>
 	<form action='<c:url value='${pageContext.request.contextPath }/board/reviewView.do'/>' method="post" id="sendData" name="sendData">
        	    <sec:csrfInput/>
                <input type="hidden" name="p" value="${cv.currentPage }"/>

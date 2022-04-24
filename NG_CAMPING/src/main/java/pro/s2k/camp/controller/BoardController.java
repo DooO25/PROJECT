@@ -31,6 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
+import pro.s2k.camp.dao.CommentDAO;
 import pro.s2k.camp.service.CommentService;
 import pro.s2k.camp.service.NoticeService;
 import pro.s2k.camp.service.QnAService;
@@ -58,6 +59,9 @@ public class BoardController {
 
 	@Autowired
 	private QnAService qnaService;
+	
+	@Autowired 
+	CommentDAO commentDAO;
 
 	// 403 오류 -----------------------------
 	@RequestMapping("/403.do")
@@ -83,7 +87,10 @@ public class BoardController {
 	// 공지사항 1개 보기
 	@RequestMapping(value = "/board/noticeView.do")
 	public String noticeView(@ModelAttribute CommonVO commonVO, NoticeVO noticeVO, Model model) {
-		noticeVO = noticeService.selectByIdx(noticeVO.getNt_idx());
+		Map<String, Integer> map = new HashMap<>();
+		map.put("mode", commonVO.getMode());
+		map.put("nt_idx", noticeVO.getNt_idx());
+		noticeVO = noticeService.selectByIdx(map);
 		model.addAttribute("nv", noticeVO);
 		model.addAttribute("cv", commonVO);
 		return "/board/noticeView";
@@ -162,7 +169,9 @@ public class BoardController {
 	// 공지사항 수정폼으로 이동
 	@RequestMapping(value = "/board/noticeUpdate.do", method = RequestMethod.POST)
 	public String noticeUpdate(@ModelAttribute CommonVO commonVO, NoticeVO noticeVO, Model model) {
-		noticeVO = noticeService.selectByIdx(noticeVO.getNt_idx());
+		Map<String, Integer> map = new HashMap<>();
+		map.put("nt_idx", noticeVO.getNt_idx());
+		noticeVO = noticeService.selectByIdx(map);
 		model.addAttribute("nv", noticeVO);
 		model.addAttribute("cv", commonVO);
 		return "/board/noticeUpdate";
@@ -260,7 +269,7 @@ public class BoardController {
 
 	// 리뷰 목록보기
 	@RequestMapping(value = "/board/review.do")
-	public String review(HttpServletRequest request, @ModelAttribute CommonVO commonVO, Model model) {
+	public String review(HttpServletRequest request, @ModelAttribute CommonVO commonVO, Model model, ReviewVO reviewVO) {
 		// 리뷰 list
 		PagingVO<ReviewVO> pv = reviewService.selectList(commonVO);
 		model.addAttribute("pv", pv);
@@ -274,7 +283,10 @@ public class BoardController {
 			ReviewVO reviewVO, CommentVO commentVO) {
 		// 리뷰 1개 보기
 		// 한개의 후기글의 정보를 가져와서
-		reviewVO = reviewService.selectByIdx(reviewVO.getRv_idx());
+		Map<String, Integer> map = new HashMap<>();
+		map.put("mode", commonVO.getMode());
+		map.put("rv_idx", reviewVO.getRv_idx());
+		reviewVO = reviewService.selectByIdx(map);
 		model.addAttribute("rv", reviewVO);
 		model.addAttribute("cv", commonVO);
 		// 댓글,대댓글 리스트로 가져오기
@@ -350,7 +362,9 @@ public class BoardController {
 	public String updatePost(HttpServletRequest request, @ModelAttribute CommonVO commonVO, Model model,
 			ReviewVO reviewVO) {
 		// 리뷰글 번호를 가져와 정보 가져오기
-		reviewVO = reviewService.selectByIdx(reviewVO.getRv_idx());
+		Map<String, Integer> map = new HashMap<>();
+		map.put("rv_idx", reviewVO.getRv_idx());
+		reviewVO = reviewService.selectByIdx(map);
 		model.addAttribute("rv", reviewVO);
 		model.addAttribute("cv", commonVO);
 		return "/board/reviewUpdate";

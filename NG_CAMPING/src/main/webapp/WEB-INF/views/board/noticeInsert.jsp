@@ -329,7 +329,7 @@ b {
 				height : 150,
 				// 에디터 한글 설정
 				lang : "ko-KR",
-				placeholder: "입력ㄱ",
+				placeholder: "입력하여 주세요",
 				disableDragAndDrop : true,
 				// 에디터에 커서 이동 (input창의 autofocus라고 생각하시면 됩니다.)
 				focus : true,

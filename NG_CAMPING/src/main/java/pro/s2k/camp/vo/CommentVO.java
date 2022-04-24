@@ -23,19 +23,16 @@ import lombok.Data;
 
 
 @Data
-
-public class CommentVO {
-	private int mb_idx;
-	private int rv_idx;
-	private int co_idx;
-	private int co_ref;
-	private int co_seq;
-	private int co_lev;
-	private String co_content;
-	private Date co_regDate;
-	private Date co_modiDate;
-	private String co_ip;
-	private int del2;
-	
-	private String mb_nick;
+public class CommentVO {		// 후기 댓글 객체
+	private int rv_idx;			// 후기 고유 번호
+	private int co_idx;			// 댓글 고유 번호
+	private int co_ref;			// 후기 참조 번호
+	private int co_seq;			// 댓글 정렬 순서
+	private int co_lev;			// 댓글 계층 (댓글, 대댓글 ...)
+	private String co_content;	// 댓글 내용
+	private Date co_regDate;	// 댓글 등록일
+	private Date co_modiDate;	// 댓글 수정일
+	private String co_ip;		// 작성 IP
+	private int del2;			// 댓글 삭제 여부
+	private String mb_nick;		// 작성자 닉네임
 }

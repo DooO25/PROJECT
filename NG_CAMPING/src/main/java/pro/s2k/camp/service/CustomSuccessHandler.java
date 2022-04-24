@@ -1,4 +1,4 @@
-package pro.s2k.camp.controller;
+package pro.s2k.camp.service;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,7 +40,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			userid = principal.toString();
 		}
 		// PrintWriter사용시 인코딩 하기위함
-		response.setCharacterEncoding("UTF-8"); 
+		response.setCharacterEncoding("UTF-8");
 		// 문자코드를 해석하는것이 항상 다르기에 컨텐츠타입까지 적용시켜야함
 		response.setContentType("text/html; charset=UTF-8");
 		// 컨트롤러에서 자바스크립트를 사용하기위해 PrintWriter 사용

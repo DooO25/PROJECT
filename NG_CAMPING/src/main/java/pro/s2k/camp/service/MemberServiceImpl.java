@@ -348,7 +348,6 @@ public class MemberServiceImpl implements MemberService {
 			for (Map.Entry<String, String> header : requestHeaders.entrySet()) { //entrySet()의 경우 키와 값을 모두 출력
 				con.setRequestProperty(header.getKey(), header.getValue());
 			}
-
 			int responseCode = con.getResponseCode();
 			if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
 				return readBody(con.getInputStream());

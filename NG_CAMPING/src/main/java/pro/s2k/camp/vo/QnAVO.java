@@ -28,16 +28,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QnAVO {
-	private int mb_idx;
-	private int qna_idx;
-	private int qna_ref;
-	private String qna_title;
-	private String qna_content;
-	private Date qna_regDate;
-	private Date qna_modiDate;
-	private String qna_ip;
-	private int qna_read;
-	
-	private String mb_nick;
+public class QnAVO {				// Q&A 객체
+	private int mb_idx;				// 유저 고유 번호
+	private int qna_idx;			// Q&A 고유 번호
+	private int qna_ref;			// Q&A 질문 참조 번호
+	private String qna_title;		// Q&A 제목
+	private String qna_content;		// Q&A 내용
+	private Date qna_regDate;		// Q&A 등록일
+	private Date qna_modiDate;		// Q&A 수정일
+	private String qna_ip;			// Q&A 작성자 IP
+	private int qna_read;			// Q&A 답변 여부 (0 = 미조회, 1 = 조회, 2 = 답변완료) 
+	private String mb_nick;			// 유저 닉네임
 }

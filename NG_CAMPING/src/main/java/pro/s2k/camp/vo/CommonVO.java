@@ -13,7 +13,7 @@ public class CommonVO {
    private int currentPage;
    private int pageSize;
    private int blockSize;
-   private String mode;
+   private int mode;
    
    private String searchText;
    private String searchType;
@@ -91,27 +91,18 @@ public class CommonVO {
          b = 10;
          blockSize = b;
       }
-
-      if(mode==null || mode.trim().length()==0) {
-         mode="insert";
-      }
    }
 
-
-
-   public String getMode() {
+   public int getMode() {
       return mode;
    }
 
-   public void setMode(String mode) {
-      this.mode = mode;
-      if(mode==null || mode.trim().length()==0) {
-         this.mode="insert";
-      }
+   public void setMode(int mode) {
+	this.mode = mode;
    }
-
-   public int getP() {
-      return p;
+	
+	public int getP() {
+	      return p;
    }
 
    public void setP(int p) {

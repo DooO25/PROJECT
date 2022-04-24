@@ -44,7 +44,7 @@
 		<beans:property name="order" value="0"/>
 	</beans:bean>
 	<!-- 실제 다운로드를 진행할 클래스 : jsp의 download.jsp를 참조 AbstractView을 상속받아 만들면된다. -->
-	<beans:bean id="downloadView" class="pro.s2k.camp.controller.FileDownloadView"/>
+	<beans:bean id="downloadView" class="pro.s2k.camp.service.FileDownloadView"/>
 	<!-- 다운로드 객체 등록 종료 -->
 	<!-- ********************************************************************************** -->
 

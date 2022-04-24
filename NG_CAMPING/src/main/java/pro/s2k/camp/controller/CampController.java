@@ -39,9 +39,10 @@ public class CampController {
 		if(request.getParameter("lat")!=null) {
 			commonVO.setLat(Double.parseDouble(request.getParameter("lat")));
 			commonVO.setLon(Double.parseDouble(request.getParameter("lon")));
+			// 세션에 추가
 			session.setAttribute("lat",Double.parseDouble(request.getParameter("lat")));
 			session.setAttribute("lon",Double.parseDouble(request.getParameter("lon")));
-		}else {
+		}else { // null 이면 세션에서 받아온다 (캠핑장 검색)
 			commonVO.setLat((double)session.getAttribute("lat"));
 			commonVO.setLon((double)session.getAttribute("lon"));
 		}
@@ -80,30 +81,32 @@ public class CampController {
 		return "/camp/campsite";
 	}
 	
-	// 캠핑장 찾기 지도를 표시해주는 컨트롤러
+	// 캠핑장 찾기 지도 표시 (카카오맵 api)
 	@RequestMapping(value ={"/camp/selectCampSitel.do"}, method = RequestMethod.POST)
 	@ResponseBody
 	public String selectCampsitel(@RequestHeader(value = "p", required = false)int p, // ajax에서 before send로 보낸 현재 페이지 값을 받는다
 			@ModelAttribute CommonVO commonVO, HttpServletRequest request, Model model,HttpSession session) throws Exception  {
+		// 세션에 담긴 검색 항목들을 담는다
+		String searchType = (String) session.getAttribute("searchType");
+		String searchType2 = (String) session.getAttribute("searchType2");
+		String searchText = (String) session.getAttribute("searchText");
+		String animalCheck = (String) session.getAttribute("animalCheck");
+		// vo에 좌표 세팅
+		commonVO.setLon((double)session.getAttribute("lon"));
+		commonVO.setLat((double)session.getAttribute("lat"));
+		// vo에 검색 항목 세팅
+		commonVO.setSearchText(searchText);
+		commonVO.setSearchType(searchType);
+		commonVO.setSearchType2(searchType2);
+		commonVO.setAnimalCheck(animalCheck);
+		// 현재 페이지 세팅
+		commonVO.setP(p); 
 		// 객체를 직렬화(문자열)로 바꿔주기위해 사용 
 		ObjectMapper mapper = new ObjectMapper();
 		// 직렬화 된 문자열을 json으로 파싱
 		JSONParser jsonParser = new JSONParser();
 		// if 와 else 에서 사용하기 때문에 전역변수로 둠
 		Object objectJson = null;
-		// 세션에 담긴 검색 항목들을 담는다
-		String searchType = (String) session.getAttribute("searchType");
-		String searchType2 = (String) session.getAttribute("searchType2");
-		String searchText = (String) session.getAttribute("searchText");
-		String animalCheck = (String) session.getAttribute("animalCheck");
-			// commonVO에 담아준다
-			commonVO.setLon((double)session.getAttribute("lon"));
-			commonVO.setLat((double)session.getAttribute("lat"));
-			commonVO.setSearchText(searchText);
-			commonVO.setSearchType(searchType);
-			commonVO.setSearchType2(searchType2);
-			commonVO.setAnimalCheck(animalCheck);
-			commonVO.setP(p); 
 		// searchType 이 null 이 아니면 검색을 했다는 의미이므로 검색 서비스로
 		if(searchType!=null) {
 				PagingVO<CampInfoVO> pv = campService.selectSearchList(commonVO);

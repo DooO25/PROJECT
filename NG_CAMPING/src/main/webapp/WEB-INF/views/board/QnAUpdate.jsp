@@ -202,7 +202,7 @@ b {
 
 
 										<a href="#"
-											onclick="document.getElementById('rView').submit()">마이페이지</a>
+											onclick="document.getElementById('token').submit()">마이페이지</a>
 									</form>
 								</li>
 							</c:when>
@@ -265,12 +265,12 @@ b {
 								<li style="vertical-align: top;">
 									<form
 										action='${pageContext.request.contextPath }/UserInfo/memberpageCorrect.do'
-										method="POST" id="rView">
+										method="POST" id="token">
 										<sec:csrfInput />
 
 
 										<a href="#"
-											onclick="document.getElementById('rView').submit()">마이페이지</a>
+											onclick="document.getElementById('token').submit()">마이페이지</a>
 									</form>
 								</li>
 
@@ -343,7 +343,7 @@ b {
          </div>
       </section>
       <br />
-	<%-- 실제적으로 갈 jsp --%>
+	<%-- 실제적으로 갈 폼 --%>
 	<form action='<c:url value='${pageContext.request.contextPath }/board/QnAView.do'/>' method="post" id="sendData" name="sendData">
        	    <sec:csrfInput/>
                <input type="hidden" name="p" value="${cv.currentPage }"/>

@@ -97,7 +97,7 @@ public class MemberController {
 				token = res.toString(); // 가져온 정보 넣어주기
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		JSONParser jsonParser = new JSONParser();
 		Object afterToken = null;
@@ -226,7 +226,7 @@ public class MemberController {
 				token = res.toString(); // 가져온 정보 넣어주기
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		JSONParser jsonParser = new JSONParser();
 		Object afterToken = null;
@@ -359,7 +359,7 @@ public class MemberController {
 				token = res.toString(); // 가져온 정보 넣어주기
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		JSONParser jsonParser = new JSONParser();
 		Object afterToken = null;
@@ -568,7 +568,7 @@ public class MemberController {
 	}
 
 	// 비밀번호 찾기 위한 정보를 post로 받을 경우
-	@RequestMapping(value = "/userInfo/findPasswordOk.do", method = RequestMethod.POST)
+	@RequestMapping(value = {"/userInfo/findPasswordOk.do","/resetPasswordOk.do"}, method = RequestMethod.POST)
 	public String findPasswordOkPOST(@ModelAttribute MemberVO memberVO, Model model) {
 		MemberVO vo = memberService.passwordsearch(memberVO);
 		if (vo == null) {

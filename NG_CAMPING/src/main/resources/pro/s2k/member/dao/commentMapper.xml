@@ -63,7 +63,7 @@
 	<!-- 나와 co_ref값이 같으면서 co_seq가 크거나 같은것 뽑기 삭제시 사용 -->
 	<select id="selectSeqList" parameterType="hashmap"
 		resultType="commentVO">
-		select * from camp_comment where co_ref=#{co_ref} andco_seq >= #{co_seq} order by co_seq
+		select * from camp_comment where co_ref=#{co_ref} and co_seq >= #{co_seq} order by co_seq
 	</select>
 
 	<!-- 댓글 수정하기 -->
@@ -86,7 +86,7 @@
 		select max(co_lev) from camp_comment where co_ref=#{co_ref} and co_seq=#{co_seq}
 	</select>
 
-	<!-- 같은 co_ref, co_seq에서 레벨개수 구하기 -->
+	<!-- 같은 co_ref, co_seq에서 레벨개수 구하기 (같은 seq중 자기보다 큰 lev있나 판단) -->
 	<select id="selectComment" parameterType="hashmap"
 		resultType="integer">
 		select distinct(co_lev) from camp_comment where co_seq = #{co_seq} and co_ref = #{co_ref}
@@ -100,16 +100,11 @@
 	</delete>
 	<delete id="delete2" parameterType="int">
 		delete from camp_comment
-		where co_ref=#{co_ref}
+		where co_idx=#{co_idx}
 	</delete>
 	<!-- 삭제표시로 변경하기 -->
 	<update id="updateDel" parameterType="int">
 		update camp_comment set
 		del2 = 1 where co_idx = #{co_idx}
 	</update>
-	<!-- 삭제표시값이 '1' 모든 데이터 가져오기 -->
-	<select id="selectDelList" resultType="commentVO">
-		select * from camp_comment
-		where del2 = 1 and co_ref=#{co_ref} order by co_idx desc
-	</select>
 </mapper>

@@ -71,7 +71,7 @@
     </security:authentication-manager>
     
     <!-- 로그인 성공시 처리할 객체 등록 -->
-    <bean class="pro.s2k.camp.controller.CustomSuccessHandler" id="customSuccessHandler"></bean>
+    <bean class="pro.s2k.camp.service.CustomSuccessHandler" id="customSuccessHandler"></bean>
     
     <!-- 시큐리트 암호화 객체 등록 -->
     <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="bCryptPasswordEncoder"/>

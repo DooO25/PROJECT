@@ -50,7 +50,7 @@ public class ReviewServiceImpl implements ReviewService {
 	public ReviewVO selectByIdx(Map<String, Integer> map) { // 후기 조회
 		ReviewVO reviewVO = reviewDAO.selectByIdx(map.get("rv_idx")); // reviewMapper selectByIdx 쿼리 실행
 		// 인수로 받아온 mode가 1이면
-		if(map.get("mode")==1) {
+		if(map.get("mode")!=0) {
 			reviewDAO.updateHit(map.get("rv_idx")); // 조회수 증가
 			reviewVO.setRv_hit(reviewVO.getRv_hit() + 1); // reviewMapper updateHit 쿼리 실행
 		}

@@ -24,6 +24,7 @@ import lombok.Data;
 
 @Data
 public class CommentVO {		// 후기 댓글 객체
+	private int mb_idx;			// 회원 번호
 	private int rv_idx;			// 후기 고유 번호
 	private int co_idx;			// 댓글 고유 번호
 	private int co_ref;			// 후기 참조 번호

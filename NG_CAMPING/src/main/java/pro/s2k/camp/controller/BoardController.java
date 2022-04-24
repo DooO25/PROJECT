@@ -363,6 +363,7 @@ public class BoardController {
 			ReviewVO reviewVO) {
 		// 리뷰글 번호를 가져와 정보 가져오기
 		Map<String, Integer> map = new HashMap<>();
+		map.put("mode", commonVO.getMode());
 		map.put("rv_idx", reviewVO.getRv_idx());
 		reviewVO = reviewService.selectByIdx(map);
 		model.addAttribute("rv", reviewVO);
